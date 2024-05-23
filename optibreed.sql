@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 16, 2024 at 08:07 AM
+-- Generation Time: May 23, 2024 at 08:17 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -200,25 +200,25 @@ CREATE TABLE `django_migrations` (
 --
 
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
-(1, 'contenttypes', '0001_initial', '2024-05-16 06:07:16.140567'),
-(2, 'auth', '0001_initial', '2024-05-16 06:07:17.892471'),
-(3, 'admin', '0001_initial', '2024-05-16 06:07:18.460664'),
-(4, 'admin', '0002_logentry_remove_auto_add', '2024-05-16 06:07:18.502612'),
-(5, 'admin', '0003_logentry_add_action_flag_choices', '2024-05-16 06:07:18.567605'),
-(6, 'contenttypes', '0002_remove_content_type_name', '2024-05-16 06:07:18.738940'),
-(7, 'auth', '0002_alter_permission_name_max_length', '2024-05-16 06:07:18.988103'),
-(8, 'auth', '0003_alter_user_email_max_length', '2024-05-16 06:07:19.062856'),
-(9, 'auth', '0004_alter_user_username_opts', '2024-05-16 06:07:19.100960'),
-(10, 'auth', '0005_alter_user_last_login_null', '2024-05-16 06:07:19.429204'),
-(11, 'auth', '0006_require_contenttypes_0002', '2024-05-16 06:07:19.440604'),
-(12, 'auth', '0007_alter_validators_add_error_messages', '2024-05-16 06:07:19.502865'),
-(13, 'auth', '0008_alter_user_username_max_length', '2024-05-16 06:07:19.555748'),
-(14, 'auth', '0009_alter_user_last_name_max_length', '2024-05-16 06:07:19.606396'),
-(15, 'auth', '0010_alter_group_name_max_length', '2024-05-16 06:07:19.686399'),
-(16, 'auth', '0011_update_proxy_permissions', '2024-05-16 06:07:19.709624'),
-(17, 'auth', '0012_alter_user_first_name_max_length', '2024-05-16 06:07:19.754705'),
-(18, 'optibreed', '0001_initial', '2024-05-16 06:07:20.176109'),
-(19, 'sessions', '0001_initial', '2024-05-16 06:07:20.337854');
+(1, 'contenttypes', '0001_initial', '2024-05-22 07:10:35.535374'),
+(2, 'auth', '0001_initial', '2024-05-22 07:10:37.336373'),
+(3, 'admin', '0001_initial', '2024-05-22 07:10:37.663309'),
+(4, 'admin', '0002_logentry_remove_auto_add', '2024-05-22 07:10:37.693227'),
+(5, 'admin', '0003_logentry_add_action_flag_choices', '2024-05-22 07:10:37.727067'),
+(6, 'contenttypes', '0002_remove_content_type_name', '2024-05-22 07:10:38.054068'),
+(7, 'auth', '0002_alter_permission_name_max_length', '2024-05-22 07:10:38.259422'),
+(8, 'auth', '0003_alter_user_email_max_length', '2024-05-22 07:10:38.318596'),
+(9, 'auth', '0004_alter_user_username_opts', '2024-05-22 07:10:38.356905'),
+(10, 'auth', '0005_alter_user_last_login_null', '2024-05-22 07:10:38.553974'),
+(11, 'auth', '0006_require_contenttypes_0002', '2024-05-22 07:10:38.564459'),
+(12, 'auth', '0007_alter_validators_add_error_messages', '2024-05-22 07:10:38.597392'),
+(13, 'auth', '0008_alter_user_username_max_length', '2024-05-22 07:10:38.691102'),
+(14, 'auth', '0009_alter_user_last_name_max_length', '2024-05-22 07:10:38.763221'),
+(15, 'auth', '0010_alter_group_name_max_length', '2024-05-22 07:10:38.818959'),
+(16, 'auth', '0011_update_proxy_permissions', '2024-05-22 07:10:38.877924'),
+(17, 'auth', '0012_alter_user_first_name_max_length', '2024-05-22 07:10:38.991101'),
+(18, 'optibreed', '0001_initial', '2024-05-22 07:10:39.391835'),
+(19, 'sessions', '0001_initial', '2024-05-22 07:10:39.510474');
 
 -- --------------------------------------------------------
 
@@ -256,9 +256,12 @@ CREATE TABLE `optibreed_condition` (
 CREATE TABLE `optibreed_room` (
   `id` bigint(20) NOT NULL,
   `Material_name` varchar(50) NOT NULL,
-  `OPT_Temperature` double NOT NULL,
-  `OPT_Humidity` double NOT NULL,
-  `OPT_Lightintensity` double NOT NULL,
+  `Min_Temperature` double NOT NULL,
+  `Max_Temperature` double NOT NULL,
+  `Min_Humidity` double NOT NULL,
+  `Max_Humidity` double NOT NULL,
+  `Min_Lightintensity` double NOT NULL,
+  `Max_Lightintensity` double NOT NULL,
   `User_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

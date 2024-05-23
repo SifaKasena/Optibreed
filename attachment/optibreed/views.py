@@ -8,11 +8,7 @@ from .models import User
 # Create your views here.
 #landing page
 def index(request):
-    if request.user.is_authenticated:
-        username = request.user.username
-    else:
-        username = 'Guest'
-    return render(request, 'index.html', {'username': username})
+    return render(request, 'index.html')
 
 
 class SignupView(generic.CreateView):
@@ -26,5 +22,9 @@ class SignupView(generic.CreateView):
         return HttpResponseRedirect(self.success_url)
 
 def home(request):
-    return HttpResponse("Hello, world. You're at the home page.")
+    if request.user.is_authenticated:
+        username = request.user.username
+        return render(request, 'home.html', {'username': username})
+    else:
+        return HttpResponseRedirect('/login')
 
