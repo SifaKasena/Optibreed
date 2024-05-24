@@ -23,9 +23,6 @@ class SignupView(generic.CreateView):
         login(self.request, user)
         return HttpResponseRedirect(self.success_url)
 
-
-
-
 @login_required
 def home(request):
     username = request.user.username
@@ -37,6 +34,7 @@ def home(request):
 
 from .forms import RoomForm
 
+@login_required
 def add_room(request):
     if request.method == 'POST':
         form = RoomForm(request.POST)
