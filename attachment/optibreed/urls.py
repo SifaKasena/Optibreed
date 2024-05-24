@@ -13,4 +13,5 @@ urlpatterns = [
     path("rooms/<int:room_id>/", views.room_conditions, name="rooms"),
     path('endpoint/', views.receive_data, name='receive_data'),
     path('edit_room/<int:room_id>/',views.edit_room, name='edit_room'),
+    path('api/latest-condition/<int:room_id>/', views.LatestConditionView.as_view(), name='latest-condition'),
 ]

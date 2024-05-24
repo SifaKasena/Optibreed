@@ -19,6 +19,38 @@
     <p><strong>Min Light Intensity:</strong> {{ room.Min_Lightintensity }}</p>
     <p><strong>Max Light Intensity:</strong> {{ room.Max_Lightintensity }}</p>
 
+    <div id="latest-condition">
+        Loading latest condition...
+    </div>
+
+    <script>
+        const roomId = {{ room.id }}; // Change to the ID of the room you want to monitor
+        const interval = 120000; // 120 seconds
+
+        async function fetchLatestCondition() {
+            try {
+                const response = await fetch(`/api/latest-condition/${roomId}/`);
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('latest-condition').innerText = `
+                        Timestamp: ${data.Timestamp}
+                        Temperature: ${data.Temperature}°C
+                        Humidity: ${data.Humidity}%
+                        Light Intensity: ${data.Lightintensity} lux
+                    `;
+                } else {
+                    document.getElementById('latest-condition').innerText = 'Failed to fetch the latest condition.';
+                }
+            } catch (error) {
+                document.getElementById('latest-condition').innerText = 'Error fetching the latest condition.';
+            }
+        }
+
+        // Fetch the latest condition immediately and then at intervals
+        fetchLatestCondition();
+        setInterval(fetchLatestCondition, interval);
+    </script>
+
 
     <h1>Room: {{ room.name }}</h1>
 
