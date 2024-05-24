@@ -12,4 +12,5 @@ urlpatterns = [
     path('add_room/', views.add_room, name='add_room'),
     path("rooms/<int:room_id>/", views.room_conditions, name="rooms"),
     path('endpoint/', views.receive_data, name='receive_data'),
+    path('edit_room/<int:room_id>/',views.edit_room, name='edit_room'),
 ]

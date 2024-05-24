@@ -6,6 +6,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+    <a href="{% url 'optibreed:home' %}">HOME</a>
+    <a href="{% url 'optibreed:edit_room' room_id=room.id %}">edit room details</a>
+
     <h1>Room Details</h1>
     <p><strong>User:</strong> {{ room.User.username }}</p>
     <p><strong>Material Name:</strong> {{ room.Material_name }}</p>
