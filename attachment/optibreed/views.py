@@ -140,3 +140,23 @@ def edit_room(request, room_id):
     else:
         form = RoomForm(instance=room)
     return render(request, 'edit_room.html', {'form': form})
+
+
+
+
+#displaying updated condition
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Condition
+from .serializers import ConditionSerializer
+
+class LatestConditionView(APIView):
+    def get(self, request, room_id, format=None):
+        try:
+            latest_condition = Condition.objects.filter(Room__id=room_id).latest('Timestamp')
+            serializer = ConditionSerializer(latest_condition)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Condition.DoesNotExist:
+            return Response({"error": "No condition records found for this room."}, status=status.HTTP_404_NOT_FOUND)
