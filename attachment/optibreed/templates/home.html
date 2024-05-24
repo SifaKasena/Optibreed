@@ -8,6 +8,7 @@
 <body>
     <h1>You are at your homepage</h1>
     <h2>welcome {{ username }}</h2>
+    <a href="{% url 'logout' %}">logout</a>
 
     <a href="{% url 'optibreed:add_room' %}">Add a room</a>
     <ul>
