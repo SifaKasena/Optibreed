@@ -49,5 +49,5 @@ def add_room(request):
 
 @login_required
 def detail(request, room_id):
-    room = get_object_or_404(Room, id=room_id)
+    room = get_object_or_404(Room, id=room_id, User=request.user)
     return render(request, 'room.html', {'room': room})
