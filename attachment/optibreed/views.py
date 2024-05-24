@@ -23,9 +23,8 @@ class SignupView(generic.CreateView):
         login(self.request, user)
         return HttpResponseRedirect(self.success_url)
 
+@login_required
 def home(request):
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect('/login')
     username = request.user.username
     rooms = Room.objects.filter(User=request.user)  # Fetch all rooms from the database associated with logged in user
     return render(request, 'home.html', {'username': username, 'rooms': rooms})
@@ -35,9 +34,8 @@ def home(request):
 
 from .forms import RoomForm
 
+@login_required
 def add_room(request):
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect('/login')
     if request.method == 'POST':
         form = RoomForm(request.POST)
         if form.is_valid():
@@ -49,8 +47,7 @@ def add_room(request):
         form = RoomForm()
     return render(request, 'add_room.html', {'form': form})
 
+@login_required
 def detail(request, room_id):
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect('/login')
     room = get_object_or_404(Room, id=room_id)
     return render(request, 'room.html', {'room': room})
