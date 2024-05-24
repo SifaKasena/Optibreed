@@ -126,3 +126,17 @@ def room_conditions(request, room_id):
     
 #     room_conditions(request,room_id)
 #     return render(request, 'room.html', {'room': room})
+
+
+#edit room information
+
+def edit_room(request, room_id):
+    room = get_object_or_404(Room, id=room_id)
+    if request.method == 'POST':
+        form = RoomForm(request.POST, instance=room)
+        if form.is_valid():
+            form.save()
+            return redirect('optibreed:rooms', room_id=room_id)
+    else:
+        form = RoomForm(instance=room)
+    return render(request, 'edit_room.html', {'form': form})
