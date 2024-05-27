@@ -1,237 +1,277 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Room Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #2e8b57;
+            color: white;
+        }
+        header a {
+            color: white;
+            text-decoration: none;
+            border: 1px solid white;
+            background-color: green;
+            border-radius: 5px;
+            padding: 5px 10px;
+        }
+        main {
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        p {
+            font-size: 1em;
+            color: #555;
+        }
+        .room-details {
+            margin-bottom: 20px;
+        }
+        .room-details p {
+            margin: 5px 0;
+        }
+        #latest-condition {
+            font-size: 0.9em;
+            color: #555;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .chart-container {
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #2e8b57;
+            color: white;
+        }
+        td {
+            background-color: #f9f9f9;
+        }
+    </style>
 </head>
 <body>
-    <a href="{% url 'optibreed:home' %}">HOME</a>
-    <a href="{% url 'optibreed:edit_room' room_id=room.id %}">edit room details</a>
+    <header>
+        <div>
+            <a href="{% url 'optibreed:home' %}"><i class="fas fa-home"></i> HOME</a>
+            <a href="{% url 'optibreed:edit_room' room_id=room.id %}"><i class="fas fa-edit"></i> Edit Room Details</a>
+        </div>
+    </header>
+    <main>
+        <h1>Room Details</h1>
+        <div class="room-details">
+            <p><strong>User:</strong> {{ room.User.username }}</p>
+            <p><strong>Material Name:</strong> {{ room.Material_name }}</p>
+            <p><strong>Min Temperature:</strong> {{ room.Min_Temperature }}°C</p>
+            <p><strong>Max Temperature:</strong> {{ room.Max_Temperature }}°C</p>
+            <p><strong>Min Humidity:</strong> {{ room.Min_Humidity }}%</p>
+            <p><strong>Max Humidity:</strong> {{ room.Max_Humidity }}%</p>
+            <p><strong>Min Light Intensity:</strong> {{ room.Min_Lightintensity }} lux</p>
+            <p><strong>Max Light Intensity:</strong> {{ room.Max_Lightintensity }} lux</p>
+        </div>
 
-    <h1>Room Details</h1>
-    <p><strong>User:</strong> {{ room.User.username }}</p>
-    <p><strong>Material Name:</strong> {{ room.Material_name }}</p>
-    <p><strong>Min Temperature:</strong> {{ room.Min_Temperature }}</p>
-    <p><strong>Max Temperature:</strong> {{ room.Max_Temperature }}</p>
-    <p><strong>Min Humidity:</strong> {{ room.Min_Humidity }}</p>
-    <p><strong>Max Humidity:</strong> {{ room.Max_Humidity }}</p>
-    <p><strong>Min Light Intensity:</strong> {{ room.Min_Lightintensity }}</p>
-    <p><strong>Max Light Intensity:</strong> {{ room.Max_Lightintensity }}</p>
+        <div id="latest-condition">
+            Loading latest condition...
+        </div>
 
-    <div id="latest-condition">
-        Loading latest condition...
-    </div>
+        <script>
+            const roomId = {{ room.id }};
+            const interval = 120000; // 120 seconds
 
-    <script>
-        const roomId = {{ room.id }}; // Change to the ID of the room you want to monitor
-        const interval = 120000; // 120 seconds
-
-        async function fetchLatestCondition() {
-            try {
-                const response = await fetch(`/api/latest-condition/${roomId}/`);
-                if (response.ok) {
-                    const data = await response.json();
-                    document.getElementById('latest-condition').innerText = `
-                        Timestamp: ${data.Timestamp}
-                        Temperature: ${data.Temperature}°C
-                        Humidity: ${data.Humidity}%
-                        Light Intensity: ${data.Lightintensity} lux
-                    `;
-                } else {
-                    document.getElementById('latest-condition').innerText = 'Failed to fetch the latest condition.';
+            async function fetchLatestCondition() {
+                try {
+                    const response = await fetch(`/api/latest-condition/${roomId}/`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        document.getElementById('latest-condition').innerText = `
+                            Timestamp: ${data.Timestamp}
+                            Temperature: ${data.Temperature}°C
+                            Humidity: ${data.Humidity}%
+                            Light Intensity: ${data.Lightintensity} lux
+                        `;
+                    } else {
+                        document.getElementById('latest-condition').innerText = 'Failed to fetch the latest condition.';
+                    }
+                } catch (error) {
+                    document.getElementById('latest-condition').innerText = 'Error fetching the latest condition.';
                 }
-            } catch (error) {
-                document.getElementById('latest-condition').innerText = 'Error fetching the latest condition.';
             }
-        }
 
-        // Fetch the latest condition immediately and then at intervals
-        fetchLatestCondition();
-        setInterval(fetchLatestCondition, interval);
-    </script>
+            // Fetch the latest condition immediately and then at intervals
+            fetchLatestCondition();
+            setInterval(fetchLatestCondition, interval);
+        </script>
 
+        <div class="chart-container">
+            <h2>Temperature Over Time</h2>
+            <canvas id="temperatureChart" width="400" height="200"></canvas>
+        </div>
 
-    <h1>Room: {{ room.name }}</h1>
+        <div class="chart-container">
+            <h2>Humidity Over Time</h2>
+            <canvas id="humidityChart" width="400" height="200"></canvas>
+        </div>
 
-    <canvas id="conditionsChart" width="400" height="200"></canvas>
+        <div class="chart-container">
+            <h2>Light Intensity Over Time</h2>
+            <canvas id="lightIntensityChart" width="400" height="200"></canvas>
+        </div>
 
-    <h2>Temperature Over Time</h2>
-    <canvas id="temperatureChart" width="400" height="200"></canvas>
+        <h2>Conditions</h2>
+        <table>
+            <tr>
+                <th>Timestamp</th>
+                <th>Temperature (°C)</th>
+                <th>Humidity (%)</th>
+                <th>Light Intensity (lx)</th>
+            </tr>
+            {% for condition in conditions %}
+            <tr>
+                <td>{{ condition.Timestamp }}</td>
+                <td>{{ condition.Temperature }}</td>
+                <td>{{ condition.Humidity }}</td>
+                <td>{{ condition.Lightintensity }}</td>
+            </tr>
+            {% endfor %}
+        </table>
 
-    <h2>Humidity Over Time</h2>
-    <canvas id="humidityChart" width="400" height="200"></canvas>
+        <script>
+            const labels = {{ labels|safe }};
+            const temperatures = {{ temperatures|safe }};
+            const humidities = {{ humidities|safe }};
+            const lightIntensities = {{ light_intensities|safe }};
 
-    <h2>Light Intensity Over Time</h2>
-    <canvas id="lightIntensityChart" width="400" height="200"></canvas>
-
-    <h2>Conditions</h2>
-    <table border="1">
-        <tr>
-            <th>Timestamp</th>
-            <th>Temperature (°C)</th>
-            <th>Humidity (%)</th>
-            <th>Light Intensity (lx)</th>
-        </tr>
-        {% for condition in conditions %}
-        <tr>
-            <td>{{ condition.Timestamp }}</td>
-            <td>{{ condition.Temperature }}</td>
-            <td>{{ condition.Humidity }}</td>
-            <td>{{ condition.Lightintensity }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-
-    <script>
-        var ctx = document.getElementById('conditionsChart').getContext('2d');
-        var conditionsChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: {{ labels|safe }},
-                datasets: [
-                    {
+            // Temperature Chart
+            var ctxTemp = document.getElementById('temperatureChart').getContext('2d');
+            var temperatureChart = new Chart(ctxTemp, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
                         label: 'Temperature (°C)',
-                        data: {{ temperatures|safe }},
+                        data: temperatures,
                         borderColor: 'rgba(255, 99, 132, 1)',
                         borderWidth: 1,
                         fill: false
-                    },
-                    {
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Timestamp'
+                            }
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Temperature (°C)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Humidity Chart
+            var ctxHum = document.getElementById('humidityChart').getContext('2d');
+            var humidityChart = new Chart(ctxHum, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
                         label: 'Humidity (%)',
-                        data: {{ humidities|safe }},
+                        data: humidities,
                         borderColor: 'rgba(54, 162, 235, 1)',
                         borderWidth: 1,
                         fill: false
-                    },
-                    {
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Timestamp'
+                            }
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Humidity (%)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Light Intensity Chart
+            var ctxLight = document.getElementById('lightIntensityChart').getContext('2d');
+            var lightIntensityChart = new Chart(ctxLight, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
                         label: 'Light Intensity (lx)',
-                        data: {{ light_intensities|safe }},
+                        data: lightIntensities,
                         borderColor: 'rgba(75, 192, 192, 1)',
                         borderWidth: 1,
                         fill: false
-                    }
-                ]
-            },
-            options: {
-                scales: {
-                    x: {
-                        display: true,
-                        title: {
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
                             display: true,
-                            text: 'Timestamp'
-                        }
-                    },
-                    y: {
-                        display: true,
-                        title: {
+                            title: {
+                                display: true,
+                                text: 'Timestamp'
+                            }
+                        },
+                        y: {
                             display: true,
-                            text: 'Values'
-                        }
-                    }
-                }
-            }
-        });
-        var ctxTemp = document.getElementById('temperatureChart').getContext('2d');
-        var temperatureChart = new Chart(ctxTemp, {
-            type: 'line',
-            data: {
-                labels: {{ labels|safe }},
-                datasets: [{
-                    label: 'Temperature (°C)',
-                    data: {{ temperatures|safe }},
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 1,
-                    fill: false
-                }]
-            },
-            options: {
-                scales: {
-                    x: {
-                        display: true,
-                        title: {
-                            display: true,
-                            text: 'Timestamp'
-                        }
-                    },
-                    y: {
-                        display: true,
-                        title: {
-                            display: true,
-                            text: 'Temperature (°C)'
+                            title: {
+                                display: true,
+                                text: 'Light Intensity (lx)'
+                            }
                         }
                     }
                 }
-            }
-        });
-
-        // Humidity Chart
-        var ctxHum = document.getElementById('humidityChart').getContext('2d');
-        var humidityChart = new Chart(ctxHum, {
-            type: 'line',
-            data: {
-                labels: {{ labels|safe }},
-                datasets: [{
-                    label: 'Humidity (%)',
-                    data: {{ humidities|safe }},
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1,
-                    fill: false
-                }]
-            },
-            options: {
-                scales: {
-                    x: {
-                        display: true,
-                        title: {
-                            display: true,
-                            text: 'Timestamp'
-                        }
-                    },
-                    y: {
-                        display: true,
-                        title: {
-                            display: true,
-                            text: 'Humidity (%)'
-                        }
-                    }
-                }
-            }
-        });
-
-        // Light Intensity Chart
-        var ctxLight = document.getElementById('lightIntensityChart').getContext('2d');
-        var lightIntensityChart = new Chart(ctxLight, {
-            type: 'line',
-            data: {
-                labels: {{ labels|safe }},
-                datasets: [{
-                    label: 'Light Intensity (lx)',
-                    data: {{ light_intensities|safe }},
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1,
-                    fill: false
-                }]
-            },
-            options: {
-                scales: {
-                    x: {
-                        display: true,
-                        title: {
-                            display: true,
-                            text: 'Timestamp'
-                        }
-                    },
-                    y: {
-                        display: true,
-                        title: {
-                            display: true,
-                            text: 'Light Intensity (lx)'
-                        }
-                    }
-                }
-            }
-        });
-    </script>
+            });
+        </script>
+    </main>
 </body>
 </html>

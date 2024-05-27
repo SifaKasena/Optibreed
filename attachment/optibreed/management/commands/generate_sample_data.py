@@ -8,7 +8,9 @@ class Command(BaseCommand):
     help = 'Generate sample data for Condition model'
 
     def handle(self, *args, **kwargs):
-        room = Room.objects.get(id=2)  # Replace with specific room if necessary
+    
+        for i in range(1,4):
+            room = Room.objects.get(id=i)  # Replace with specific room if necessary
 
         if not room:
             self.stdout.write(self.style.ERROR('No Room instances found. Please create a Room instance first.'))
