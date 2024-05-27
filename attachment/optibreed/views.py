@@ -97,13 +97,11 @@ def receive_data(request):
 
 
 # viauslize historical data
-from django.shortcuts import render
-from .models import Condition, Room
 
 def room_conditions(request, room_id):
     # Fetch the room and its conditions
-    room = Room.objects.get(id=room_id, User = request.user)
-    conditions = Condition.objects.filter(Room=room).order_by('-Timestamp')
+    room = Room.objects.get(id=room_id, User=request.user)
+    conditions = Condition.objects.filter(Room=room).order_by('-Timestamp')[:50]  # Limit to first 50 records
 
     labels = [condition.Timestamp.strftime('%Y-%m-%d %H:%M:%S') for condition in conditions]
     temperatures = [condition.Temperature for condition in conditions]
