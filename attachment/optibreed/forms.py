@@ -20,3 +20,13 @@ class RoomForm(forms.ModelForm):
             'Material_name', 'Min_Temperature', 'Max_Temperature',
             'Min_Humidity', 'Max_Humidity', 'Min_Lightintensity', 'Max_Lightintensity'
         ]
+
+class ReportForm(forms.Form):
+    RECORD_CHOICES = [
+        ('recent', 'Most Recent Records'),
+        ('date_range', 'Date Range')
+    ]
+    report_type = forms.ChoiceField(choices=RECORD_CHOICES, required=True)
+    number_of_records = forms.IntegerField(required=False, min_value=1)
+    start_date = forms.DateTimeField(required=False, widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
+    end_date = forms.DateTimeField(required=False, widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))

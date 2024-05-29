@@ -89,6 +89,7 @@
         <h2>Welcome, {{ username }}!</h2>
         <div style="text-align: center; margin: 20px;">
             <a href="{% url 'optibreed:add_room' %}" style="padding: 10px 20px; background-color: #4CAF50; color: white; border-radius: 5px; text-decoration: none;">Add a Room</a>
+            
         </div>
         <ul id="rooms">
             {% for room in rooms %}
@@ -107,7 +108,7 @@
                                 if (response.ok) {
                                     const data = await response.json();
                                     document.getElementById('latest-condition-{{ room.id }}').innerText = `
-                                        Timestamp: ${data.Timestamp}
+                                        
                                         Temperature: ${data.Temperature}°C
                                         Humidity: ${data.Humidity}%
                                         Light Intensity: ${data.Lightintensity} lux
