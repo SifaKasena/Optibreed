@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Condition Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1, h2 {
+            color: #007bff;
+        }
+        h3 {
+            color: #343a40;
+        }
+        p {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 1em;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .chart-container {
+            margin-bottom: 20px;
+        }
+        .chart-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Condition Report for Room: {{ room.name }}</h1>
+        <h2>User: {{ user.username }}</h2>
+
+        <form method="get">
+            {{ form.as_p }}
+            <button type="submit">Generate Report</button>
+            <button type="submit" name="download_pdf">Download PDF</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Temperature (°C)</th>
+                    <th>Humidity (%)</th>
+                    <th>Light Intensity (lux)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for condition in conditions %}
+                    <tr>
+                        <td>{{ condition.Timestamp }}</td>
+                        <td>{{ condition.Temperature }}</td>
+                        <td>{{ condition.Humidity }}</td>
+                        <td>{{ condition.Lightintensity }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Report Data Section -->
+        <div>
+            <h3>Report Data:</h3>
+            <p>Average Temperature: {{ report_data.avg_temperature }}°C</p>
+            <p>Average Humidity: {{ report_data.avg_humidity }}%</p>
+            <p>Average Light Intensity: {{ report_data.avg_lightintensity }} lux</p>
+        </div>
+
+        <!-- Visualization Section -->
+        <div class="chart-container">
+            <h3>Temperature Over Time:</h3>
+            <img src="data:image/png;base64,{{ image_base64_temp }}" alt="Temperature Over Time">
+        </div>
+        <div class="chart-container">
+            <h3>Humidity Over Time:</h3>
+            <img src="data:image/png;base64,{{ image_base64_hum}}" alt="Humidity Over Time">
+        </div>
+        <div class="chart-container">
+            <h3>Light intensity Over Time:</h3>
+            <img src="data:image/png;base64,{{ image_base64_light}}" alt="Light intensity Over Time">
+        </div>
+
+    </div>   
+</body>

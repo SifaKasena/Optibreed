@@ -84,11 +84,13 @@
         <div>
             <a href="{% url 'optibreed:home' %}"><i class="fas fa-home"></i> HOME</a>
             <a href="{% url 'optibreed:edit_room' room_id=room.id %}"><i class="fas fa-edit"></i> Edit Room Details</a>
+            <a href="{% url 'optibreed:generate_report' room.id %}" style="padding: 10px 20px; background-color: #4CAF50; color: white; border-radius: 5px; text-decoration: none;">Generate Room Reports</a>
         </div>
     </header>
     <main>
         <h1>Room Details</h1>
         <div class="room-details">
+            
             <p><strong>User:</strong> {{ room.User.username }}</p>
             <p><strong>Material Name:</strong> {{ room.Material_name }}</p>
             <p><strong>Min Temperature:</strong> {{ room.Min_Temperature }}°C</p>
@@ -98,6 +100,7 @@
             <p><strong>Min Light Intensity:</strong> {{ room.Min_Lightintensity }} lux</p>
             <p><strong>Max Light Intensity:</strong> {{ room.Max_Lightintensity }} lux</p>
         </div>
+
 
         <div id="latest-condition">
             Loading latest condition...
