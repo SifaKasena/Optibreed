@@ -1,132 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Optibreed Dashboard</title>
-    <link rel="stylesheet" href="static/styles.css">
+    <link rel="stylesheet" href="static/styles.css" />
     <style>
-        body {
-            background-color: rgb(179, 223, 179);
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: #2e8b57;
-            color: white;
-        }
-        header img {
-            height: 50px;
-            border-radius: 50%;
-        }
-        header #title h1 {
-            margin: 0;
-        }
-        header a {
-            color: white;
-            text-decoration: none;
-            border: 1px solid white;
-            background-color: green;
-            border-radius: 5px;
-            padding: 5px 10px;
-        }
-        main {
-            padding: 20px;
-        }
-        h1, h2 {
-            text-align: center;
-        }
-        #rooms {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            list-style: none;
-            padding: 0;
-        }
-        #rooms li {
-            background-color: white;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            margin: 10px;
-            padding: 15px;
-            width: 200px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        #rooms a {
-            display: block;
-            color: #2e8b57;
-            text-decoration: none;
-            text-align: center;
-            font-weight: bold;
-        }
-        #latest-condition {
-            margin-top: 10px;
-            font-size: 0.9em;
-            color: #555;
-        }
+      body {
+        background-color: rgb(179, 223, 179);
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        background-color: #2e8b57;
+        color: white;
+      }
+      header img {
+        height: 50px;
+        border-radius: 50%;
+      }
+      header #title h1 {
+        margin: 0;
+      }
+      header button {
+        color: white;
+        text-decoration: none;
+        border: 1px solid white;
+        background-color: green;
+        border-radius: 5px;
+        padding: 5px 10px;
+      }
+      main {
+        padding: 20px;
+      }
+      h1,
+      h2 {
+        text-align: center;
+      }
+      #rooms {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        list-style: none;
+        padding: 0;
+      }
+      #rooms li {
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        margin: 10px;
+        padding: 15px;
+        width: 200px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      #rooms a {
+        display: block;
+        color: #2e8b57;
+        text-decoration: none;
+        text-align: center;
+        font-weight: bold;
+      }
+      #latest-condition {
+        margin-top: 10px;
+        font-size: 0.9em;
+        color: #555;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <header>
-        <div id="profile">
-            <img src="static/profile.jpg" alt="Profile Picture">
-            {{ username }}
-        </div>
-        <div id="title">
-            <h1>OPTIBREED</h1>
-        </div>
-        <div id="logout">
-            <a href="{% url 'logout' %}">Logout</a>
-        </div>
+      <div id="profile">
+        <img src="static/profile.jpg" alt="Profile Picture" />
+        {{ username }}
+      </div>
+      <div id="title">
+        <h1>OPTIBREED</h1>
+      </div>
+      <div id="logout">
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %} <button type="submit">Logout</button>
+        </form>
+      </div>
     </header>
     <main>
-        <h1>Homepage</h1>
-        <h2>Welcome, {{ username }}!</h2>
-        <div style="text-align: center; margin: 20px;">
-            <a href="{% url 'optibreed:add_room' %}" style="padding: 10px 20px; background-color: #4CAF50; color: white; border-radius: 5px; text-decoration: none;">Add a Room</a>
-            
-        </div>
-        <ul id="rooms">
-            {% for room in rooms %}
-                <li>
-                    <a href="{% url 'optibreed:rooms' room.id %}">{{ room.Material_name }}</a>
-                    <div id="latest-condition-{{ room.id }}">
-                         Loading latest condition...
-                    </div>
-                    <script>
-                        const roomId{{ room.id }} = {{ room.id }};
-                        const interval{{ room.id }} = 120000; // 120 seconds
+      <h1>Homepage</h1>
+      <h2>Welcome, {{ username }}!</h2>
+      <div style="text-align: center; margin: 20px">
+        <a
+          href="{% url 'optibreed:add_room' %}"
+          style="
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+          "
+          >Add a Room</a
+        >
+      </div>
+      <ul id="rooms">
+        {% for room in rooms %}
+        <li>
+          <a href="{% url 'optibreed:rooms' room.id %}"
+            >{{ room.Material_name }}</a
+          >
+          <div id="latest-condition-{{ room.id }}">
+            Loading latest condition...
+          </div>
+          <script>
+            const roomId{{ room.id }} = {{ room.id }};
+            const interval{{ room.id }} = 120000; // 120 seconds
 
-                        async function fetchLatestCondition{{ room.id }}() {
-                            try {
-                                const response = await fetch(`/api/latest-condition/${roomId{{ room.id }}}/`);
-                                if (response.ok) {
-                                    const data = await response.json();
-                                    document.getElementById('latest-condition-{{ room.id }}').innerText = `
-                                        
-                                        Temperature: ${data.Temperature}°C
-                                        Humidity: ${data.Humidity}%
-                                        Light Intensity: ${data.Lightintensity} lux
-                                    `;
-                                } else {
-                                    document.getElementById('latest-condition-{{ room.id }}').innerText = 'Failed to fetch the latest condition.';
-                                }
-                            } catch (error) {
-                                document.getElementById('latest-condition-{{ room.id }}').innerText = 'Error fetching the latest condition.';
-                            }
-                        }
+            async function fetchLatestCondition{{ room.id }}() {
+                try {
+                    const response = await fetch(`/api/latest-condition/${roomId{{ room.id }}}/`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        document.getElementById('latest-condition-{{ room.id }}').innerText = `
 
-                        fetchLatestCondition{{ room.id }}();
-                        setInterval(fetchLatestCondition{{ room.id }}, interval{{ room.id }});
-                    </script>
-                </li>
-            {% endfor %}
-        </ul>
+                            Temperature: ${data.Temperature}°C
+                            Humidity: ${data.Humidity}%
+                            Light Intensity: ${data.Lightintensity} lux
+                        `;
+                    } else {
+                        document.getElementById('latest-condition-{{ room.id }}').innerText = 'Failed to fetch the latest condition.';
+                    }
+                } catch (error) {
+                    document.getElementById('latest-condition-{{ room.id }}').innerText = 'Error fetching the latest condition.';
+                }
+            }
+
+            fetchLatestCondition{{ room.id }}();
+            setInterval(fetchLatestCondition{{ room.id }}, interval{{ room.id }});
+          </script>
+        </li>
+        {% endfor %}
+      </ul>
     </main>
-</body>
+  </body>
 </html>
