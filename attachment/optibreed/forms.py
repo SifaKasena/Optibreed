@@ -4,15 +4,39 @@ from django.contrib.auth.models import User
 from .models import Room
 from django import forms
 
+
 class RegistrationForm(UserCreationForm):
+    """
+    A form used for user registration.
+
+    Inherits from UserCreationForm, which is a built-in form provided by Django
+    for creating new user accounts.
+
+    Attributes:
+        model (User): The user model to be used for registration.
+        fields (list): The fields to be included in the registration form.
+
+    """
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2']
 
 
-
-#form for adding room
+# form for adding room
 class RoomForm(forms.ModelForm):
+    """
+    A form for creating or updating a Room object.
+
+    This form is used to collect and validate data for the Room model.
+    It includes fields for the material name, minimum and maximum temperature,
+    minimum and maximum humidity, and minimum and maximum light intensity.
+
+    Attributes:
+        model (Room): The Room model that this form is associated with.
+        exclude (list): A list of fields to exclude from the form.
+        fields (list): A list of fields to include in the form.
+
+    """
     class Meta:
         model = Room
         exclude = ['User']
@@ -21,7 +45,21 @@ class RoomForm(forms.ModelForm):
             'Min_Humidity', 'Max_Humidity', 'Min_Lightintensity', 'Max_Lightintensity'
         ]
 
+
 class ReportForm(forms.Form):
+    """
+    A form for generating reports.
+
+    This form allows users to select the type of report they want to generate,
+    specify the number of records to include, and provide a date range for the report.
+
+    Attributes:
+        report_type (ChoiceField): A choice field for selecting the type of report.
+        number_of_records (IntegerField): An optional field for specifying the number of records to include.
+        start_date (DateTimeField): An optional field for specifying the start date of the report.
+        end_date (DateTimeField): An optional field for specifying the end date of the report.
+    """
+
     RECORD_CHOICES = [
         ('recent', 'Most Recent Records'),
         ('date_range', 'Date Range')
