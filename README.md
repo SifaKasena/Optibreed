@@ -32,8 +32,8 @@ Optibreed is an IoT application designed to monitor environmental parameters suc
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/optibreed-iot.git
-cd optibreed-iot
+git clone https://github.com/MoseNjau/Optibreed-App.git
+cd attachement
 ```
 
 ### Create and Activate Virtual Environment
