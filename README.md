@@ -90,47 +90,52 @@ cd attachment
 python manage.py runserver
 ```
 
-### Configuration
+
+## Configuration
 **Sensor Configuration**
 Ensure your sensors are properly connected and configured to send data to the Django application. The application expects sensor data in a specific format. Refer to the API Endpoints section for more details.
 
-## Settings
+### Settings
 Modify the settings.py file to configure various aspects of the application, such as allowed hosts, installed apps, middleware, etc.
 
-Usage
-Accessing the Application
-Open your web browser and go to http://127.0.0.1:8000/ to access the application.
+## Usage
 
-Admin Panel
-Access the admin panel at http://127.0.0.1:8000/admin/ using the superuser credentials you created earlier.
+### Accessing the Application
+- Open your web browser and go to http://127.0.0.1:8000/ to access the application.
 
-API Endpoints
-Sensor Data Submission
-Endpoint: POST /api/sensor-data/
+### Admin Panel
+- Access the admin panel at http://127.0.0.1:8000/admin/ using the superuser credentials you created earlier.
 
-json
-Copy code
+## API Endpoints
+### Sensor Data Submission
+`Endpoint: POST /api/sensor-data/`
+
+```
 {
   "sensor_type": "temperature",
   "value": 22.5,
   "timestamp": "2023-06-14T12:34:56Z"
 }
-Retrieve Sensor Data
-Endpoint: GET /api/sensor-data/
+```
 
-Optional Query Parameters:
+### Retrieve Sensor Data
+`Endpoint: GET /api/sensor-data/`
 
-sensor_type: Filter by sensor type (e.g., temperature, humidity, light)
-start_date: Filter data starting from this date
-end_date: Filter data up to this date
-Contributing
-We welcome contributions to the Optibreed IoT application! To contribute, follow these steps:
+### Optional Query Parameters:
 
-Fork the repository.
-Create a new branch (git checkout -b feature-branch).
-Make your changes.
-Commit your changes (git commit -m 'Add some feature').
-Push to the branch (git push origin feature-branch).
-Open a Pull Request.
-License
+- `sensor_type:` Filter by sensor type (e.g., temperature, humidity, light)
+- `start_date:` Filter data starting from this date
+- `end_date:` Filter data up to this date
+
+## Contributing
+**We welcome contributions to the Optibreed IoT application! To contribute, follow these steps:**
+
+- Fork the repository.
+- Create a new branch (`git checkout -b feature-branch`).
+- Make your changes.
+- Commit your changes (git commit -m 'Add some feature').
+- Push to the branch (git push origin feature-branch).
+- Open a Pull Request.
+
+## License
 This project is licensed under the MIT License. See the LICENSE file for details.
