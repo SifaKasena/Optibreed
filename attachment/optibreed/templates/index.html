@@ -1,13 +1,171 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>OptiBreed - Home</title>
+    <!-- <style>
+
+      body {
+        background-color: #f4f4f9; /* Light grey background */
+        color: #333;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        height: 100vh;
+        text-align: center;
+      }
+      .container {
+        background-color: #fff;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        width: 100%;
+        margin: 20px;
+      }
+      h1 {
+        color: #2e8b57; /* Sea Green color */
+        margin-bottom: 20px;
+      }
+      p {
+        color: #555;
+        font-size: 18px;
+        margin-bottom: 30px;
+      }
+      .buttons {
+        display: flex;
+        justify-content: space-around;
+      }
+      a {
+        background-color: #2e8b57;
+        color: white;
+        padding: 15px 25px;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+      }
+      a:hover {
+        background-color: #276749; /* Darker Sea Green */
+      }
+    </style> -->
+
+    <style>
+      body{
+        background-color: black;
+        width: Fixed (1,280px)px;
+        height: Hug (802px)px;
+        top: -533px;
+        left: -61px;
+        gap: 0px;
+        opacity: 0px;
+        color: #F4F6E9;
+
+      }
+      #full{
+        display: flex;
+        justify-content: space-between;
+        width: Fill (1,280px)px;
+        height: Hug (802px)px;
+        padding: 112px 64px 112px 64px;
+        gap: 64px;
+        opacity: 0px;
+      }
+      #hero{
+        height: 100%;
+        width: 100%;
+        border-radius: 32px 0px 0px 0px;
+      }
+      #pic{
+        width: Fill (480px)px;
+        height: Hug (352px)px;
+        gap: 0px;
+        border-radius: 32px 0px 0px 0px;
+        opacity: 0px;
+        background-color: azure;
+        justify-content: center;
+        align-content: center;
+
+      }
+      #right{
+        width: Fill (608px)px;
+        height: Hug (578px)px;
+        gap: 48px;
+        opacity: 0px;
+
+      }
+      #rev{
+        width: 608px;
+        height: 234px;
+        gap: 0px;
+        opacity: 0px;
+        font-family: Domine;
+        font-size: 72px;
+        font-weight: 400;
+        line-height: 77.76px;
+        letter-spacing: -0.01em;
+        text-align: left;
+        color: #EAEAFD;
+
+      }
+      #content{
+        width: 608px;
+        height: 54px;
+        gap: 0px;
+        opacity: 0px;
+        font-family: Open Sans;
+        font-size: 18px;
+        font-weight: 400;
+        line-height: 27px;
+        text-align: left;
+        color: #B7B7C7;
+
+      }
+      #links{
+        padding-top: 30px;
+      }
+      a{
+        width: Hug (131px)px;
+        height: Fixed (56px)px;
+        padding: 16px 24px 16px 24px;
+        gap: 4px;
+        border-radius: 20px;
+        opacity: 0px;
+        background-color: #FFD015;
+        text-decoration: none;
+
+      }
+    </style>
   </head>
   <body>
-    <h1>you are at the landing page</h1>
-    <a href="{% url 'optibreed:signup' %}">sign up</a>
-    <a href="{% url 'login' %}">login</a>
+    <div id="full">
+      <div id="pic">
+        <img id="hero" src="{% static 'hero.jpeg' %}" alt="">
+
+      </div>
+      <div id="right">
+        <div id="rev">
+          <p>Revolutionize Your Breeding Program</p>
+
+        </div>
+        <div id="content">
+          <p>OptiBreed offers real-time monitoring and intelligent alerts to ensure the optimal storage conditions for your breeding materials.</p>
+
+        </div>
+        <div id="links">
+          <a href="{% url 'optibreed:signup' %}">Get Started</a>
+          <a href="{% url 'login' %}">Login</a>
+
+        </div>
+
+      </div>
+    </div>
+
   </body>
 </html>
