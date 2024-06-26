@@ -1,40 +1,43 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.views import generic
-from django.contrib.auth import login
-from .forms import RegistrationForm, ReportForm, RoomForm
-from .models import Condition, Room
-from django.contrib.auth.decorators import login_required
-import matplotlib.pyplot as plt
 import base64
+import json
+import tempfile
+from io import BytesIO
+import matplotlib
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 from django.db.models import Avg
-from django.http import HttpResponse
-from django.db.models import Avg
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views import generic
+from django.views.decorators.csrf import csrf_exempt
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
-from io import BytesIO
-import base64
-import tempfile
-import matplotlib
-import json
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .forms import RegistrationForm, ReportForm, RoomForm
+from .models import Condition, Room
 from .serializers import ConditionSerializer
+import matplotlib.pyplot as plt
 
 
 # Create your views here.
 def index(request):
     """
-    Renders the index.html template.
+    Renders the index page.
 
-    Parameters:
-    - request: The HTTP request object.
+    If the user is authenticated, it redirects to the 'home' page.
+    Otherwise, it renders the 'index.html' template.
+
+    Args:
+        request: The HTTP request object.
 
     Returns:
-    - The rendered index.html template.
+        A rendered HTML response.
     """
+    if request.user.is_authenticated:
+        return redirect('optibreed:home')
+
     return render(request, 'index.html')
 
 
@@ -121,6 +124,19 @@ def add_room(request):
 # Collect data from sensor
 @csrf_exempt
 def receive_data(request):
+    """
+    Receives data from a POST request and saves it to the database.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        JsonResponse: A JSON response indicating the status of the operation.
+
+    Raises:
+        JSONDecodeError: If the request body contains invalid JSON.
+        Room.DoesNotExist: If the specified room_id does not exist in the database.
+    """
     if request.method == 'POST':
         try:
             data = json.loads(request.body)

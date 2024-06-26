@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -75,7 +76,7 @@
   <body>
     <header>
       <div id="profile">
-        <img src="static/profile.jpg" alt="Profile Picture" />
+        <img src="{% static 'profile.jpeg' %}" alt="Profile Picture" />
         {{ username }}
       </div>
       <div id="title">
