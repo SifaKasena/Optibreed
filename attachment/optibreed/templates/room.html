@@ -7,104 +7,184 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 20px;
+        body{
+            background-color: #d3d3d3;
+            
         }
-        header {
+        #header{
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: #2e8b57;
-            color: white;
         }
-        header a {
-            color: white;
+        #linklist{
+            display: flex;
+            justify-content: space-between;
+            margin-left: 30%;
+            margin-right: 30%;
+
+        }
+        #linklist li{
+            list-style: none;
+            
+        }
+        #linklist li a{
             text-decoration: none;
-            border: 1px solid white;
-            background-color: green;
-            border-radius: 5px;
-            padding: 5px 10px;
+            color: black;
+            padding: 5px;
+            background-color: #ffff;
+            border-radius: 20px 0 0 0;
+            
+
         }
-        main {
+        #conditions{
+            display: flex;
+            justify-content: space-between;
+        
+        }
+        .condition{
+            background-color: #ffff;
             padding: 20px;
+            height: 10%;
+            width: 28%;
+            border-radius: 20px 0 20px 0;
+            display: grid;
+            
+        }
+        #temperature, #humidity{
+            margin-left: 40%;
+            margin-right: 40%;
+            
+
+        }
+        #light{
+            margin-left: 30%;
+            margin-right: 30%;
+
+
+        }
+        #minmax{
+            display: flex;
+            justify-content: space-between;
+        }
+        .chart-container{
+            
             background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 45%;
+            border-radius: 30px;
+            flex: 0 0 45%;
+
+            margin: 5px;
         }
-        h1, h2 {
-            text-align: center;
-            color: #333;
+        #charts{
+            padding-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            
         }
-        p {
-            font-size: 1em;
-            color: #555;
+        table{
+            background-color: #ffff;
+            margin-left: 5%;
+            width: 90%;
+            border: 1px solid;
+            border-radius: 20px;
         }
-        .room-details {
-            margin-bottom: 20px;
+        th{
+            background-color: #d3d3d3;
+            border-radius: 10px;
+            border: 1px solid;
+
         }
-        .room-details p {
-            margin: 5px 0;
+        
+        tr:hover{
+            background-color: aqua;
+            border: 5px solid black;
         }
-        #latest-condition {
-            font-size: 0.9em;
-            color: #555;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .chart-container {
-            margin: 20px 0;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        table, th, td {
-            border: 1px solid #ccc;
-        }
-        th, td {
-            padding: 10px;
-            text-align: center;
-        }
-        th {
-            background-color: #2e8b57;
-            color: white;
-        }
-        td {
-            background-color: #f9f9f9;
-        }
+        
+            
+
+        
+     
+
     </style>
 </head>
 <body>
-    <header>
-        <div>
-            <a href="{% url 'optibreed:home' %}"><i class="fas fa-home"></i> HOME</a>
-            <a href="{% url 'optibreed:edit_room' room_id=room.id %}"><i class="fas fa-edit"></i> Edit Room Details</a>
-            <a href="{% url 'optibreed:generate_report' room.id %}" style="padding: 10px 20px; background-color: #4CAF50; color: white; border-radius: 5px; text-decoration: none;">Generate Room Reports</a>
-        </div>
-    </header>
-    <main>
-        <h1>Room Details</h1>
-        <div class="room-details">
+    <div id="header">
+        <div id="profile">
             
-            <p><strong>User:</strong> {{ room.User.username }}</p>
-            <p><strong>Material Name:</strong> {{ room.Material_name }}</p>
-            <p><strong>Min Temperature:</strong> {{ room.Min_Temperature }}°C</p>
-            <p><strong>Max Temperature:</strong> {{ room.Max_Temperature }}°C</p>
-            <p><strong>Min Humidity:</strong> {{ room.Min_Humidity }}%</p>
-            <p><strong>Max Humidity:</strong> {{ room.Max_Humidity }}%</p>
-            <p><strong>Min Light Intensity:</strong> {{ room.Min_Lightintensity }} lux</p>
-            <p><strong>Max Light Intensity:</strong> {{ room.Max_Lightintensity }} lux</p>
-        </div>
+            <h2>{{ room.User.username }} {{ username }}</h2>
 
-
-        <div id="latest-condition">
-            Loading latest condition...
         </div>
+        <div id="heading">
+            <h1><strong>Material Name:</strong>{{ room.Material_name }}</h1>
+        </div>
+        <div></div>
+    </div>
+    <nav>
+        <ul id="linklist">
+            <li><a href="{% url 'optibreed:home' %}">Home</a></li>
+            <li><a href="{% url 'optibreed:edit_room' room_id=room.id %}">Edit Room Details</a></li>
+            <li><a href="{% url 'optibreed:generate_report' room.id %}">Generate Room Reports</a></li>
+            
+        </ul>
+    </nav>
+    <div id="conditions">
+        
+        <div class="condition">
+            <h2 >Temperature</h2>
+           <h1 id="temperature">latest-condition</h1> 
+           <div id="minmax">
+            <div id="min">
+                <p>MIN</p>
+                <p>{{ room.Min_Temperature }}°C</p>
+
+            </div>
+            <div id="max">
+                <p>MAX</p>
+                <p>{{ room.Max_Temperature }}°C</p>
+
+            </div>
+           </div>
+        </div>
+        <div class="condition">
+            <h2>Humidity</h2>
+            <h1 id="humidity">latest-condition</h1>
+            <div id="minmax">
+                <div id="min">
+                    <p>MIN</p>
+                    <p>{{ room.Min_Humidity }}%</p>
+    
+                </div>
+                <div id="max">
+                    <p>MAX</p>
+                    <p>{{ room.Max_Humidity }}%</p>
+    
+                </div>
+               </div>
+        </div>
+        <div class="condition">
+            <h2>Light Intensity</h2>
+            <h1 id="light">latest-condition</h1>
+            <div id="minmax">
+                <div id="min">
+                    <p>MIN</p>
+                    <p>{{ room.Min_Lightintensity }} lux</p>
+    
+                </div>
+                <div id="max">
+                    <p>MAX</p>
+                    <p>{{ room.Max_Lightintensity }} lux</p>
+    
+                </div>
+               </div>
+        </div>
+        
+        
+        
+        
+    </div>
+    <main>
+
+       
 
         <script>
             const roomId = {{ room.id }};
@@ -115,17 +195,17 @@
                     const response = await fetch(`/api/latest-condition/${roomId}/`);
                     if (response.ok) {
                         const data = await response.json();
-                        document.getElementById('latest-condition').innerText = `
-                            Timestamp: ${data.Timestamp}
-                            Temperature: ${data.Temperature}°C
-                            Humidity: ${data.Humidity}%
-                            Light Intensity: ${data.Lightintensity} lux
-                        `;
+                        const temperature = Math.round(data.Temperature)
+                        const humidity = Math.round(data.Humidity)
+                        const light = Math.round(data.Lightintensity)
+                        document.getElementById('temperature').innerText = `${temperature}°C`;
+                        document.getElementById('humidity').innerText =  `${humidity}%`;
+                        document.getElementById('light').innerText = `${light} lux`;
                     } else {
-                        document.getElementById('latest-condition').innerText = 'Failed to fetch the latest condition.';
+                        document.getElementById('error').innerText = 'Failed to fetch the latest condition.';
                     }
                 } catch (error) {
-                    document.getElementById('latest-condition').innerText = 'Error fetching the latest condition.';
+                    document.getElementById('error').innerText = 'Error fetching the latest condition.';
                 }
             }
 
@@ -134,31 +214,37 @@
             setInterval(fetchLatestCondition, interval);
         </script>
 
-        <div class="chart-container">
-            <h2>Temperature Over Time</h2>
+        <div id="charts">
+            <div class="chart-container">
+            <h2 style="padding-left: 20px;">Temperature Over Time</h2>
             <canvas id="temperatureChart" width="400" height="200"></canvas>
         </div>
 
         <div class="chart-container">
-            <h2>Humidity Over Time</h2>
+            <h2 style="padding-left: 20px;">Humidity Over Time</h2>
             <canvas id="humidityChart" width="400" height="200"></canvas>
         </div>
 
-        <div class="chart-container">
-            <h2>Light Intensity Over Time</h2>
+        <div class="chart-container" >
+            <h2 style="padding-left: 20px;">Light Intensity Over Time</h2>
             <canvas id="lightIntensityChart" width="400" height="200"></canvas>
         </div>
 
-        <h2>Conditions</h2>
+        </div>
+
+        
+        <h2 style="margin-left: 45%; margin-right: 45%">Conditions</h2>
         <table>
             <tr>
+                
                 <th>Timestamp</th>
                 <th>Temperature (°C)</th>
                 <th>Humidity (%)</th>
                 <th>Light Intensity (lx)</th>
             </tr>
             {% for condition in conditions %}
-            <tr>
+            <tr id="row">
+                
                 <td>{{ condition.Timestamp }}</td>
                 <td>{{ condition.Temperature }}</td>
                 <td>{{ condition.Humidity }}</td>
