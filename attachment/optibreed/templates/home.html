@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Optibreed Dashboard</title>
     <link rel="stylesheet" href="static/styles.css">
-    <style>
+    <!-- <style>
         body {
             background-color: rgb(179, 223, 179);
             font-family: Arial, sans-serif;
@@ -69,34 +70,128 @@
             font-size: 0.9em;
             color: #555;
         }
+    </style> -->
+    <style>
+        body{
+            background-color: #d3d3d3;
+        }
+        #header{
+            display: flex;
+            justify-content: space-between;
+        }
+        #hero{
+            background-color: white;
+            border-radius: 50px;
+            font-size: xx-large;
+            width: 90%;
+            height: 200px;
+            margin-left: 5%;
+            margin-right: 5%;
+
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        
+        
+        #rooms {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            list-style: none;
+            padding: 0;
+        }
+        #rooms li {
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin: 10px;
+            padding: 15px;
+            width: 300px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        #rooms a {
+            display: block;
+            color: #2e8b57;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+        }
+        #latest-condition {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #555;
+        }
+        #conditions{
+            display: flex;
+            justify-content: space-between;
+        }
+        #conditions img{
+            width: 30px;
+            height: 40px;
+            border-radius: 20px;
+            padding: 10px;
+            
+            
+        }
+        #lig , #temp,#hum {
+            background-color: #d3d3d3;
+            height: 100px;
+            border-radius: 20px;
+            
+            width: 28%;
+            margin: 4%;
+            
+
+        }
+        #temperature,#humidity,#light{
+            
+            padding: 10px;
+        }
     </style>
 </head>
 <body>
-    <header>
-        <div id="profile">
-            <img src="static/profile.jpg" alt="Profile Picture">
-            {{ username }}
-        </div>
-        <div id="title">
-            <h1>OPTIBREED</h1>
-        </div>
-        <div id="logout">
-            <a href="{% url 'logout' %}">Logout</a>
-        </div>
-    </header>
-    <main>
-        <h1>Homepage</h1>
-        <h2>Welcome, {{ username }}!</h2>
-        <div style="text-align: center; margin: 20px;">
-            <a href="{% url 'optibreed:add_room' %}" style="padding: 10px 20px; background-color: #4CAF50; color: white; border-radius: 5px; text-decoration: none;">Add a Room</a>
-            
-        </div>
+    <div id="header">
+        <p>{{ username }}</p>
+        <h1>OPTIBREED</h1>
+        <a href="{% url 'logout' %}">Log Out</a>
+    </div>
+    <div id="hero">
+        <p>OptiBreed offers real-time monitoring and intelligent alerts to ensure the optimal storage conditions for your breeding materials.</p>
+    </div>
+    <div id="roomtitle">
+        <h2>ROOMS</h2>
+    </div>
+    <div id="rooms">
         <ul id="rooms">
             {% for room in rooms %}
                 <li>
-                    <a href="{% url 'optibreed:rooms' room.id %}">{{ room.Material_name }}</a>
+                    <a href="{% url 'optibreed:rooms' room.id %}">{{ room.Material_name }}
                     <div id="latest-condition-{{ room.id }}">
-                         Loading latest condition...
+                        <div>
+
+                        </div>
+                        <div id="conditions">
+                            <div id="temp">
+                                <div>
+                                    <img src="{% static 'temp.png' %}" alt="">
+                                </div>
+                                <div id="temperature"></div>
+                            </div>
+                            <div id="hum">
+                                <div>
+                                    <img src="{% static 'humidity.jpeg' %}" alt="">
+                                </div>
+                                <div id="humidity"></div>
+                            </div>
+                            <div id="lig">
+                                <div>
+                                    <img src="{% static 'light.jpeg' %}" alt="">
+                                </div>
+                                <div id="light"></div>
+                            </div>
+                        </div>
+                         
                     </div>
                     <script>
                         const roomId{{ room.id }} = {{ room.id }};
@@ -106,13 +201,14 @@
                             try {
                                 const response = await fetch(`/api/latest-condition/${roomId{{ room.id }}}/`);
                                 if (response.ok) {
-                                    const data = await response.json();
-                                    document.getElementById('latest-condition-{{ room.id }}').innerText = `
-                                        
-                                        Temperature: ${data.Temperature}°C
-                                        Humidity: ${data.Humidity}%
-                                        Light Intensity: ${data.Lightintensity} lux
-                                    `;
+                                    const data = await response.json()
+                                    Temperature = Math.round(data.Temperature)
+                                    Humidity = Math.round(data.Humidity)
+                                    Lightintensity = Math.round(data.Lightintensity)
+                                    document.getElementById('temperature').innerText = `${Temperature}°C`;
+                                    document.getElementById('humidity').innerText = `${Humidity}%`;
+                                    document.getElementById('light').innerText = `${Lightintensity} lux`;
+
                                 } else {
                                     document.getElementById('latest-condition-{{ room.id }}').innerText = 'Failed to fetch the latest condition.';
                                 }
@@ -124,9 +220,10 @@
                         fetchLatestCondition{{ room.id }}();
                         setInterval(fetchLatestCondition{{ room.id }}, interval{{ room.id }});
                     </script>
-                </li>
+                </li></a>
             {% endfor %}
         </ul>
-    </main>
+
+    </div>
 </body>
 </html>
