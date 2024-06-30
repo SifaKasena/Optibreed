@@ -1,23 +1,25 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Signup Card</title>
-    <link rel="stylesheet" href="{% static 'card_style.css' %}" />
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div class="signup-card">
       <img
-        src="{% static 'Logo.png' %}"
+        src="../static/Logo.png"
         alt="Logo"
         style="display: block; margin: 0 auto 20px; width: 100px; height: auto"
       />
       <h2 style="text-align: center; margin-top: 0">Welcome to Optibreed</h2>
       <button id="close-card" style="float: right">X</button>
       <form>
-        {% csrf_token %} {{ form.as_p }}
+        <input type="text" placeholder="Username" required />
+        <input type="email" placeholder="Email" required />
+        <input type="password" placeholder="Password" required />
+        <input type="password" placeholder="Confirm Password" required />
         <button type="submit">Sign Up</button>
       </form>
       <div class="divider">OR</div>
@@ -35,15 +37,14 @@
         data-type="standard"
         data-shape="pill"
         data-theme="outline"
-        data-text="continue_with"
+        data-text="signin_with"
         data-size="large"
         data-logo_alignment="left"
-        data-width="350"
       ></div>
       <button type="button" class="google-signin">Continue with Google</button>
-      <div style="text-align: center; display: flex; justify-content: center">
-        <p style="color: #fff">
-          Already a member? <a href="{% url 'optibreed:login' %}">Log in</a>
+      <div style="text-align: center; display: flex">
+        <p style="margin: 32px auto; color: #fff">
+          Already a member? <a href="/login">Log in</a>
         </p>
       </div>
     </div>
