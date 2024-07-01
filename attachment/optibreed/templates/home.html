@@ -5,72 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Optibreed Dashboard</title>
-    <link rel="stylesheet" href="static/styles.css">
-    <!-- <style>
-        body {
-            background-color: rgb(179, 223, 179);
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: #2e8b57;
-            color: white;
-        }
-        header img {
-            height: 50px;
-            border-radius: 50%;
-        }
-        header #title h1 {
-            margin: 0;
-        }
-        header a {
-            color: white;
-            text-decoration: none;
-            border: 1px solid white;
-            background-color: green;
-            border-radius: 5px;
-            padding: 5px 10px;
-        }
-        main {
-            padding: 20px;
-        }
-        h1, h2 {
-            text-align: center;
-        }
-        #rooms {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            list-style: none;
-            padding: 0;
-        }
-        #rooms li {
-            background-color: white;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            margin: 10px;
-            padding: 15px;
-            width: 200px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        #rooms a {
-            display: block;
-            color: #2e8b57;
-            text-decoration: none;
-            text-align: center;
-            font-weight: bold;
-        }
-        #latest-condition {
-            margin-top: 10px;
-            font-size: 0.9em;
-            color: #555;
-        }
-    </style> -->
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
     <style>
         body{
             background-color: #d3d3d3;
@@ -87,13 +22,10 @@
             height: 200px;
             margin-left: 5%;
             margin-right: 5%;
-
         }
         h1, h2 {
             text-align: center;
         }
-        
-        
         #rooms {
             display: flex;
             flex-wrap: wrap;
@@ -131,21 +63,13 @@
             height: 40px;
             border-radius: 20px;
             padding: 10px;
-            
-            
         }
-        #lig , #temp,#hum {
+        .condition-box {
             background-color: #d3d3d3;
             height: 100px;
             border-radius: 20px;
-            
             width: 28%;
             margin: 4%;
-            
-
-        }
-        #temperature,#humidity,#light{
-            
             padding: 10px;
         }
     </style>
@@ -166,32 +90,28 @@
         <ul id="rooms">
             {% for room in rooms %}
                 <li>
-                    <a href="{% url 'optibreed:rooms' room.id %}">{{ room.Material_name }}
+                    <a href="{% url 'optibreed:rooms' room.id %}">{{ room.Material_name }}</a>
                     <div id="latest-condition-{{ room.id }}">
-                        <div>
-
-                        </div>
                         <div id="conditions">
-                            <div id="temp">
+                            <div id="temp-{{ room.id }}" class="condition-box">
                                 <div>
                                     <img src="{% static 'temp.png' %}" alt="">
                                 </div>
-                                <div id="temperature"></div>
+                                <div id="temperature-{{ room.id }}"></div>
                             </div>
-                            <div id="hum">
+                            <div id="hum-{{ room.id }}" class="condition-box">
                                 <div>
                                     <img src="{% static 'humidity.jpeg' %}" alt="">
                                 </div>
-                                <div id="humidity"></div>
+                                <div id="humidity-{{ room.id }}"></div>
                             </div>
-                            <div id="lig">
+                            <div id="lig-{{ room.id }}" class="condition-box">
                                 <div>
                                     <img src="{% static 'light.jpeg' %}" alt="">
                                 </div>
-                                <div id="light"></div>
+                                <div id="light-{{ room.id }}"></div>
                             </div>
                         </div>
-                         
                     </div>
                     <script>
                         const roomId{{ room.id }} = {{ room.id }};
@@ -201,14 +121,13 @@
                             try {
                                 const response = await fetch(`/api/latest-condition/${roomId{{ room.id }}}/`);
                                 if (response.ok) {
-                                    const data = await response.json()
-                                    Temperature = Math.round(data.Temperature)
-                                    Humidity = Math.round(data.Humidity)
-                                    Lightintensity = Math.round(data.Lightintensity)
-                                    document.getElementById('temperature').innerText = `${Temperature}°C`;
-                                    document.getElementById('humidity').innerText = `${Humidity}%`;
-                                    document.getElementById('light').innerText = `${Lightintensity} lux`;
-
+                                    const data = await response.json();
+                                    const temperature = Math.round(data.Temperature);
+                                    const humidity = Math.round(data.Humidity);
+                                    const lightIntensity = Math.round(data.Lightintensity);
+                                    document.getElementById('temperature-{{ room.id }}').innerText = `${temperature}°C`;
+                                    document.getElementById('humidity-{{ room.id }}').innerText = `${humidity}%`;
+                                    document.getElementById('light-{{ room.id }}').innerText = `${lightIntensity} lux`;
                                 } else {
                                     document.getElementById('latest-condition-{{ room.id }}').innerText = 'Failed to fetch the latest condition.';
                                 }
@@ -220,10 +139,9 @@
                         fetchLatestCondition{{ room.id }}();
                         setInterval(fetchLatestCondition{{ room.id }}, interval{{ room.id }});
                     </script>
-                </li></a>
+                </li>
             {% endfor %}
         </ul>
-
     </div>
 </body>
 </html>
