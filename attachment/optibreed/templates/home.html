@@ -14,6 +14,16 @@
             display: flex;
             justify-content: space-between;
         }
+        #username{
+            background-color: white;
+            width: 80px;
+            border-radius: 40px;
+            
+        }
+        #username p{
+            padding: 10px;
+            padding-left: 20px;
+        }
         #hero{
             background-color: white;
             border-radius: 50px;
@@ -77,12 +87,18 @@
   </head>
   <body>
     <div id="header">
-      <p>{{ username }}</p>
+        <div id="username">
+            <p>{{ username }}</p>
+        </div>
+      
       <h1>OPTIBREED</h1>
-      <form action="{% url 'logout' %}" method="POST">
+      <div id="logout">
+        <form action="{% url 'logout' %}" method="POST">
         {% csrf_token %}
         <button type="submit">Log Out</button>
       </form>
+      </div>
+      
     </div>
     <div id="hero">
         <h2>KEEP OPTIMUM!!!</h2>
