@@ -1,6 +1,5 @@
 from django.contrib import admin
-
-# Register your models here.
 from .models import Room, Condition
 
+# Register your models here.
 admin.site.register([Room, Condition])
