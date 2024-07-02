@@ -167,12 +167,12 @@
             <div id="minmax">
                 <div id="min">
                     <p>MIN</p>
-                    <p>{{ room.Min_Lightintensity }} lux</p>
+                    <p id="minl">{{ room.Min_Lightintensity }} lux</p>
     
                 </div>
                 <div id="max">
                     <p>MAX</p>
-                    <p>{{ room.Max_Lightintensity }} lux</p>
+                    <p id="maxl">{{ room.Max_Lightintensity }} lux</p>
     
                 </div>
                </div>
@@ -189,24 +189,55 @@
         <script>
             const roomId = {{ room.id }};
             const interval = 120000; // 120 seconds
+            
 
             async function fetchLatestCondition() {
                 try {
                     const response = await fetch(`/api/latest-condition/${roomId}/`);
                     if (response.ok) {
                         const data = await response.json();
-                        const temperature = Math.round(data.Temperature)
-                        const humidity = Math.round(data.Humidity)
-                        const light = Math.round(data.Lightintensity)
+                        const temperature = Math.round(data.Temperature);
+                        const humidity = Math.round(data.Humidity);
+                        const light = Math.round(data.Lightintensity);
+                    
                         document.getElementById('temperature').innerText = `${temperature}°C`;
                         document.getElementById('humidity').innerText =  `${humidity}%`;
                         document.getElementById('light').innerText = `${light} lux`;
+                    
+                        // Temperature color logic
+                        if (temperature < {{ room.Min_Temperature }}){
+                            document.getElementById('temperature').style.color = 'blue';
+                        } else if (temperature > {{ room.Max_Temperature }}){
+                            document.getElementById('temperature').style.color = 'red';
+                        } else {
+                            document.getElementById('temperature').style.color = 'green';
+                        }
+                    
+                        // Humidity color logic
+                        if (humidity < {{ room.Min_Humidity }}){
+                            document.getElementById('humidity').style.color = 'blue';
+                        } else if (humidity > {{ room.Max_Humidity }}){
+                            document.getElementById('humidity').style.color = 'red';
+                        } else {
+                            document.getElementById('humidity').style.color = 'green';
+                        }
+                    
+                        // Light intensity color logic
+                        if (light < {{ room.Min_Lightintensity }}){
+                            document.getElementById('light').style.color = 'blue';
+                        } else if (light > {{ room.Max_Lightintensity }}){
+                            document.getElementById('light').style.color = 'red';
+                        } else {
+                            document.getElementById('light').style.color = 'green';
+                        }
+                    
                     } else {
-                        document.getElementById('error').innerText = 'Failed to fetch the latest condition.';
+                        document.getElementById('latest-condition').innerText = 'Failed to fetch the latest condition.';
                     }
-                } catch (error) {
-                    document.getElementById('error').innerText = 'Error fetching the latest condition.';
-                }
+                    } catch (error) {
+                        document.getElementById('latest-condition').innerText = 'Error fetching the latest condition.';
+                    }
+                    
             }
 
             // Fetch the latest condition immediately and then at intervals
