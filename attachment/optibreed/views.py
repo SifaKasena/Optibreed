@@ -296,7 +296,8 @@ def generate_report(request, room_id):
     """
     room = get_object_or_404(Room, id=room_id, User=request.user)
     form = ReportForm(request.GET or None)
-    conditions = Condition.objects.filter(Room=room).order_by('-Timestamp')
+    conditions = Condition.objects.filter(Room=room).order_by('-Timestamp')[:30]
+
     if form.is_valid():
         report_type = form.cleaned_data['report_type']
         number_of_records = form.cleaned_data['number_of_records']
