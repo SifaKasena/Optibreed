@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Optibreed Dashboard</title>
-    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="{% static 'styles.css' %}" />
     <style>
         body{
             background-color: #d3d3d3;
@@ -74,12 +74,15 @@
             padding: 10px;
         }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div id="header">
-        <p>{{ username }}</p>
-        <h1>OPTIBREED</h1>
-        <a href="{% url 'logout' %}">Log Out</a>
+      <p>{{ username }}</p>
+      <h1>OPTIBREED</h1>
+      <form action="{% url 'logout' %}" method="POST">
+        {% csrf_token %}
+        <button type="submit">Log Out</button>
+      </form>
     </div>
     <div id="hero">
         <h2>KEEP OPTIMUM!!!</h2>
@@ -89,61 +92,65 @@
         <h2>YOUR ROOMS</h2>
     </div>
     <div id="rooms">
-        <ul id="rooms">
-            {% for room in rooms %}
-                <li>
-                    <a href="{% url 'optibreed:rooms' room.id %}">{{ room.Material_name }}</a>
-                    <div id="latest-condition-{{ room.id }}">
-                        <div id="conditions">
-                            <div id="temp-{{ room.id }}" class="condition-box">
-                                <div>
-                                    <img src="{% static 'temp.png' %}" alt="">
-                                </div>
-                                <div id="temperature-{{ room.id }}"></div>
-                            </div>
-                            <div id="hum-{{ room.id }}" class="condition-box">
-                                <div>
-                                    <img src="{% static 'humidity.jpeg' %}" alt="">
-                                </div>
-                                <div id="humidity-{{ room.id }}"></div>
-                            </div>
-                            <div id="lig-{{ room.id }}" class="condition-box">
-                                <div>
-                                    <img src="{% static 'light.jpeg' %}" alt="">
-                                </div>
-                                <div id="light-{{ room.id }}"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <script>
-                        const roomId{{ room.id }} = {{ room.id }};
-                        const interval{{ room.id }} = 120000; // 120 seconds
-
-                        async function fetchLatestCondition{{ room.id }}() {
-                            try {
-                                const response = await fetch(`/api/latest-condition/${roomId{{ room.id }}}/`);
-                                if (response.ok) {
-                                    const data = await response.json();
-                                    const temperature = Math.round(data.Temperature);
-                                    const humidity = Math.round(data.Humidity);
-                                    const lightIntensity = Math.round(data.Lightintensity);
-                                    document.getElementById('temperature-{{ room.id }}').innerText = `${temperature}°C`;
-                                    document.getElementById('humidity-{{ room.id }}').innerText = `${humidity}%`;
-                                    document.getElementById('light-{{ room.id }}').innerText = `${lightIntensity} lux`;
-                                } else {
-                                    document.getElementById('latest-condition-{{ room.id }}').innerText = 'Failed to fetch the latest condition.';
-                                }
-                            } catch (error) {
-                                document.getElementById('latest-condition-{{ room.id }}').innerText = 'Error fetching the latest condition.';
-                            }
-                        }
-
-                        fetchLatestCondition{{ room.id }}();
-                        setInterval(fetchLatestCondition{{ room.id }}, interval{{ room.id }});
-                    </script>
-                </li>
-            {% endfor %}
-        </ul>
+      <ul id="rooms">
+        {% for room in rooms %}
+        <li>
+          <a href="{% url 'optibreed:rooms' room.id %}"
+            >{{ room.Material_name }}
+            <div id="latest-condition-{{ room.id }}">
+              <div></div>
+              <div id="conditions">
+                <div id="temp">
+                  <div>
+                    <img src="{% static 'temp.png' %}" alt="" />
+                  </div>
+                  <div id="temperature"></div>
+                </div>
+                <div id="hum">
+                  <div>
+                    <img src="{% static 'humidity.jpeg' %}" alt="" />
+                  </div>
+                  <div id="humidity"></div>
+                </div>
+                <div id="lig">
+                  <div>
+                    <img src="{% static 'light.jpeg' %}" alt="" />
+                  </div>
+                  <div id="light"></div>
+                </div>
+              </div>
+            </div>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
     </div>
-</body>
+    <script>
+      const roomId{{ room.id }} = {{ room.id }};
+      const interval{{ room.id }} = 120000; // 120 seconds
+
+      async function fetchLatestCondition{{ room.id }}() {
+          try {
+              const response = await fetch(`/api/latest-condition/${roomId{{ room.id }}}/`);
+              if (response.ok) {
+                  const data = await response.json()
+                  Temperature = Math.round(data.Temperature)
+                  Humidity = Math.round(data.Humidity)
+                  Lightintensity = Math.round(data.Lightintensity)
+                  document.getElementById('temperature').innerText = `${Temperature}°C`;
+                  document.getElementById('humidity').innerText = `${Humidity}%`;
+                  document.getElementById('light').innerText = `${Lightintensity} lux`;
+
+              } else {
+                  document.getElementById('latest-condition-{{ room.id }}').innerText = 'Failed to fetch the latest condition.';
+              }
+          } catch (error) {
+              document.getElementById('latest-condition-{{ room.id }}').innerText = 'Error fetching the latest condition.';
+          }
+      }
+
+      fetchLatestCondition{{ room.id }}();
+      setInterval(fetchLatestCondition{{ room.id }}, interval{{ room.id }});
+    </script>
+  </body>
 </html>
