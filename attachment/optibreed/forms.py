@@ -21,6 +21,13 @@ class RegistrationForm(UserCreationForm):
         model = User
         fields = ['username', 'email', 'password1', 'password2']
 
+    def __init__(self, *args, **kwargs):
+        super(RegistrationForm, self).__init__(*args, **kwargs)
+        self.fields['username'].widget = forms.TextInput(attrs={'placeholder': 'Username'})
+        self.fields['email'].widget = forms.EmailInput(attrs={'placeholder': 'Email'})
+        self.fields['password1'].widget = forms.PasswordInput(attrs={'placeholder': 'Password'})
+        self.fields['password2'].widget = forms.PasswordInput(attrs={'placeholder': 'Confirm Password'})
+
 
 # form for adding room
 class RoomForm(forms.ModelForm):
