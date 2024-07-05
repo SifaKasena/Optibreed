@@ -9,8 +9,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
     
-        for i in range(1,4):
-            room = Room.objects.get(id=i)  # Replace with specific room if necessary
+        room = Room.objects.get(id=8)  # Replace with specific room if necessary
 
         if not room:
             self.stdout.write(self.style.ERROR('No Room instances found. Please create a Room instance first.'))

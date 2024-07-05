@@ -1,41 +1,114 @@
-from django.shortcuts import render,redirect,get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
-from django.views import generic
-from django.contrib.auth import login,logout
-from .forms import RegistrationForm
-from .models import User
-from.models import Room
+import base64
+import json
+import tempfile
+from io import BytesIO
+import matplotlib
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.db.models import Avg
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views import generic
+from django.views.decorators.csrf import csrf_exempt
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .forms import RegistrationForm, ReportForm, RoomForm
+from .models import Condition, Room
+from .serializers import ConditionSerializer
+import matplotlib.pyplot as plt
+
 
 # Create your views here.
-#landing page
 def index(request):
+    """
+    Renders the index page.
+
+    If the user is authenticated, it redirects to the 'home' page.
+    Otherwise, it renders the 'index.html' template.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        A rendered HTML response.
+    """
+    if request.user.is_authenticated:
+        return redirect('optibreed:home')
+
     return render(request, 'index.html')
 
 
 class SignupView(generic.CreateView):
+    """
+    View for user registration/signup.
+
+    This view handles the user registration process by displaying a form
+    for users to enter their registration details. Upon successful registration,
+    the user is logged in and redirected to the home page.
+
+    Attributes:
+        template_name (str): The name of the template used to render the registration form.
+        form_class (class): The form class used for user registration.
+        success_url (str): The URL to redirect to after successful registration.
+
+    Methods:
+        form_valid(form): Overrides the base method to save the user registration details,
+                          log in the user, and redirect to the success URL.
+    """
     template_name = "registration/signup.html"
     form_class = RegistrationForm
     success_url = '/home/'
-    
+
     def form_valid(self, form):
+        """
+        Called when a valid form is submitted.
+
+        This method saves the form data, logs in the user, and redirects to the success URL.
+
+        Args:
+            form (Form): The valid form object.
+
+        Returns:
+            HttpResponseRedirect: The HTTP response redirecting to the success URL.
+        """
         user = form.save()
         login(self.request, user)
         return HttpResponseRedirect(self.success_url)
 
+
 @login_required
 def home(request):
+    """
+    Renders the home page with the logged-in user's username and a list of rooms associated with the user.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered home.html template with the username and rooms.
+
+    """
     username = request.user.username
     rooms = Room.objects.filter(User=request.user)  # Fetch all rooms from the database associated with logged in user
     return render(request, 'home.html', {'username': username, 'rooms': rooms})
 
 
-#add room
-
-from .forms import RoomForm
-
 @login_required
 def add_room(request):
+    """
+    View function for adding a room.
+
+    Parameters:
+    - request: The HTTP request object.
+
+    Returns:
+    - If the request method is POST and the form is valid, it saves the room instance to the database and redirects to the 'optibreed:home' page.
+    - If the request method is GET, it renders the 'add_room.html' template with an empty form.
+
+    """
     if request.method == 'POST':
         form = RoomForm(request.POST)
         if form.is_valid():
@@ -48,23 +121,22 @@ def add_room(request):
     return render(request, 'add_room.html', {'form': form})
 
 
-
-
-
-
-
-#collect data from sensor
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-import json
-
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-import json
-from .models import Condition, Room  # Ensure you import your models
-
+# Collect data from sensor
 @csrf_exempt
 def receive_data(request):
+    """
+    Receives data from a POST request and saves it to the database.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        JsonResponse: A JSON response indicating the status of the operation.
+
+    Raises:
+        JSONDecodeError: If the request body contains invalid JSON.
+        Room.DoesNotExist: If the specified room_id does not exist in the database.
+    """
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -76,7 +148,7 @@ def receive_data(request):
 
             # Find the room instance (Assuming Room model exists)
             room = Room.objects.get(id=room_id)
-            
+
             # Create and save the Condition instance
             Condition.objects.create(
                 Room=room,
@@ -85,7 +157,7 @@ def receive_data(request):
                 Humidity=humidity,
                 Lightintensity=light_intensity
             )
-            
+
             return JsonResponse({"status": "success"}, status=200)
         except json.JSONDecodeError:
             return JsonResponse({"status": "failure", "reason": "Invalid JSON"}, status=400)
@@ -94,12 +166,21 @@ def receive_data(request):
     return JsonResponse({"status": "failure", "reason": "Invalid request method"}, status=405)
 
 
-
-
 # viauslize historical data
-
 def room_conditions(request, room_id):
-    # Fetch the room and its conditions
+    """
+    Retrieve and display the conditions of a room.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        room_id (int): The ID of the room.
+
+    Returns:
+        HttpResponse: The HTTP response object containing the rendered room.html template.
+
+    Raises:
+        Room.DoesNotExist: If the room with the specified ID does not exist.
+    """
     room = Room.objects.get(id=room_id, User=request.user)
     conditions = Condition.objects.filter(Room=room).order_by('-Timestamp')[:50]  # Limit to first 50 records
 
@@ -111,7 +192,7 @@ def room_conditions(request, room_id):
     context = {
         'room': room,
         'conditions': conditions,
-        'labels': json.dumps(labels),  # Convert to JSON for JavaScript
+        'labels': json.dumps(labels),
         'temperatures': json.dumps(temperatures),
         'humidities': json.dumps(humidities),
         'light_intensities': json.dumps(light_intensities)
@@ -120,15 +201,22 @@ def room_conditions(request, room_id):
     return render(request, 'room.html', context)
 
 
-# def detail(request, room_id):
-    
-#     room_conditions(request,room_id)
-#     return render(request, 'room.html', {'room': room})
-
-
-#edit room information
-
+# Edit room information
 def edit_room(request, room_id):
+    """
+    Edit a room with the given room_id.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        room_id (int): The ID of the room to be edited.
+
+    Returns:
+        HttpResponse: The HTTP response object.
+
+    Raises:
+        Http404: If the room with the given room_id does not exist.
+
+    """
     room = get_object_or_404(Room, id=room_id)
     if request.method == 'POST':
         form = RoomForm(request.POST, instance=room)
@@ -140,18 +228,19 @@ def edit_room(request, room_id):
     return render(request, 'edit_room.html', {'form': form})
 
 
-
-
-#displaying updated condition
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .models import Condition
-from .serializers import ConditionSerializer
-
+# Displaying updated condition
 class LatestConditionView(APIView):
+    """
+    A view that returns the latest condition record for a given room.
+
+    Attributes:
+        room_id (int): The ID of the room for which to retrieve the latest condition record.
+
+    Methods:
+        get(request, room_id, format=None): Retrieves the latest condition record for the specified room.
+    """
     def get(self, request, room_id, format=None):
+        """Retrieves the latest condition record for the specified room."""
         try:
             latest_condition = Condition.objects.filter(Room__id=room_id).latest('Timestamp')
             serializer = ConditionSerializer(latest_condition)
@@ -160,128 +249,54 @@ class LatestConditionView(APIView):
             return Response({"error": "No condition records found for this room."}, status=status.HTTP_404_NOT_FOUND)
 
 
-
-#generating reports
-
-# views.py
-
-
-# def generate_report(request, room_id):
-    # room = Room.objects.get(id=room_id, User=request.user)
-    # form = ReportForm(request.GET or None)
-    # conditions = []
-    # report_data = {}
-    # if form.is_valid():
-    #     report_type = form.cleaned_data['report_type']
-    #     if report_type == 'recent':
-    #         number_of_records = form.cleaned_data['number_of_records']
-    #         conditions = Condition.objects.filter(Room=room).order_by('-Timestamp')[:number_of_records]
-    #     elif report_type == 'date_range':
-    #         start_date = form.cleaned_data['start_date']
-    #         end_date = form.cleaned_data['end_date']
-    #         conditions = Condition.objects.filter(Room=room, Timestamp__range=(start_date, end_date)).order_by('Timestamp')
-        
-    #     # Calculate average statistics
-    #     avg_temperature = conditions.aggregate(Avg('Temperature'))['Temperature__avg']
-    #     avg_humidity = conditions.aggregate(Avg('Humidity'))['Humidity__avg']
-    #     avg_lightintensity = conditions.aggregate(Avg('Lightintensity'))['Lightintensity__avg']
-        
-    #     report_data = {
-    #         'avg_temperature': avg_temperature,
-    #         'avg_humidity': avg_humidity,
-    #         'avg_lightintensity': avg_lightintensity
-    #     }
-
-    #     # Generate plots
-    #     labels = [condition.Timestamp.strftime('%Y-%m-%d %H:%M:%S') for condition in conditions]
-    #     temperatures = [condition.Temperature for condition in conditions]
-    #     humidities = [condition.Humidity for condition in conditions]
-    #     lightintensities = [condition.Lightintensity for condition in conditions]
-
-    #     # Temperature plot
-    #     plt.figure(figsize=(10, 6))
-    #     plt.plot(labels, temperatures, label='Temperature', color='red')
-    #     plt.xlabel('Timestamp')
-    #     plt.ylabel('Temperature (°C)')
-    #     plt.title('Temperature Over Time')
-    #     plt.xticks(rotation=45)
-    #     plt.tight_layout()
-        
-    #     buf = io.BytesIO()
-    #     plt.savefig(buf, format='png')
-    #     buf.seek(0)
-    #     image_base64_temp = base64.b64encode(buf.read()).decode('utf-8')
-    #     plt.close()
-        
-    #     report_data['image_base64_temp'] = image_base64_temp
-
-    #     # Humidity plot
-    #     plt.figure(figsize=(10, 6))
-    #     plt.plot(labels, humidities, label='Humidity', color='blue')
-    #     plt.xlabel('Timestamp')
-    #     plt.ylabel('Humidity (%)')
-    #     plt.title('Humidity Over Time')
-    #     plt.xticks(rotation=45)
-    #     plt.tight_layout()
-        
-    #     buf = io.BytesIO()
-    #     plt.savefig(buf, format='png')
-    #     buf.seek(0)
-    #     image_base64_hum = base64.b64encode(buf.read()).decode('utf-8')
-    #     plt.close()
-        
-    #     report_data['image_base64_hum'] = image_base64_hum
-
-    #     # Light Intensity plot
-    #     plt.figure(figsize=(10, 6))
-    #     plt.plot(labels, lightintensities, label='Light Intensity', color='green')
-    #     plt.xlabel('Timestamp')
-    #     plt.ylabel('Light Intensity (lux)')
-    #     plt.title('Light Intensity Over Time')
-    #     plt.xticks(rotation=45)
-    #     plt.tight_layout()
-        
-    #     buf = io.BytesIO()
-    #     plt.savefig(buf, format='png')
-    #     buf.seek(0)
-    #     image_base64_light = base64.b64encode(buf.read()).decode('utf-8')
-    #     plt.close()
-        
-    #     report_data['image_base64_light'] = image_base64_light
-
-    # context = {
-    #     'room': room,
-    #     'user': request.user,
-    #     'form': form,
-    #     'conditions': conditions,
-    #     'report_data': report_data
-    # }
-    # return render(request, 'report.html', context)
-
-from django.shortcuts import render
-from .models import Condition, Room
-from .forms import ReportForm
-import matplotlib
 matplotlib.use('Agg')  # Use the Anti-Grain Geometry backend for non-interactive plotting
-import matplotlib.pyplot as plt
-import io
-import base64
-from django.db.models import Avg
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
-from django.db.models import Avg
-from .models import Condition, Room
-from .forms import ReportForm
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
-from io import BytesIO
-import base64
-import tempfile
+
+
+def generate_chart(labels, data, title, ylabel):
+    """
+    Generate a chart with the given labels, data, title, and ylabel.
+
+    Args:
+        labels (list): List of labels for the x-axis.
+        data (list): List of data points for the y-axis.
+        title (str): Title of the chart.
+        ylabel (str): Label for the y-axis.
+
+    Returns:
+        bytes: Image data of the generated chart in PNG format.
+    """
+    plt.figure(figsize=(10, 6))
+    plt.plot(labels, data, label=title)
+    plt.xlabel('Timestamp')
+    plt.ylabel(ylabel)
+    plt.title(f'{title} Over Time')
+    plt.xticks(rotation=45)
+    buf = BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    image_data = buf.read()
+    plt.close()
+    return image_data
+
 
 def generate_report(request, room_id):
+    """
+    Generate a report for a given room based on user input.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        room_id (int): The ID of the room for which the report is generated.
+
+    Returns:
+        HttpResponse: The HTTP response containing the generated report.
+
+    Raises:
+        Http404: If the room with the given ID does not exist.
+
+    """
     room = get_object_or_404(Room, id=room_id, User=request.user)
     form = ReportForm(request.GET or None)
-    conditions = Condition.objects.filter(Room=room).order_by('-Timestamp')
+    conditions = Condition.objects.filter(Room=room).order_by('-Timestamp')[:30]
 
     if form.is_valid():
         report_type = form.cleaned_data['report_type']
@@ -304,23 +319,9 @@ def generate_report(request, room_id):
     humidities = [condition.Humidity for condition in conditions]
     lightintensities = [condition.Lightintensity for condition in conditions]
 
-    def generate_chart(data, title, ylabel):
-        plt.figure(figsize=(10, 6))
-        plt.plot(labels, data, label=title)
-        plt.xlabel('Timestamp')
-        plt.ylabel(ylabel)
-        plt.title(f'{title} Over Time')
-        plt.xticks(rotation=45)
-        buf = BytesIO()
-        plt.savefig(buf, format='png')
-        buf.seek(0)
-        image_data = buf.read()
-        plt.close()
-        return image_data
-
-    image_temp = generate_chart(temperatures, 'Temperature', 'Temperature (°C)')
-    image_hum = generate_chart(humidities, 'Humidity', 'Humidity (%)')
-    image_light = generate_chart(lightintensities, 'Light Intensity', 'Light Intensity (lux)')
+    image_temp = generate_chart(labels, temperatures, 'Temperature', 'Temperature (°C)')
+    image_hum = generate_chart(labels, humidities, 'Humidity', 'Humidity (%)')
+    image_light = generate_chart(labels, lightintensities, 'Light Intensity', 'Light Intensity (lux)')
 
     report_data = {
         'avg_temperature': avg_temperature,

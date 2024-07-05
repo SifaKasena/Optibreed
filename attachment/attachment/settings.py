@@ -129,3 +129,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/home/'
 LOGOUT_REDIRECT_URL = '/'
+
+# Then set the SECURE_REFERRER_POLICY
+SECURE_REFERRER_POLICY = 'no-referrer-when-downgrade'
