@@ -38,6 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -48,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'attachment.urls'
@@ -132,3 +137,22 @@ LOGOUT_REDIRECT_URL = '/'
 
 # Then set the SECURE_REFERRER_POLICY
 SECURE_REFERRER_POLICY = 'no-referrer-when-downgrade'
+
+# Allauth settings
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': '579901606533-ednao5hi0ra4uth33itkmogcm699v51d.apps.googleusercontent.com',
+            'secret': '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'
+        },
+        'SCOPE': [
+            'profile',
+            'email',
+        ]
+    }
+}
