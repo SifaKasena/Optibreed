@@ -21,4 +21,5 @@ urlpatterns = [
     path('', include('optibreed.urls')),
     path('', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
+    path('accounts/', include('allauth.urls')),
 ]

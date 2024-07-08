@@ -183,11 +183,12 @@ def room_conditions(request, room_id):
     """
     room = Room.objects.get(id=room_id, User=request.user)
     conditions = Condition.objects.filter(Room=room).order_by('-Timestamp')[:50]  # Limit to first 50 records
+    conditions_reverse = conditions[::-1]
 
-    labels = [condition.Timestamp.strftime('%Y-%m-%d %H:%M:%S') for condition in conditions]
-    temperatures = [condition.Temperature for condition in conditions]
-    humidities = [condition.Humidity for condition in conditions]
-    light_intensities = [condition.Lightintensity for condition in conditions]
+    labels = [condition.Timestamp.strftime('%Y-%m-%d %H:%M:%S') for condition in conditions_reverse]
+    temperatures = [condition.Temperature for condition in conditions_reverse]
+    humidities = [condition.Humidity for condition in conditions_reverse]
+    light_intensities = [condition.Lightintensity for condition in conditions_reverse]
 
     context = {
         'room': room,
@@ -200,6 +201,24 @@ def room_conditions(request, room_id):
 
     return render(request, 'room.html', context)
 
+def latest_conditions(request, room_id):
+    room = Room.objects.get(id=room_id, User=request.user)
+    conditions = Condition.objects.filter(Room=room).order_by('-Timestamp')[:50]  # Limit to first 50 records
+    conditions_reverse = conditions[::-1]
+
+    labels = [condition.Timestamp.strftime('%Y-%m-%d %H:%M:%S') for condition in conditions_reverse]
+    temperatures = [condition.Temperature for condition in conditions_reverse]
+    humidities = [condition.Humidity for condition in conditions_reverse]
+    light_intensities = [condition.Lightintensity for condition in conditions_reverse]
+
+    data = {
+        'labels': labels,
+        'temperatures': temperatures,
+        'humidities': humidities,
+        'light_intensities': light_intensities
+    }
+
+    return JsonResponse(data)
 
 # Edit room information
 def edit_room(request, room_id):
@@ -297,6 +316,7 @@ def generate_report(request, room_id):
     room = get_object_or_404(Room, id=room_id, User=request.user)
     form = ReportForm(request.GET or None)
     conditions = Condition.objects.filter(Room=room).order_by('-Timestamp')[:30]
+    conditions_reverse = conditions[::-1]
 
     if form.is_valid():
         report_type = form.cleaned_data['report_type']
@@ -314,10 +334,10 @@ def generate_report(request, room_id):
     avg_lightintensity = conditions.aggregate(Avg('Lightintensity'))['Lightintensity__avg']
 
     # Generate plots
-    labels = [condition.Timestamp.strftime('%Y-%m-%d %H:%M:%S') for condition in conditions]
-    temperatures = [condition.Temperature for condition in conditions]
-    humidities = [condition.Humidity for condition in conditions]
-    lightintensities = [condition.Lightintensity for condition in conditions]
+    labels = [condition.Timestamp.strftime('%Y-%m-%d %H:%M:%S') for condition in conditions_reverse]
+    temperatures = [condition.Temperature for condition in conditions_reverse]
+    humidities = [condition.Humidity for condition in conditions_reverse]
+    lightintensities = [condition.Lightintensity for condition in conditions_reverse]
 
     image_temp = generate_chart(labels, temperatures, 'Temperature', 'Temperature (°C)')
     image_hum = generate_chart(labels, humidities, 'Humidity', 'Humidity (%)')

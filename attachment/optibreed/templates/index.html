@@ -109,6 +109,26 @@
         </div>
       </div>
     </div>
-    {% block extra_body %}{% endblock %} {% block scripts %}{% endblock %}
+    <div
+      id="g_id_onload"
+      data-client_id="579901606533-ednao5hi0ra4uth33itkmogcm699v51d.apps.googleusercontent.com"
+      data-context="use"
+      data-ux_mode="popup"
+      data-login_uri="{% url 'google_login_by_token' %}"
+      data-auto_prompt="false"
+    ></div>
+
+    <div
+      class="g_id_signin"
+      data-type="standard"
+      data-shape="pill"
+      data-theme="outline"
+      data-text="signin_with"
+      data-size="large"
+      data-logo_alignment="left"
+    ></div>
+    {% block extra_body %}{% endblock %} {% block scripts %}
+    <script src="https://accounts.google.com/gsi/client" async></script>
+    {% endblock %}
   </body>
 </html>
