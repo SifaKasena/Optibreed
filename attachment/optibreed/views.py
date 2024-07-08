@@ -201,6 +201,24 @@ def room_conditions(request, room_id):
 
     return render(request, 'room.html', context)
 
+def latest_conditions(request, room_id):
+    room = Room.objects.get(id=room_id, User=request.user)
+    conditions = Condition.objects.filter(Room=room).order_by('-Timestamp')[:50]  # Limit to first 50 records
+    conditions_reverse = conditions[::-1]
+
+    labels = [condition.Timestamp.strftime('%Y-%m-%d %H:%M:%S') for condition in conditions_reverse]
+    temperatures = [condition.Temperature for condition in conditions_reverse]
+    humidities = [condition.Humidity for condition in conditions_reverse]
+    light_intensities = [condition.Lightintensity for condition in conditions_reverse]
+
+    data = {
+        'labels': labels,
+        'temperatures': temperatures,
+        'humidities': humidities,
+        'light_intensities': light_intensities
+    }
+
+    return JsonResponse(data)
 
 # Edit room information
 def edit_room(request, room_id):
