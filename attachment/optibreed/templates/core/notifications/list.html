@@ -1,0 +1,55 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="card">
+        <div class="card-header">
+            <h2>Notifications List</h2>
+            <div class="filters">
+                <form method="get" action="{% url 'notifications:list' %}">
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <select name="status" id="status" class="form-control">
+                            <option value="">All</option>
+                            <option value="unread">Unread</option>
+                            <option value="read">Read</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Date</label>
+                        <input type="date" name="date" id="date" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                </form>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Message</th>
+                        <th>Timestamp</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for notification in notifications %}
+                    <tr class="{% if notification.status == 'unread' %}table-warning{% endif %}">
+                        <td>{{ notification.message }}</td>
+                        <td>{{ notification.timestamp }}</td>
+                        <td>{{ notification.status }}</td>
+                        <td>
+                            <a href="{% url 'notifications:details' notification.id %}" class="btn btn-info btn-sm">View</a>
+                            <a href="{% url 'notifications:mark_as_read' notification.id %}" class="btn btn-success btn-sm">Mark as Read</a>
+                            <a href="{% url 'notifications:delete' notification.id %}" class="btn btn-danger btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

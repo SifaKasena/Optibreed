@@ -23,92 +23,40 @@ import matplotlib.pyplot as plt
 
 # Create your views here.
 def index(request):
-    """
-    Renders the index page.
 
-    If the user is authenticated, it redirects to the 'home' page.
-    Otherwise, it renders the 'index.html' template.
-
-    Args:
-        request: The HTTP request object.
-
-    Returns:
-        A rendered HTML response.
-    """
     if request.user.is_authenticated:
-        return redirect('optibreed:home')
+        return redirect('optibreed:dashboard')
 
-    return render(request, 'index.html')
+    return render(request, 'public/index.html')
+
 
 
 class SignupView(generic.CreateView):
-    """
-    View for user registration/signup.
 
-    This view handles the user registration process by displaying a form
-    for users to enter their registration details. Upon successful registration,
-    the user is logged in and redirected to the home page.
-
-    Attributes:
-        template_name (str): The name of the template used to render the registration form.
-        form_class (class): The form class used for user registration.
-        success_url (str): The URL to redirect to after successful registration.
-
-    Methods:
-        form_valid(form): Overrides the base method to save the user registration details,
-                          log in the user, and redirect to the success URL.
-    """
     template_name = "registration/signup.html"
     form_class = RegistrationForm
-    success_url = '/home/'
+    success_url = '/dashboard/'
 
     def form_valid(self, form):
-        """
-        Called when a valid form is submitted.
-
-        This method saves the form data, logs in the user, and redirects to the success URL.
-
-        Args:
-            form (Form): The valid form object.
-
-        Returns:
-            HttpResponseRedirect: The HTTP response redirecting to the success URL.
-        """
         user = form.save()
         login(self.request, user)
         return HttpResponseRedirect(self.success_url)
 
 
 @login_required
-def home(request):
-    """
-    Renders the home page with the logged-in user's username and a list of rooms associated with the user.
-
-    Args:
-        request (HttpRequest): The HTTP request object.
-
-    Returns:
-        HttpResponse: The rendered home.html template with the username and rooms.
-
-    """
-    username = request.user.username
-    rooms = Room.objects.filter(User=request.user)  # Fetch all rooms from the database associated with logged in user
-    return render(request, 'home.html', {'username': username, 'rooms': rooms})
+def dashboard(request):
+    # Add any additional context or data you need to pass to the template
+    context = {
+        'installed_sensors': 20,  # Example data
+        'auto_adjustments': 50,  # Example data
+        'manual_adjustments': 28  # Example data
+    }
+    return render(request, 'core/dashboard/dashboard.html', context)
 
 
 @login_required
 def add_room(request):
-    """
-    View function for adding a room.
 
-    Parameters:
-    - request: The HTTP request object.
-
-    Returns:
-    - If the request method is POST and the form is valid, it saves the room instance to the database and redirects to the 'optibreed:home' page.
-    - If the request method is GET, it renders the 'add_room.html' template with an empty form.
-
-    """
     if request.method == 'POST':
         form = RoomForm(request.POST)
         if form.is_valid():
@@ -124,19 +72,7 @@ def add_room(request):
 # Collect data from sensor
 @csrf_exempt
 def receive_data(request):
-    """
-    Receives data from a POST request and saves it to the database.
 
-    Args:
-        request (HttpRequest): The HTTP request object.
-
-    Returns:
-        JsonResponse: A JSON response indicating the status of the operation.
-
-    Raises:
-        JSONDecodeError: If the request body contains invalid JSON.
-        Room.DoesNotExist: If the specified room_id does not exist in the database.
-    """
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -168,19 +104,7 @@ def receive_data(request):
 
 # viauslize historical data
 def room_conditions(request, room_id):
-    """
-    Retrieve and display the conditions of a room.
 
-    Args:
-        request (HttpRequest): The HTTP request object.
-        room_id (int): The ID of the room.
-
-    Returns:
-        HttpResponse: The HTTP response object containing the rendered room.html template.
-
-    Raises:
-        Room.DoesNotExist: If the room with the specified ID does not exist.
-    """
     room = Room.objects.get(id=room_id, User=request.user)
     conditions = Condition.objects.filter(Room=room).order_by('-Timestamp')[:50]  # Limit to first 50 records
 
@@ -203,20 +127,7 @@ def room_conditions(request, room_id):
 
 # Edit room information
 def edit_room(request, room_id):
-    """
-    Edit a room with the given room_id.
 
-    Args:
-        request (HttpRequest): The HTTP request object.
-        room_id (int): The ID of the room to be edited.
-
-    Returns:
-        HttpResponse: The HTTP response object.
-
-    Raises:
-        Http404: If the room with the given room_id does not exist.
-
-    """
     room = get_object_or_404(Room, id=room_id)
     if request.method == 'POST':
         form = RoomForm(request.POST, instance=room)
@@ -230,15 +141,7 @@ def edit_room(request, room_id):
 
 # Displaying updated condition
 class LatestConditionView(APIView):
-    """
-    A view that returns the latest condition record for a given room.
 
-    Attributes:
-        room_id (int): The ID of the room for which to retrieve the latest condition record.
-
-    Methods:
-        get(request, room_id, format=None): Retrieves the latest condition record for the specified room.
-    """
     def get(self, request, room_id, format=None):
         """Retrieves the latest condition record for the specified room."""
         try:
@@ -253,18 +156,7 @@ matplotlib.use('Agg')  # Use the Anti-Grain Geometry backend for non-interactive
 
 
 def generate_chart(labels, data, title, ylabel):
-    """
-    Generate a chart with the given labels, data, title, and ylabel.
 
-    Args:
-        labels (list): List of labels for the x-axis.
-        data (list): List of data points for the y-axis.
-        title (str): Title of the chart.
-        ylabel (str): Label for the y-axis.
-
-    Returns:
-        bytes: Image data of the generated chart in PNG format.
-    """
     plt.figure(figsize=(10, 6))
     plt.plot(labels, data, label=title)
     plt.xlabel('Timestamp')
@@ -280,20 +172,7 @@ def generate_chart(labels, data, title, ylabel):
 
 
 def generate_report(request, room_id):
-    """
-    Generate a report for a given room based on user input.
 
-    Args:
-        request (HttpRequest): The HTTP request object.
-        room_id (int): The ID of the room for which the report is generated.
-
-    Returns:
-        HttpResponse: The HTTP response containing the generated report.
-
-    Raises:
-        Http404: If the room with the given ID does not exist.
-
-    """
     room = get_object_or_404(Room, id=room_id, User=request.user)
     form = ReportForm(request.GET or None)
     conditions = Condition.objects.filter(Room=room).order_by('-Timestamp')[:30]

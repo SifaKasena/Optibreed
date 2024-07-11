@@ -1,0 +1,68 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div id="header" class="text-center mb-4">
+        <h2>{{ user.username }}</h2>
+        <h1>{{ room.name }} Report</h1>
+        <a href="{% url 'optibreed:home' %}"><img src="{% static 'home.png' %}" alt="Home" class="home-icon"></a>
+    </div>
+
+    <div id="hero" class="mb-4">
+        <form method="get" class="form-inline justify-content-center">
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary mr-2">Generate Report</button>
+            <button type="submit" name="download_pdf" class="btn btn-secondary">Download PDF</button>
+        </form>
+    </div>
+
+    <div id="avg2" class="text-center mb-4">
+        <h3>Average Data:</h3>
+        <div id="avg" class="d-flex justify-content-center">
+            <p class="mx-3">Temperature: <br> {{ report_data.avg_temperature }}°C</p>
+            <p class="mx-3">Humidity:<br> {{ report_data.avg_humidity }}%</p>
+            <p class="mx-3">Light Intensity:<br> {{ report_data.avg_lightintensity }} lux</p>
+        </div>
+    </div>
+
+    <div id="table" class="mb-4">
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Temperature (°C)</th>
+                    <th>Humidity (%)</th>
+                    <th>Light Intensity (lux)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for condition in conditions %}
+                    <tr>
+                        <td>{{ condition.Timestamp }}</td>
+                        <td>{{ condition.Temperature }}</td>
+                        <td>{{ condition.Humidity }}</td>
+                        <td>{{ condition.Lightintensity }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div id="charts" class="mb-5">
+        <div class="row">
+            <div class="col-md-4 chart-container">
+                <h3>Temperature Over Time:</h3>
+                <img src="data:image/png;base64,{{ image_base64_temp }}" alt="Temperature Over Time" class="img-fluid">
+            </div>
+            <div class="col-md-4 chart-container">
+                <h3>Humidity Over Time:</h3>
+                <img src="data:image/png;base64,{{ image_base64_hum }}" alt="Humidity Over Time" class="img-fluid">
+            </div>
+            <div class="col-md-4 chart-container">
+                <h3>Light Intensity Over Time:</h3>
+                <img src="data:image/png;base64,{{ image_base64_light }}" alt="Light Intensity Over Time" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Room Information</h2>
+        </div>
+        <div class="card-body">
+            <div class="room-info">
+                <h3>{{ room.name }}</h3>
+                <p><strong>Status:</strong> {{ room.status }}</p>
+                <p><strong>Description:</strong> {{ room.description }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h2>Current Conditions</h2>
+        </div>
+        <div class="card-body">
+            <div class="sensor-readings">
+                <div class="reading">
+                    <h4>Temperature</h4>
+                    <p>{{ current_temperature }} °C</p>
+                </div>
+                <div class="reading">
+                    <h4>Humidity</h4>
+                    <p>{{ current_humidity }} %</p>
+                </div>
+                <div class="reading">
+                    <h4>CO2 Levels</h4>
+                    <p>{{ current_co2 }} ppm</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

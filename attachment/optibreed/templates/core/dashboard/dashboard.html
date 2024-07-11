@@ -1,0 +1,56 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="statistics">
+        <div class="stat-item">
+            <i class="bi bi-speedometer2" style="font-size: 2rem;"></i>
+            <div class="stat-info">
+                <div class="stat-number">{{ installed_sensors }}</div>
+                <div class="stat-label">installed sensors</div>
+            </div>
+        </div>
+        <div class="stat-item">
+            <i class="bi bi-sliders" style="font-size: 2rem;"></i>
+            <div class="stat-info">
+                <div class="stat-number">{{ auto_adjustments }}</div>
+                <div class="stat-label">auto adjustments</div>
+            </div>
+        </div>
+        <div class="stat-item">
+            <i class="bi bi-tools" style="font-size: 2rem;"></i>
+            <div class="stat-info">
+                <div class="stat-number">{{ manual_adjustments }}</div>
+                <div class="stat-label">manual adjustments</div>
+            </div>
+        </div>
+    </div>
+    <div class="charts">
+        <div class="chart-large">
+            <img src="{% static 'images/rectangle_13.png' %}" alt="Large Chart">
+        </div>
+        <div class="chart-small">
+            <img src="{% static 'images/rectangle_14.png' %}" alt="Small Chart">
+        </div>
+    </div>
+    <div class="bottom-section">
+        <div class="bottom-item">
+            <img src="{% static 'images/rectangle_15.png' %}" alt="Bottom Item">
+        </div>
+        <div class="bottom-info">
+            <div class="info-item">
+                <i class="bi bi-info-circle" style="font-size: 2rem;"></i>
+            </div>
+            <div class="info-item">
+                <i class="bi bi-info-circle" style="font-size: 2rem;"></i>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

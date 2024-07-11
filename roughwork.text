@@ -1,0 +1,127 @@
+Here's the updated folder structure for the OptiBreed app:
+universe.io/cards
+
+optibreed/
+├── manage.py
+├── optibreed/
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls.py
+│   ├── wsgi.py
+│   └── asgi.py
+├── app/
+│   ├── migrations/
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── tests.py
+│   ├── views.py
+│   └── urls.py
+├── static/
+│   ├── admin/
+│   │   ├── css/
+│   │   ├── fonts/
+│   │   ├── images/
+│   │   └── js/
+│   ├── core/
+│   │   ├── css/
+│   │   │   └── style.css
+│   │   ├── img/
+│   │   ├── js/
+│   │   │   └── main.js
+│   │   └── vendor/
+│   ├── dashboard/
+│   │   ├── css/
+│   │   ├── img/
+│   │   ├── js/
+│   │   └── vendor/
+│   └── public/
+│       ├── css/
+│       ├── img/
+│       ├── js/
+│       └── vendor/
+├── templates/
+│   ├── account/
+│   │   ├── base.html
+│   │   ├── login.html
+│   │   ├── logout.html
+│   │   └── signup.html
+│   ├── core/
+│   │   ├── components/
+│   │   │   ├── footer.html
+│   │   │   ├── sidebar.html
+│   │   │   └── topnav.html
+│   │   ├── dashboard/
+│   │   │   └── dashboard.html
+│   │   ├── dependencies/
+│   │   │   ├── css.html
+│   │   │   └── js.html
+│   │   ├── notifications/
+│   │   │   ├── details.html
+│   │   │   └── list.html
+│   │   ├── reports/
+│   │   │   └── reports.html
+│   │   ├── rooms/
+│   │   │   ├── add_room.html
+│   │   │   ├── edit_room.html
+│   │   │   └── room_details.html
+│   │   ├── base.html
+│   │   └── index.html
+│   └── public/
+│       ├── components/
+│       │   ├── footer.html
+│       │   └── navbar.html
+│       ├── dependencies/
+│       │   ├── css.html
+│       │   └── js.html
+│       ├── about.html
+│       ├── base.html
+│       ├── contact.html
+│       ├── index.html
+│       └── pricing.html
+```
+
+
+Features and Components:
+
+1. Public Pages:
+Home
+Get Started
+
+2. Authenticated Pages:
+Dashboard
+Rooms Management
+Room Conditions and Details
+Room Graphs
+Report Data
+Notifications
+
+3. Functionality:
+User Authentication (Login, Signup, Logout)
+CRUD Operations for Rooms
+Real-time Sensor Data Visualization
+Integration with Google Sign-in
+
+
+Models and Views to Add:
+1. Models:
+Room Model: Represents the rooms managed in the application, including fields like name, description, sensors associated, etc.
+Sensor Model: If sensors are entities with specific data points, this model could capture those details.
+
+2. Views (and ViewSets if using DRF for API):
+Home View: Render the home page.
+Get Started View: Provide information and steps to get started.
+Dashboard View: Display overview and summary of rooms and sensor data.
+Rooms Management View: List, create, update, delete rooms.
+Room Details View: Detailed view of a specific room, its sensors, and data.
+Room Graphs View: Render graphs and charts for room-specific data.
+Report Data View: Generate and display reports based on sensor data.
+Notifications View: Manage and display notifications for users.
+Login/Signup/Logout Views: Handle user authentication.
+
+3. Considerations:
+Authentication and Authorization: Ensure views are protected based on user roles and permissions.
+API Views (Optional): If exposing APIs, create corresponding API views and serializers for CRUD operations on rooms and sensors.
+Real-time Data Handling: Implement WebSocket or similar technology for real-time updates if needed.
+External Integrations: Ensure integration with Google Sign-in follows OAuth standards and handles user authentication securely.

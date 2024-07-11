@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block extra_head %}
+    <title>OptiBreed - Home</title>
+    {% endblock %}
+    <link rel="stylesheet" href="{% static 'account/styles.css' %}">
+</head>
+<body>
+    <div id="full">
+        <div id="pic">
+            <img id="hero" src="{% static 'hero.jpeg' %}" alt="Hero Image">
+        </div>
+        <div id="right">
+            <div id="rev">
+                <p>Revolutionize Your Breeding Program</p>
+            </div>
+            <div id="content">
+                <p>OptiBreed offers real-time monitoring and intelligent alerts to ensure the optimal storage conditions for your breeding materials.</p>
+            </div>
+            <div id="links">
+                <a href="{% url 'optibreed:signup' %}">Get Started</a>
+                <a href="{% url 'login' %}">Login</a>
+            </div>
+        </div>
+    </div>
+    {% block extra_body %}{% endblock %}
+    {% block scripts %}{% endblock %}
+</body>
+</html>
