@@ -1,9 +1,14 @@
 {% load static %}
 <!-- ======= Header ======= -->
-<header id="header" class="header  d-flex align-items-center justify-content-between">
+<header id="header" class="header fixed-top d-flex align-items-center">
 
-  <!-- Toggle Sidebar Button -->
-  <i class="bi bi-list toggle"></i>
+  <div class="d-flex align-items-center justify-content-between">
+    <a href="{% url 'optibreed:dashboard'%}" class="logo d-flex align-items-center">
+      <img src="assets/img/logo.png" alt="">
+      <span class="d-none d-lg-block">Optibreed</span>
+    </a>
+    <i class="bi bi-list toggle-sidebar-btn"></i>
+  </div><!-- End Logo -->
 
   <div class="search-bar">
     <form class="search-form d-flex align-items-center" method="POST" action="#">
@@ -40,8 +45,8 @@
           <li class="notification-item">
             <i class="bi bi-exclamation-circle text-warning"></i>
             <div>
-              <h4>Temperature Alert</h4>
-              <p>Room 3 temperature exceeds optimal levels</p>
+              <h4>Lorem Ipsum</h4>
+              <p>Quae dolorem earum veritatis oditseno</p>
               <p>30 min. ago</p>
             </div>
           </li>
@@ -53,8 +58,8 @@
           <li class="notification-item">
             <i class="bi bi-x-circle text-danger"></i>
             <div>
-              <h4>Humidity Issue</h4>
-              <p>Room 2 humidity is too low</p>
+              <h4>Atque rerum nesciunt</h4>
+              <p>Quae dolorem earum veritatis oditseno</p>
               <p>1 hr. ago</p>
             </div>
           </li>
@@ -66,8 +71,8 @@
           <li class="notification-item">
             <i class="bi bi-check-circle text-success"></i>
             <div>
-              <h4>Sensor Update</h4>
-              <p>New sensor added in Room 5</p>
+              <h4>Sit rerum fuga</h4>
+              <p>Quae dolorem earum veritatis oditseno</p>
               <p>2 hrs. ago</p>
             </div>
           </li>
@@ -79,8 +84,8 @@
           <li class="notification-item">
             <i class="bi bi-info-circle text-primary"></i>
             <div>
-              <h4>System Maintenance</h4>
-              <p>Scheduled for tomorrow at 2 PM</p>
+              <h4>Dicta reprehenderit</h4>
+              <p>Quae dolorem earum veritatis oditseno</p>
               <p>4 hrs. ago</p>
             </div>
           </li>
@@ -117,7 +122,7 @@
               <img src="assets/img/messages-1.jpg" alt="" class="rounded-circle">
               <div>
                 <h4>Maria Hudson</h4>
-                <p>New sensor is performing well...</p>
+                <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
                 <p>4 hrs. ago</p>
               </div>
             </a>
@@ -131,7 +136,7 @@
               <img src="assets/img/messages-2.jpg" alt="" class="rounded-circle">
               <div>
                 <h4>Anna Nelson</h4>
-                <p>Room 1 conditions are stable...</p>
+                <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
                 <p>6 hrs. ago</p>
               </div>
             </a>
@@ -145,7 +150,7 @@
               <img src="assets/img/messages-3.jpg" alt="" class="rounded-circle">
               <div>
                 <h4>David Muldon</h4>
-                <p>Maintenance task completed...</p>
+                <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
                 <p>8 hrs. ago</p>
               </div>
             </a>
@@ -166,20 +171,20 @@
 
         <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
           <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
-          <span class="d-none d-md-block dropdown-toggle ps-2">{{ request.user }}</span>
-        </a><!-- End Profile Image Icon -->
+          <span class="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
+        </a><!-- End Profile Iamge Icon -->
 
         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
           <li class="dropdown-header">
-            <h6>{{ request.user }}</h6>
-            <span>Web Developer</span>
+            <h6>Kevin Anderson</h6>
+            <span>Web Designer</span>
           </li>
           <li>
             <hr class="dropdown-divider">
           </li>
 
           <li>
-            <a class="dropdown-item d-flex align-items-center" href="#">
+            <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
               <i class="bi bi-person"></i>
               <span>My Profile</span>
             </a>
@@ -209,7 +214,7 @@
           </li>
 
           <li>
-            <a class="dropdown-item d-flex align-items-center" href="{% url 'logout' %}">
+            <a class="dropdown-item d-flex align-items-center" href="#">
               <i class="bi bi-box-arrow-right"></i>
               <span>Sign Out</span>
             </a>

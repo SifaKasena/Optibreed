@@ -2,55 +2,561 @@
 {% load static %}
 
 {% block title %}Dashboard{% endblock %}
-{% block styles %}
+<!-- {% block styles %}
 <link rel="stylesheet" href="{% static 'dashboard.css' %}">
-{% endblock %}
+{% endblock %} -->
 
 {% block content %}
-<div class="main-content">
-    <div class="statistics">
-        <div class="stat-item">
-            <i class="bi bi-speedometer2" style="font-size: 2rem;"></i>
-            <div class="stat-info">
-                <div class="stat-number">{{ installed_sensors }}</div>
-                <div class="stat-label">installed sensors</div>
+<main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Dashboard</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'optibreed:dashboard' %}">Home</a></li>
+          <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section dashboard">
+      <div class="row">
+
+        <!-- Left side columns -->
+        <div class="col-lg-8">
+          <div class="row">
+
+            <!-- Temperature Card -->
+            <div class="col-xxl-4 col-md-6">
+                <div class="card info-card temperature-card">
+                    <!-- Filter Dropdown -->
+                    <div class="filter">
+                        <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                            <li class="dropdown-header text-start">
+                                <h6>Filter</h6>
+                            </li>
+                            <li><a class="dropdown-item" href="#">Today</a></li>
+                            <li><a class="dropdown-item" href="#">This Month</a></li>
+                            <li><a class="dropdown-item" href="#">This Year</a></li>
+                        </ul>
+                    </div>
+            
+                    <!-- Card Body -->
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <h5 class="card-title">Temperature <span>| Today</span></h5>
+            
+                        <!-- Icon and Temperature Reading -->
+                        <div class="d-flex flex-column align-items-center mb-auto">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-thermometer-half"></i>
+                                <h6>22°C</h6>
+                            </div>
+                        </div>
+            
+                        <!-- Min and Max Temperature Readings -->
+                        <div class="d-flex justify-content-between mt-auto">
+                            <span class="text-muted small fs-6">Min: 18°C</span>
+                            <span class="text-muted small fs-6">Max: 25°C</span>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- End Temperature Card -->
+
+
+            <!-- Humidity Card -->
+            <div class="col-xxl-4 col-md-6">
+                <div class="card info-card humidity-card">
+                    <!-- Filter Dropdown -->
+                    <div class="filter">
+                        <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                            <li class="dropdown-header text-start">
+                                <h6>Filter</h6>
+                            </li>
+                            <li><a class="dropdown-item" href="#">Today</a></li>
+                            <li><a class="dropdown-item" href="#">This Month</a></li>
+                            <li><a class="dropdown-item" href="#">This Year</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <h5 class="card-title">Humidity <span>| Today</span></h5>
+
+                        <!-- Icon and Humidity Reading -->
+                        <div class="d-flex flex-column align-items-center mb-auto">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-droplet-half"></i>
+                                <h6>60%</h6>
+                            </div>
+                        </div>
+
+                        <!-- Min and Max Humidity Readings -->
+                        <div class="d-flex justify-content-between mt-auto">
+                            <span class="text-muted small fs-6">Min: 50%</span>
+                            <span class="text-muted small fs-6">Max: 70%</span>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- End Humidity Card -->
+
+
+            <!-- Light Intensity Card -->
+            <div class="col-xxl-4 col-md-6">
+                <div class="card info-card light-intensity-card">
+                    <!-- Filter Dropdown -->
+                    <div class="filter">
+                        <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                            <li class="dropdown-header text-start">
+                                <h6>Filter</h6>
+                            </li>
+                            <li><a class="dropdown-item" href="#">Today</a></li>
+                            <li><a class="dropdown-item" href="#">This Month</a></li>
+                            <li><a class="dropdown-item" href="#">This Year</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <h5 class="card-title">Light Intensity <span>| Today</span></h5>
+
+                        <!-- Icon and Light Intensity Reading -->
+                        <div class="d-flex flex-column align-items-center mb-auto">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-brightness-high"></i>
+                                <h6 class="ms-3">800 lux</h6>
+                            </div>
+                        </div>
+
+                        <!-- Min and Max Light Intensity Readings -->
+                        <div class="d-flex justify-content-between mt-auto">
+                            <span class="text-muted small fs-6">Min: 600 lux</span>
+                            <span class="text-muted small fs-6">Max: 1000 lux</span>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- End Light Intensity Card -->
+
+
+            <!-- Combined Graph -->
+            <div class="col-12">
+                <div class="card">
+
+                  <div class="filter">
+                    <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                      <li class="dropdown-header text-start">
+                        <h6>Filter</h6>
+                      </li>
+                      <li><a class="dropdown-item" href="#">Today</a></li>
+                      <li><a class="dropdown-item" href="#">This Month</a></li>
+                      <li><a class="dropdown-item" href="#">This Year</a></li>
+                    </ul>
+                  </div>
+  
+                  <div class="card-body">
+                    <h5 class="card-title">Environmental Conditions <span>/ Today</span></h5>
+  
+                    <!-- Line Chart -->
+                    <div id="conditionsChart"></div>
+  
+                    <script>
+                      document.addEventListener("DOMContentLoaded", () => {
+                        new ApexCharts(document.querySelector("#conditionsChart"), {
+                          series: [{
+                            name: 'Temperature',
+                            data: [22, 23, 21, 20, 22, 23, 24],
+                          }, {
+                            name: 'Humidity',
+                            data: [60, 62, 61, 59, 60, 63, 64]
+                          }, {
+                            name: 'Light Intensity',
+                            data: [800, 820, 780, 790, 810, 830, 850]
+                          }],
+                          chart: {
+                            height: 350,
+                            type: 'line',
+                            toolbar: {
+                              show: false
+                            },
+                          },
+                          markers: {
+                            size: 4
+                          },
+                          colors: ['#4154f1', '#2eca6a', '#ff771d'],
+                          stroke: {
+                            curve: 'smooth',
+                            width: 2
+                          },
+                          xaxis: {
+                            categories: ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00"]
+                          },
+                          tooltip: {
+                            x: {
+                              format: 'HH:mm'
+                            },
+                          }
+                        }).render();
+                      });
+                    </script>
+                    <!-- End Line Chart -->
+  
+                  </div>
+  
+                </div>
+              </div><!-- End Combined Graph -->
+
+            <!-- Recent Alerts -->
+            <div class="col-12">
+                <div class="card recent-alerts overflow-auto">
+            
+                <div class="filter">
+                    <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                        <h6>Filter</h6>
+                    </li>
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                    </ul>
+                </div>
+            
+                <div class="card-body">
+                    <h5 class="card-title">Recent Alerts <span>| Today</span></h5>
+            
+                    <table class="table table-borderless datatable">
+                    <thead>
+                        <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Sensor ID</th>
+                        <th scope="col">Issue</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                        <th scope="row"><a href="#">#101</a></th>
+                        <td>Temp-01</td>
+                        <td><a href="#" class="text-primary">Temperature Drop</a></td>
+                        <td>Temperature dropped below 18°C at...</td>
+                        <td><span class="badge bg-warning">In Progress</span></td>
+                        </tr>
+                        <tr>
+                        <th scope="row"><a href="#">#102</a></th>
+                        <td>Humidity-05</td>
+                        <td><a href="#" class="text-primary">Humidity Rise</a></td>
+                        <td>Humidity rose above 70% at...</td>
+                        <td><span class="badge bg-danger">Unresolved</span></td>
+                        </tr>
+                        <tr>
+                        <th scope="row"><a href="#">#103</a></th>
+                        <td>Light-07</td>
+                        <td><a href="#" class="text-primary">High Light Intensity</a></td>
+                        <td>Light intensity exceeded 1000 lux...</td>
+                        <td><span class="badge bg-success">Resolved</span></td>
+                        </tr>
+                        <tr>
+                        <th scope="row"><a href="#">#104</a></th>
+                        <td>Temp-02</td>
+                        <td><a href="#" class="text-primary">Temperature Spike</a></td>
+                        <td>Temperature rose above 25°C at...</td>
+                        <td><span class="badge bg-warning">In Progress</span></td>
+                        </tr>
+                        <tr>
+                        <th scope="row"><a href="#">#105</a></th>
+                        <td>Humidity-03</td>
+                        <td><a href="#" class="text-primary">Low Humidity</a></td>
+                        <td>Humidity dropped below 50% at...</td>
+                        <td><span class="badge bg-success">Resolved</span></td>
+                        </tr>
+                    </tbody>
+                    </table>
+            
+                </div>
+            
+                </div>
+            </div><!-- End Recent Alerts -->
+  
+
+            <!-- Top Selling -->
+            <div class="col-12">
+              <div class="card top-selling overflow-auto">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
+                </div>
+
+                <div class="card-body pb-0">
+                  <h5 class="card-title">Top Selling <span>| Today</span></h5>
+
+                  <table class="table table-borderless">
+                    <thead>
+                      <tr>
+                        <th scope="col">Preview</th>
+                        <th scope="col">Product</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Sold</th>
+                        <th scope="col">Revenue</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row"><a href="#"><img src="assets/img/product-1.jpg" alt=""></a></th>
+                        <td><a href="#" class="text-primary fw-bold">Ut inventore ipsa voluptas nulla</a></td>
+                        <td>$64</td>
+                        <td class="fw-bold">124</td>
+                        <td>$5,828</td>
+                      </tr>
+                      <tr>
+                        <th scope="row"><a href="#"><img src="assets/img/product-2.jpg" alt=""></a></th>
+                        <td><a href="#" class="text-primary fw-bold">Exercitationem similique doloremque</a></td>
+                        <td>$46</td>
+                        <td class="fw-bold">98</td>
+                        <td>$4,508</td>
+                      </tr>
+                      <tr>
+                        <th scope="row"><a href="#"><img src="assets/img/product-3.jpg" alt=""></a></th>
+                        <td><a href="#" class="text-primary fw-bold">Doloribus nisi exercitationem</a></td>
+                        <td>$59</td>
+                        <td class="fw-bold">74</td>
+                        <td>$4,366</td>
+                      </tr>
+                      <tr>
+                        <th scope="row"><a href="#"><img src="assets/img/product-4.jpg" alt=""></a></th>
+                        <td><a href="#" class="text-primary fw-bold">Officiis quaerat sint rerum error</a></td>
+                        <td>$32</td>
+                        <td class="fw-bold">63</td>
+                        <td>$2,016</td>
+                      </tr>
+                      <tr>
+                        <th scope="row"><a href="#"><img src="assets/img/product-5.jpg" alt=""></a></th>
+                        <td><a href="#" class="text-primary fw-bold">Sit unde debitis delectus repellendus</a></td>
+                        <td>$79</td>
+                        <td class="fw-bold">41</td>
+                        <td>$3,239</td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                </div>
+
+              </div>
+            </div><!-- End Top Selling -->
+
+          </div>
+        </div><!-- End Left side columns -->
+
+        <!-- Right side columns -->
+        <div class="col-lg-4">
+
+        <!-- Recent Activity -->
+        <div class="card">
+            <div class="filter">
+            <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <li class="dropdown-header text-start">
+                <h6>Filter</h6>
+                </li>
+                <li><a class="dropdown-item" href="#">Today</a></li>
+                <li><a class="dropdown-item" href="#">This Month</a></li>
+                <li><a class="dropdown-item" href="#">This Year</a></li>
+            </ul>
             </div>
-        </div>
-        <div class="stat-item">
-            <i class="bi bi-sliders" style="font-size: 2rem;"></i>
-            <div class="stat-info">
-                <div class="stat-number">{{ auto_adjustments }}</div>
-                <div class="stat-label">auto adjustments</div>
+        
+            <div class="card-body">
+            <h5 class="card-title">Recent Activity <span>| Today</span></h5>
+        
+            <div class="activity">
+        
+                <div class="activity-item d-flex">
+                <div class="activite-label">10 min</div>
+                <i class='bi bi-circle-fill activity-badge text-success align-self-start'></i>
+                <div class="activity-content">
+                    Sensor <a href="#" class="fw-bold text-dark">Temp-01</a> was turned off
+                </div>
+                </div><!-- End activity item-->
+        
+                <div class="activity-item d-flex">
+                <div class="activite-label">30 min</div>
+                <i class='bi bi-circle-fill activity-badge text-warning align-self-start'></i>
+                <div class="activity-content">
+                    Manual adjustment: Humidity <a href="#" class="fw-bold text-dark">Humidity-05</a> set to 60%
+                </div>
+                </div><!-- End activity item-->
+        
+                <div class="activity-item d-flex">
+                <div class="activite-label">1 hr</div>
+                <i class='bi bi-circle-fill activity-badge text-danger align-self-start'></i>
+                <div class="activity-content">
+                    Automation <a href="#" class="fw-bold text-dark">Light Control</a> turned off
+                </div>
+                </div><!-- End activity item-->
+        
+                <div class="activity-item d-flex">
+                <div class="activite-label">2 hrs</div>
+                <i class='bi bi-circle-fill activity-badge text-info align-self-start'></i>
+                <div class="activity-content">
+                    Sensor <a href="#" class="fw-bold text-dark">Temp-02</a> was turned on
+                </div>
+                </div><!-- End activity item-->
+        
+                <div class="activity-item d-flex">
+                <div class="activite-label">5 hrs</div>
+                <i class='bi bi-circle-fill activity-badge text-primary align-self-start'></i>
+                <div class="activity-content">
+                    Manual adjustment: Light intensity <a href="#" class="fw-bold text-dark">Light-07</a> set to 800 lux
+                </div>
+                </div><!-- End activity item-->
+        
+                <div class="activity-item d-flex">
+                <div class="activite-label">1 day</div>
+                <i class='bi bi-circle-fill activity-badge text-muted align-self-start'></i>
+                <div class="activity-content">
+                    Automation <a href="#" class="fw-bold text-dark">Humidity Control</a> turned on
+                </div>
+                </div><!-- End activity item-->
+        
             </div>
-        </div>
-        <div class="stat-item">
-            <i class="bi bi-tools" style="font-size: 2rem;"></i>
-            <div class="stat-info">
-                <div class="stat-number">{{ manual_adjustments }}</div>
-                <div class="stat-label">manual adjustments</div>
+        
             </div>
-        </div>
-    </div>
-    <div class="charts">
-        <div class="chart-large">
-            <img src="{% static 'images/rectangle_13.png' %}" alt="Large Chart">
-        </div>
-        <div class="chart-small">
-            <img src="{% static 'images/rectangle_14.png' %}" alt="Small Chart">
-        </div>
-    </div>
-    <div class="bottom-section">
-        <div class="bottom-item">
-            <img src="{% static 'images/rectangle_15.png' %}" alt="Bottom Item">
-        </div>
-        <div class="bottom-info">
-            <div class="info-item">
-                <i class="bi bi-info-circle" style="font-size: 2rem;"></i>
+        </div><!-- End Recent Activity -->
+  
+        <!-- Condition Deviations Report -->
+        <div class="card">
+            <div class="filter">
+            <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <li class="dropdown-header text-start">
+                <h6>Filter</h6>
+                </li>
+                <li><a class="dropdown-item" href="#">Today</a></li>
+                <li><a class="dropdown-item" href="#">This Month</a></li>
+                <li><a class="dropdown-item" href="#">This Year</a></li>
+            </ul>
             </div>
-            <div class="info-item">
-                <i class="bi bi-info-circle" style="font-size: 2rem;"></i>
+        
+            <div class="card-body pb-0">
+            <h5 class="card-title">Condition Deviations <span>| This Month</span></h5>
+        
+            <div id="conditionDeviationsChart" style="min-height: 400px;" class="echart"></div>
+        
+            <script>
+                document.addEventListener("DOMContentLoaded", () => {
+                var conditionDeviationsChart = echarts.init(document.querySelector("#conditionDeviationsChart")).setOption({
+                    legend: {
+                    data: ['Optimal Conditions', 'Actual Conditions']
+                    },
+                    radar: {
+                    // shape: 'circle',
+                    indicator: [
+                        { name: 'Temperature', max: 50 },
+                        { name: 'Humidity', max: 100 },
+                        { name: 'Light Intensity', max: 1000 }
+                    ]
+                    },
+                    series: [{
+                    name: 'Optimal vs Actual Conditions',
+                    type: 'radar',
+                    data: [
+                        {
+                        value: [22, 55, 800],
+                        name: 'Optimal Conditions'
+                        },
+                        {
+                        value: [30, 70, 950],
+                        name: 'Actual Conditions'
+                        }
+                    ]
+                    }]
+                });
+                });
+            </script>
+        
             </div>
-        </div>
-    </div>
-</div>
+        </div><!-- End Condition Deviations Report -->
+  
+
+        <!-- System Adjustments and Sensors Report -->
+        <div class="card">
+            <div class="filter">
+            <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <li class="dropdown-header text-start">
+                <h6>Filter</h6>
+                </li>
+                <li><a class="dropdown-item" href="#">Today</a></li>
+                <li><a class="dropdown-item" href="#">This Month</a></li>
+                <li><a class="dropdown-item" href="#">This Year</a></li>
+            </ul>
+            </div>
+        
+            <div class="card-body pb-0">
+            <h5 class="card-title">System Adjustments and Sensors <span>| Today</span></h5>
+        
+            <div id="adjustmentsChart" style="min-height: 400px;" class="echart"></div>
+        
+            <script>
+                document.addEventListener("DOMContentLoaded", () => {
+                echarts.init(document.querySelector("#adjustmentsChart")).setOption({
+                    tooltip: {
+                    trigger: 'item'
+                    },
+                    legend: {
+                    top: '5%',
+                    left: 'center'
+                    },
+                    series: [{
+                    name: 'Adjustments and Sensors',
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    avoidLabelOverlap: false,
+                    label: {
+                        show: false,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        label: {
+                        show: true,
+                        fontSize: '18',
+                        fontWeight: 'bold'
+                        }
+                    },
+                    labelLine: {
+                        show: false
+                    },
+                    data: [
+                        { value: 1048, name: 'Manual Adjustments' },
+                        { value: 735, name: 'Automatic Adjustments' },
+                        { value: 580, name: 'Installed Sensors' }
+                    ]
+                    }]
+                });
+                });
+            </script>
+        
+            </div>
+        </div><!-- End System Adjustments and Sensors Report -->
+  
+
+
+
+        </div><!-- End Right side columns -->
+
+      </div>
+    </section>
+
+  </main><!-- End #main -->
 {% endblock %}

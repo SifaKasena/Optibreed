@@ -125,3 +125,171 @@ Authentication and Authorization: Ensure views are protected based on user roles
 API Views (Optional): If exposing APIs, create corresponding API views and serializers for CRUD operations on rooms and sensors.
 Real-time Data Handling: Implement WebSocket or similar technology for real-time updates if needed.
 External Integrations: Ensure integration with Google Sign-in follows OAuth standards and handles user authentication securely.
+
+
+
+            <!-- Temperature Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card temperature-card">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <h5 class="card-title">Temperature <span>| Today</span></h5>
+                  <div class="d-flex flex-column align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-thermometer-half"></i>
+                      <h6>22°C</h6>
+                    </div>
+                    <div class="ps-1">
+                        <span class="text-muted small pt-2 ps-1">Min: 18°C, Max: 25°C</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Temperature Card -->
+
+            <!-- Humidity Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card humidity-card">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <h5 class="card-title">Humidity <span>| Today</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-droplet-half"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>60%</h6>
+                      <span class="text-muted small pt-2 ps-1">Min: 50%, Max: 70%</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Humidity Card -->
+
+            <!-- Light Intensity Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card light-intensity-card">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <h5 class="card-title">Light Intensity <span>| Today</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-brightness-high"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>800 lux</h6>
+                      <span class="text-muted small pt-2 ps-1">Min: 600 lux, Max: 1000 lux</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Light Intensity Card -->
+
+            <!-- Combined Graph -->
+            <div class="col-12">
+              <div class="card">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <h5 class="card-title">Environmental Conditions <span>/ Today</span></h5>
+
+                  <!-- Line Chart -->
+                  <div id="conditionsChart"></div>
+
+                  <script>
+                    document.addEventListener("DOMContentLoaded", () => {
+                      new ApexCharts(document.querySelector("#conditionsChart"), {
+                        series: [{
+                          name: 'Temperature',
+                          data: [22, 23, 21, 20, 22, 23, 24],
+                        }, {
+                          name: 'Humidity',
+                          data: [60, 62, 61, 59, 60, 63, 64]
+                        }, {
+                          name: 'Light Intensity',
+                          data: [800, 820, 780, 790, 810, 830, 850]
+                        }],
+                        chart: {
+                          height: 350,
+                          type: 'line',
+                          toolbar: {
+                            show: false
+                          },
+                        },
+                        markers: {
+                          size: 4
+                        },
+                        colors: ['#4154f1', '#2eca6a', '#ff771d'],
+                        stroke: {
+                          curve: 'smooth',
+                          width: 2
+                        },
+                        xaxis: {
+                          categories: ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00"]
+                        },
+                        tooltip: {
+                          x: {
+                            format: 'HH:mm'
+                          },
+                        }
+                      }).render();
+                    });
+                  </script>
+                  <!-- End Line Chart -->
+
+                </div>
+
+              </div>
+            </div><!-- End Combined Graph -->

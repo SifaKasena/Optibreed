@@ -1,53 +1,71 @@
 {% load static %}
-<div class="navigation">
-  <ul>
-      <li>
-          <a href="#">
-              <span class="icon">
-                  <ion-icon name="logo-apple"></ion-icon> <!-- Random logo icon -->
-              </span>
-              <span class="title">Rand Logo</span>
-          </a>
-      </li>
-      <li>
-          <a href="{% url 'optibreed:dashboard' %}">
-              <span class="icon">
-                  <ion-icon name="home-outline"></ion-icon> <!-- Dashboard icon -->
-              </span>
-              <span class="title">Dashboard</span>
-          </a>
-      </li>
-      <li>
-          <a href="#">
-              <span class="icon">
-                  <ion-icon name="people-outline"></ion-icon> <!-- Rooms icon -->
-              </span>
-              <span class="title">Rooms</span>
-          </a>
-      </li>
-      <li>
-          <a href="#">
-              <span class="icon">
-                  <ion-icon name="person-outline"></ion-icon> <!-- Profile icon -->
-              </span>
-              <span class="title">Profile</span>
-          </a>
-      </li>
-      <li>
-          <a href="#">
-              <span class="icon">
-                  <ion-icon name="chatbubble-outline"></ion-icon> <!-- Notifications icon -->
-              </span>
-              <span class="title">Notifications</span>
-          </a>
-      </li>
-      <li>
-          <a href="#">
-              <span class="icon">
-                  <ion-icon name="document-text-outline"></ion-icon> <!-- Reports icon -->
-              </span>
-              <span class="title">Reports</span>
-          </a>
-      </li>
-  </ul>
-</div>
+<aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+      <li class="nav-item">
+        <a class="nav-link " href="{% url 'optibreed:dashboard' %}">
+          <i class="bi bi-grid"></i>
+          <span>Dashboard</span>
+        </a>
+      </li><!-- End Dashboard Nav -->
+      <li class="nav-item">
+        <a class="nav-link " href="{% url 'optibreed:rooms' %}">
+          <i class="ri-home-5-fill"></i>
+          <span>Rooms</span>
+        </a>
+      </li><!-- End Dashboard Nav -->
+      <li class="nav-item">
+        <a class="nav-link " href="{% url 'optibreed:notifications_list' %}">
+          <i class="ri-message-3-fill"></i>
+          <span>Notifications</span>
+        </a>
+      </li><!-- End Dashboard Nav -->
+      <li class="nav-item">
+        <a class="nav-link " href="#">
+          <i class="ri-24-hours-line"></i>
+          <span>Activity log</span>
+        </a>
+      </li><!-- End Dashboard Nav -->
+      <li class="nav-item">
+        <a class="nav-link " href="#">
+          <i class="ri-chat-history-fill"></i>
+          <span>Report</span>
+        </a>
+      </li><!-- End Dashboard Nav -->
+
+
+      <li class="nav-heading">Info Pages</li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#">
+          <i class="bi bi-person"></i>
+          <span>Profile</span>
+        </a>
+      </li><!-- End Profile Page Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#">
+          <i class="bi bi-question-circle"></i>
+          <span>F.A.Q</span>
+        </a>
+      </li><!-- End F.A.Q Page Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#">
+          <i class="bi bi-envelope"></i>
+          <span>Contact</span>
+        </a>
+      </li><!-- End Contact Page Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#">
+          <i class="bi bi-box-arrow-in-right"></i>
+          <span>Logout</span>
+        </a>
+      </li><!-- End Login Page Nav -->
+
+
+    </ul>
+
+  </aside><!-- End Sidebar-->

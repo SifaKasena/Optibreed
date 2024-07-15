@@ -1,11 +1,20 @@
 {% extends "core/base.html" %}
 
 {% block content %}
-<div class="container mt-5">
+<div id="main" class="main mt-5">
     <div class="card">
-        <div class="card-header">
-            <h2>Edit Room</h2>
-        </div>
+        <div class="pagetitle m-lg-4">
+            <h1>Rooms</h1>
+            <nav>
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                  <a href="{% url 'optibreed:dashboard' %}">Home</a>
+                </li>
+                <li class="breadcrumb-item active">Rooms</li>
+                <li class="breadcrumb-item active">Edit-room</li>
+              </ol>
+            </nav>
+          </div>
         <div class="card-body">
             <form method="post">
                 {% csrf_token %}

@@ -16,7 +16,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .forms import RegistrationForm, ReportForm, RoomForm
-from .models import Condition, Room
+from .models import Condition, Room, Notification
 from .serializers import ConditionSerializer
 import matplotlib.pyplot as plt
 
@@ -53,39 +53,81 @@ def dashboard(request):
     }
     return render(request, 'core/dashboard/dashboard.html', context)
 
+@login_required
+def rooms(request):
+    rooms = Room.objects.filter(User=request.user)
+    return render(request, 'core/room/rooms.html', {'rooms': rooms})
+
 
 @login_required
 def add_room(request):
-
     if request.method == 'POST':
         form = RoomForm(request.POST)
         if form.is_valid():
-            room = form.save(commit=False)  # Create a Room instance but don't save to the database yet
-            room.User = request.user  # Set the User field to the logged-in user
-            room.save()  # Save the Room instance to the database
-            return redirect('optibreed:home')  # Redirect to a success page or another relevant page
+            room = form.save(commit=False)
+            room.User = request.user
+            room.save()
+            return redirect('optibreed:home')
     else:
         form = RoomForm()
     return render(request, 'add_room.html', {'form': form})
 
+@login_required
+def edit_room(request, room_id):
+    room = get_object_or_404(Room, id=room_id)
+    if request.method == 'POST':
+        form = RoomForm(request.POST, instance=room)
+        if form.is_valid():
+            form.save()
+            return redirect('optibreed:rooms', room_id=room_id)
+    else:
+        form = RoomForm(instance=room)
+    return render(request, 'edit_room.html', {'form': form})
 
-# Collect data from sensor
+@login_required
+def room_conditions(request, room_id):
+    room = Room.objects.get(id=room_id, User=request.user)
+    conditions = Condition.objects.filter(Room=room).order_by('-Timestamp')[:50]
+
+    if conditions:
+        current_condition = conditions[0]
+        current_temperature = current_condition.Temperature
+        current_humidity = current_condition.Humidity
+        current_co2 = current_condition.Lightintensity  # Assuming Lightintensity represents CO2 levels in this context
+    else:
+        current_temperature = current_humidity = current_co2 = "No data available"
+
+    labels = [condition.Timestamp.strftime('%Y-%m-%d %H:%M:%S') for condition in conditions]
+    temperatures = [condition.Temperature for condition in conditions]
+    humidities = [condition.Humidity for condition in conditions]
+    light_intensities = [condition.Lightintensity for condition in conditions]
+
+    context = {
+        'room': room,
+        'conditions': conditions,
+        'labels': json.dumps(labels),
+        'temperatures': json.dumps(temperatures),
+        'humidities': json.dumps(humidities),
+        'light_intensities': json.dumps(light_intensities),
+        'current_temperature': current_temperature,
+        'current_humidity': current_humidity,
+        'current_co2': current_co2
+    }
+
+    return render(request, 'room_details.html', context)
+
 @csrf_exempt
 def receive_data(request):
-
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            room_id = data.get('room_id')  # Ensure the data contains a room_id
+            room_id = data.get('room_id')
             timestamp = data.get('timestamp')
             temperature = data.get('temperature')
             humidity = data.get('humidity')
             light_intensity = data.get('light_intensity')
 
-            # Find the room instance (Assuming Room model exists)
             room = Room.objects.get(id=room_id)
-
-            # Create and save the Condition instance
             Condition.objects.create(
                 Room=room,
                 Timestamp=timestamp,
@@ -101,12 +143,9 @@ def receive_data(request):
             return JsonResponse({"status": "failure", "reason": "Room not found"}, status=404)
     return JsonResponse({"status": "failure", "reason": "Invalid request method"}, status=405)
 
-
-# viauslize historical data
 def room_conditions(request, room_id):
-
     room = Room.objects.get(id=room_id, User=request.user)
-    conditions = Condition.objects.filter(Room=room).order_by('-Timestamp')[:50]  # Limit to first 50 records
+    conditions = Condition.objects.filter(Room=room).order_by('-Timestamp')[:50]
 
     labels = [condition.Timestamp.strftime('%Y-%m-%d %H:%M:%S') for condition in conditions]
     temperatures = [condition.Temperature for condition in conditions]
@@ -125,19 +164,36 @@ def room_conditions(request, room_id):
     return render(request, 'room.html', context)
 
 
-# Edit room information
-def edit_room(request, room_id):
+# Notifications list view
+@login_required
+def notifications_list(request):
+    status = request.GET.get('status')
+    date = request.GET.get('date')
 
-    room = get_object_or_404(Room, id=room_id)
-    if request.method == 'POST':
-        form = RoomForm(request.POST, instance=room)
-        if form.is_valid():
-            form.save()
-            return redirect('optibreed:rooms', room_id=room_id)
-    else:
-        form = RoomForm(instance=room)
-    return render(request, 'edit_room.html', {'form': form})
+    notifications = Notification.objects.filter(User=request.user)
 
+    if status:
+        notifications = notifications.filter(status=status)
+    if date:
+        notifications = notifications.filter(timestamp__date=date)
+
+    context = {
+        'notifications': notifications
+    }
+
+    return render(request, 'core/notifications/list.html', context)
+
+
+# Notification details view
+@login_required
+def notification_details(request, notification_id):
+    notification = get_object_or_404(Notification, id=notification_id, User=request.user)
+
+    context = {
+        'notification': notification
+    }
+
+    return render(request, 'notifications/details.html', context)
 
 # Displaying updated condition
 class LatestConditionView(APIView):

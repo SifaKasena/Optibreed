@@ -2,19 +2,23 @@
 {% load static %}
 
 {% block content %}
-<div class="container my-4">
+<div class="main" id="main">
     <div class="card">
         <div class="card-header">
             <h2>Notification Details</h2>
         </div>
         <div class="card-body">
+            {% if notification %}
             <p class="card-text"><strong>Message:</strong> {{ notification.message }}</p>
             <p class="card-text"><strong>Timestamp:</strong> {{ notification.timestamp }}</p>
             <p class="card-text"><strong>Status:</strong> {{ notification.status }}</p>
-            <div class="actions">
+            <div class="actions mt-3">
                 <a href="{% url 'notifications:mark_as_read' notification.id %}" class="btn btn-success">Mark as Read</a>
                 <a href="{% url 'notifications:delete' notification.id %}" class="btn btn-danger">Delete</a>
             </div>
+            {% else %}
+            <p>Notification details not available.</p>
+            {% endif %}
         </div>
     </div>
 </div>
