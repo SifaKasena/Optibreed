@@ -1,18 +1,30 @@
 {% extends "core/base.html" %}
 
 {% block content %}
-<div id="main" class="main mt-5">
+<div class="pagetitle">
+    <h1>Reports</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'optibreed:dashboard' %}">Home</a></li>
+            <li class="breadcrumb-item active">Report</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<div id="main" class="container mt-5">
     <div id="header" class="text-center mb-4">
         <h2>{{ user.username }}</h2>
         <h1>{{ room.name }} Report</h1>
-        <a href="{% url 'optibreed:home' %}"><img src="{% static 'home.png' %}" alt="Home" class="home-icon"></a>
+        <a href="{% url 'optibreed:home' %}">
+            <img src="{% static 'home.png' %}" alt="Home" class="img-fluid home-icon" style="width: 40px;">
+        </a>
     </div>
 
     <div id="hero" class="mb-4">
         <form method="get" class="form-inline justify-content-center">
             {{ form.as_p }}
-            <button type="submit" class="btn btn-primary mr-2">Generate Report</button>
-            <button type="submit" name="download_pdf" class="btn btn-secondary">Download PDF</button>
+            <button type="submit" class="btn btn-primary mx-2">Generate Report</button>
+            <button type="submit" name="download_pdf" class="btn btn-secondary mx-2">Download PDF</button>
         </form>
     </div>
 
@@ -50,15 +62,15 @@
 
     <div id="charts" class="mb-5">
         <div class="row">
-            <div class="col-md-4 chart-container">
+            <div class="col-md-4 mb-4">
                 <h3>Temperature Over Time:</h3>
                 <img src="data:image/png;base64,{{ image_base64_temp }}" alt="Temperature Over Time" class="img-fluid">
             </div>
-            <div class="col-md-4 chart-container">
+            <div class="col-md-4 mb-4">
                 <h3>Humidity Over Time:</h3>
                 <img src="data:image/png;base64,{{ image_base64_hum }}" alt="Humidity Over Time" class="img-fluid">
             </div>
-            <div class="col-md-4 chart-container">
+            <div class="col-md-4 mb-4">
                 <h3>Light Intensity Over Time:</h3>
                 <img src="data:image/png;base64,{{ image_base64_light }}" alt="Light Intensity Over Time" class="img-fluid">
             </div>
