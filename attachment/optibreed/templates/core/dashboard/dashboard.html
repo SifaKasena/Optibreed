@@ -28,185 +28,174 @@
 
             <!-- Temperature Card -->
             <div class="col-xxl-4 col-md-6">
-                <div class="card info-card temperature-card">
-                    <!-- Filter Dropdown -->
-                    <div class="filter">
-                        <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                            <li class="dropdown-header text-start">
-                                <h6>Filter</h6>
-                            </li>
-                            <li><a class="dropdown-item" href="#">Today</a></li>
-                            <li><a class="dropdown-item" href="#">This Month</a></li>
-                            <li><a class="dropdown-item" href="#">This Year</a></li>
-                        </ul>
-                    </div>
-            
-                    <!-- Card Body -->
-                    <div class="card-body d-flex flex-column justify-content-between">
-                        <h5 class="card-title">Temperature <span>| Today</span></h5>
-            
-                        <!-- Icon and Temperature Reading -->
-                        <div class="d-flex flex-column align-items-center mb-auto">
-                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                <i class="bi bi-thermometer-half"></i>
-                                <h6>22°C</h6>
-                            </div>
-                        </div>
-            
-                        <!-- Min and Max Temperature Readings -->
-                        <div class="d-flex justify-content-between mt-auto">
-                            <span class="text-muted small fs-6">Min: 18°C</span>
-                            <span class="text-muted small fs-6">Max: 25°C</span>
-                        </div>
-                    </div>
-                </div>
+              <div class="card info-card temperature-card">
+                  <div class="filter">
+                      <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                      <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                          <li class="dropdown-header text-start">
+                              <h6>Filter</h6>
+                          </li>
+                          <li><a class="dropdown-item" href="#">Today</a></li>
+                          <li><a class="dropdown-item" href="#">This Month</a></li>
+                          <li><a class="dropdown-item" href="#">This Year</a></li>
+                      </ul>
+                  </div>
+                  <div class="card-body d-flex flex-column justify-content-between">
+                      <h5 class="card-title">Temperature <span>| Today</span></h5>
+                      {% for condition in conditions %}
+                      <div class="d-flex flex-column align-items-center mb-auto">
+                          <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                              <i class="bi bi-thermometer-half"></i>
+                              <h6>{{ condition.Temperature|floatformat:2 }}°C</h6>
+                          </div>
+                      </div>
+                      <div class="d-flex justify-content-between mt-auto">
+                          <span class="text-muted small fs-6">Min: {{ min_temperature|floatformat:2 }}°C</span>
+                          <span class="text-muted small fs-6">Max: {{ max_temperature|floatformat:2 }}°C</span>
+                      </div>
+                      {% endfor %}
+                  </div>
+              </div>
             </div><!-- End Temperature Card -->
-
 
             <!-- Humidity Card -->
             <div class="col-xxl-4 col-md-6">
-                <div class="card info-card humidity-card">
-                    <!-- Filter Dropdown -->
-                    <div class="filter">
-                        <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                            <li class="dropdown-header text-start">
-                                <h6>Filter</h6>
-                            </li>
-                            <li><a class="dropdown-item" href="#">Today</a></li>
-                            <li><a class="dropdown-item" href="#">This Month</a></li>
-                            <li><a class="dropdown-item" href="#">This Year</a></li>
-                        </ul>
-                    </div>
-
-                    <!-- Card Body -->
-                    <div class="card-body d-flex flex-column justify-content-between">
-                        <h5 class="card-title">Humidity <span>| Today</span></h5>
-
-                        <!-- Icon and Humidity Reading -->
-                        <div class="d-flex flex-column align-items-center mb-auto">
-                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                <i class="bi bi-droplet-half"></i>
-                                <h6>60%</h6>
-                            </div>
-                        </div>
-
-                        <!-- Min and Max Humidity Readings -->
-                        <div class="d-flex justify-content-between mt-auto">
-                            <span class="text-muted small fs-6">Min: 50%</span>
-                            <span class="text-muted small fs-6">Max: 70%</span>
-                        </div>
-                    </div>
-                </div>
+              <div class="card info-card humidity-card">
+                  <div class="filter">
+                      <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                      <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                          <li class="dropdown-header text-start">
+                              <h6>Filter</h6>
+                          </li>
+                          <li><a class="dropdown-item" href="#">Today</a></li>
+                          <li><a class="dropdown-item" href="#">This Month</a></li>
+                          <li><a class="dropdown-item" href="#">This Year</a></li>
+                      </ul>
+                  </div>
+                  <div class="card-body d-flex flex-column justify-content-between">
+                      <h5 class="card-title">Humidity <span>| Today</span></h5>
+                      {% for condition in conditions %}
+                      <div class="d-flex flex-column align-items-center mb-auto">
+                          <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                              <i class="bi bi-droplet-half"></i>
+                              <h6>{{ condition.Humidity|floatformat:2 }}%</h6>
+                          </div>
+                      </div>
+                      <div class="d-flex justify-content-between mt-auto">
+                          <span class="text-muted small fs-6">Min: {{ min_humidity|floatformat:2 }}%</span>
+                          <span class="text-muted small fs-6">Max: {{ max_humidity|floatformat:2 }}%</span>
+                      </div>
+                      {% endfor %}
+                  </div>
+              </div>
             </div><!-- End Humidity Card -->
-
 
             <!-- Light Intensity Card -->
             <div class="col-xxl-4 col-md-6">
-                <div class="card info-card light-intensity-card">
-                    <!-- Filter Dropdown -->
+              <div class="card info-card light-intensity-card">
+                  <div class="filter">
+                      <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                      <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                          <li class="dropdown-header text-start">
+                              <h6>Filter</h6>
+                          </li>
+                          <li><a class="dropdown-item" href="#">Today</a></li>
+                          <li><a class="dropdown-item" href="#">This Month</a></li>
+                          <li><a class="dropdown-item" href="#">This Year</a></li>
+                      </ul>
+                  </div>
+                  <div class="card-body d-flex flex-column justify-content-between">
+                      <h5 class="card-title">Light Intensity <span>| Today</span></h5>
+                      {% for condition in conditions %}
+                      <div class="d-flex flex-column align-items-center mb-auto">
+                          <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                              <i class="bi bi-brightness-high"></i>
+                              <h6>{{ condition.Lightintensity|floatformat:2 }} lux</h6>
+                          </div>
+                      </div>
+                      <div class="d-flex justify-content-between mt-auto">
+                          <span class="text-muted small fs-6">Min: {{ min_light_intensity|floatformat:2 }} lux</span>
+                          <span class="text-muted small fs-6">Max: {{ max_light_intensity|floatformat:2 }} lux</span>
+                      </div>
+                      {% endfor %}
+                  </div>
+              </div>
+            </div><!-- End Light Intensity Card -->
+
+
+            <div class="col-12">
+                <div class="card">
                     <div class="filter">
                         <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                             <li class="dropdown-header text-start">
                                 <h6>Filter</h6>
                             </li>
-                            <li><a class="dropdown-item" href="#">Today</a></li>
-                            <li><a class="dropdown-item" href="#">This Month</a></li>
-                            <li><a class="dropdown-item" href="#">This Year</a></li>
+                            <li><a class="dropdown-item" href="?time_frame=today">Today</a></li>
+                            <li><a class="dropdown-item" href="?time_frame=this_week">This Week</a></li>
+                            <li><a class="dropdown-item" href="?time_frame=this_month">This Month</a></li>
                         </ul>
                     </div>
-
-                    <!-- Card Body -->
-                    <div class="card-body d-flex flex-column justify-content-between">
-                        <h5 class="card-title">Light Intensity <span>| Today</span></h5>
-
-                        <!-- Icon and Light Intensity Reading -->
-                        <div class="d-flex flex-column align-items-center mb-auto">
-                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                <i class="bi bi-brightness-high"></i>
-                                <h6 class="ms-3">800 lux</h6>
-                            </div>
-                        </div>
-
-                        <!-- Min and Max Light Intensity Readings -->
-                        <div class="d-flex justify-content-between mt-auto">
-                            <span class="text-muted small fs-6">Min: 600 lux</span>
-                            <span class="text-muted small fs-6">Max: 1000 lux</span>
-                        </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Environmental Conditions <span>/ {{ time_frame }}</span></h5>
+                        <!-- Line Chart -->
+                        <div id="conditionsChart"></div>
+                        <script>
+                            document.addEventListener("DOMContentLoaded", () => {
+                                new ApexCharts(document.querySelector("#conditionsChart"), {
+                                    series: [{
+                                        name: 'Temperature',
+                                        data: {{ temperatures|safe }},
+                                    }, {
+                                        name: 'Humidity',
+                                        data: {{ humidities|safe }},
+                                    }, {
+                                        name: 'Light Intensity',
+                                        data: {{ light_intensities|safe }},
+                                    }],
+                                    chart: {
+                                        height: 350,
+                                        type: 'line',
+                                        toolbar: {
+                                            show: false
+                                        },
+                                    },
+                                    markers: {
+                                        size: 4
+                                    },
+                                    colors: ['#4154f1', '#2eca6a', '#ff771d'],
+                                    stroke: {
+                                        curve: 'smooth',
+                                        width: 2
+                                    },
+                                    xaxis: {
+                                        categories: {{ timestamps|safe }},
+                                        type: 'datetime',
+                                    },
+                                    yaxis: {
+                                        labels: {
+                                            formatter: function (value) {
+                                                return value.toFixed(2); // Adjust the number of decimal places as needed
+                                            }
+                                        }
+                                    },
+                                    tooltip: {
+                                        x: {
+                                            format: 'dd/MM/yy HH:mm'
+                                        },
+                                    }
+                                }).render();
+                            });
+                        </script>
+                        <!-- End Line Chart -->
                     </div>
                 </div>
-            </div><!-- End Light Intensity Card -->
+            </div>
+          
+          
 
 
-            <!-- Combined Graph -->
-            <div class="col-12">
-                <div class="card">
 
-                  <div class="filter">
-                    <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                      <li class="dropdown-header text-start">
-                        <h6>Filter</h6>
-                      </li>
-                      <li><a class="dropdown-item" href="#">Today</a></li>
-                      <li><a class="dropdown-item" href="#">This Month</a></li>
-                      <li><a class="dropdown-item" href="#">This Year</a></li>
-                    </ul>
-                  </div>
-  
-                  <div class="card-body">
-                    <h5 class="card-title">Environmental Conditions <span>/ Today</span></h5>
-  
-                    <!-- Line Chart -->
-                    <div id="conditionsChart"></div>
-  
-                    <script>
-                      document.addEventListener("DOMContentLoaded", () => {
-                        new ApexCharts(document.querySelector("#conditionsChart"), {
-                          series: [{
-                            name: 'Temperature',
-                            data: [22, 23, 21, 20, 22, 23, 24],
-                          }, {
-                            name: 'Humidity',
-                            data: [60, 62, 61, 59, 60, 63, 64]
-                          }, {
-                            name: 'Light Intensity',
-                            data: [800, 820, 780, 790, 810, 830, 850]
-                          }],
-                          chart: {
-                            height: 350,
-                            type: 'line',
-                            toolbar: {
-                              show: false
-                            },
-                          },
-                          markers: {
-                            size: 4
-                          },
-                          colors: ['#4154f1', '#2eca6a', '#ff771d'],
-                          stroke: {
-                            curve: 'smooth',
-                            width: 2
-                          },
-                          xaxis: {
-                            categories: ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00"]
-                          },
-                          tooltip: {
-                            x: {
-                              format: 'HH:mm'
-                            },
-                          }
-                        }).render();
-                      });
-                    </script>
-                    <!-- End Line Chart -->
-  
-                  </div>
-  
-                </div>
-              </div><!-- End Combined Graph -->
 
             <!-- Recent Alerts -->
             <div class="col-12">

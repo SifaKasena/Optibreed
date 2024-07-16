@@ -19,6 +19,8 @@ from .forms import RegistrationForm, ReportForm, RoomForm
 from .models import Condition, Room, Notification
 from .serializers import ConditionSerializer
 import matplotlib.pyplot as plt
+from django.db.models import Min, Max
+from datetime import datetime, timedelta, date
 
 
 # Create your views here.
@@ -45,13 +47,53 @@ class SignupView(generic.CreateView):
 
 @login_required
 def dashboard(request):
-    # Add any additional context or data you need to pass to the template
+    rooms = Room.objects.all()
+    Room_id = rooms.values_list('id', flat=True)  # Fetch all Room IDs
+    
+    time_frame = request.GET.get('time_frame', 'today')
+    today = date.today()
+    
+    if time_frame == 'today':
+        conditions = Condition.objects.filter(Room_id__in=Room_id, Timestamp__date=today).order_by('-Timestamp')
+    elif time_frame == 'this_week':
+        start_of_week = today - timedelta(days=today.weekday())
+        conditions = Condition.objects.filter(Room_id__in=Room_id, Timestamp__date__gte=start_of_week).order_by('-Timestamp')
+    elif time_frame == 'this_month':
+        start_of_month = today.replace(day=1)
+        conditions = Condition.objects.filter(Room_id__in=Room_id, Timestamp__date__gte=start_of_month).order_by('-Timestamp')
+    else:
+        conditions = Condition.objects.filter(Room_id__in=Room_id).order_by('-Timestamp')
+
+    min_temperature = conditions.aggregate(Min('Temperature'))['Temperature__min']
+    max_temperature = conditions.aggregate(Max('Temperature'))['Temperature__max']
+    min_humidity = conditions.aggregate(Min('Humidity'))['Humidity__min']
+    max_humidity = conditions.aggregate(Max('Humidity'))['Humidity__max']
+    min_light_intensity = conditions.aggregate(Min('Lightintensity'))['Lightintensity__min']
+    max_light_intensity = conditions.aggregate(Max('Lightintensity'))['Lightintensity__max']
+
+    temperatures = [condition.Temperature for condition in conditions]
+    humidities = [condition.Humidity for condition in conditions]
+    light_intensities = [condition.Lightintensity for condition in conditions]
+    timestamps = [condition.Timestamp.strftime('%Y-%m-%dT%H:%M:%S.%fZ') for condition in conditions]
+
     context = {
-        'installed_sensors': 20,  # Example data
-        'auto_adjustments': 50,  # Example data
-        'manual_adjustments': 28  # Example data
+        'rooms': rooms,
+        'conditions': conditions[:1],  # Only pass the latest condition
+        'min_temperature': min_temperature,
+        'max_temperature': max_temperature,
+        'min_humidity': min_humidity,
+        'max_humidity': max_humidity,
+        'min_light_intensity': min_light_intensity,
+        'max_light_intensity': max_light_intensity,
+        'temperatures': temperatures,
+        'humidities': humidities,
+        'light_intensities': light_intensities,
+        'timestamps': timestamps,
+        'time_frame': time_frame,
     }
     return render(request, 'core/dashboard/dashboard.html', context)
+
+
 
 @login_required
 def rooms(request):
@@ -61,15 +103,18 @@ def rooms(request):
 
 @login_required
 def add_room(request):
-    form = RoomForm
     if request.method == 'POST':
+        form = RoomForm(request.POST)
         if form.is_valid():
             room = form.save(commit=False)
             room.User = request.user
             room.save()
-            return redirect('optibreed:home')
+            return redirect('optibreed:rooms')
+    else:
+        form = RoomForm()
 
-    return render(request, 'core/room/add_room.html', {'form': form})
+    return render(request, 'core/rooms/add_room.html', {'form': form})
+
 
 @login_required
 def edit_room(request, room_id):
