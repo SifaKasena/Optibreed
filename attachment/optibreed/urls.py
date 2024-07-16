@@ -16,6 +16,6 @@ urlpatterns = [
     path("notification_details/", views.notification_details, name="notification_details"),
     path("endpoint/", views.receive_data, name="receive_data"),
     path("edit_room/<int:room_id>/", views.edit_room, name="edit_room"),
-    path("generate_report/<int:room_id>/", views.generate_report, name="generate_report"),
+    path("generate_report/", views.generate_report, name="generate_report"),
     path("api/latest-condition/<int:room_id>/", views.LatestConditionView.as_view(), name="latest-condition"),
 ]

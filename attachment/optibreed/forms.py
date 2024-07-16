@@ -53,25 +53,36 @@ class RoomForm(forms.ModelForm):
         ]
 
 
+# class ReportForm(forms.Form):
+#     """
+#     A form for generating reports.
+
+#     This form allows users to select the type of report they want to generate,
+#     specify the number of records to include, and provide a date range for the report.
+
+#     Attributes:
+#         report_type (ChoiceField): A choice field for selecting the type of report.
+#         number_of_records (IntegerField): An optional field for specifying the number of records to include.
+#         start_date (DateTimeField): An optional field for specifying the start date of the report.
+#         end_date (DateTimeField): An optional field for specifying the end date of the report.
+#     """
+
+#     RECORD_CHOICES = [
+#         ('recent', 'Most Recent Records'),
+#         ('date_range', 'Date Range')
+#     ]
+#     report_type = forms.ChoiceField(choices=RECORD_CHOICES, required=True)
+#     number_of_records = forms.IntegerField(required=False, min_value=1)
+#     start_date = forms.DateTimeField(required=False, widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
+#     end_date = forms.DateTimeField(required=False, widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
+
+
+
 class ReportForm(forms.Form):
-    """
-    A form for generating reports.
-
-    This form allows users to select the type of report they want to generate,
-    specify the number of records to include, and provide a date range for the report.
-
-    Attributes:
-        report_type (ChoiceField): A choice field for selecting the type of report.
-        number_of_records (IntegerField): An optional field for specifying the number of records to include.
-        start_date (DateTimeField): An optional field for specifying the start date of the report.
-        end_date (DateTimeField): An optional field for specifying the end date of the report.
-    """
-
-    RECORD_CHOICES = [
-        ('recent', 'Most Recent Records'),
-        ('date_range', 'Date Range')
-    ]
-    report_type = forms.ChoiceField(choices=RECORD_CHOICES, required=True)
-    number_of_records = forms.IntegerField(required=False, min_value=1)
-    start_date = forms.DateTimeField(required=False, widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
-    end_date = forms.DateTimeField(required=False, widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
+    room_id = forms.ModelChoiceField(queryset=Room.objects.all(), label='Select Room')
+    report_type = forms.ChoiceField(choices=[('recent', 'Recent'), ('date_range', 'Date Range')], label='Report Type')
+    number_of_records = forms.ChoiceField(choices=[(10, '10'), (25, '25'), (50, '50'), (75, '75'), (100, '100'), ('all', 'All')], label='Number of Records')
+    start_date = forms.DateTimeField(required=False, widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}), label='Start Date')
+    end_date = forms.DateTimeField(required=False, widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}), label='End Date')
+    order = forms.ChoiceField(choices=[('asc', 'Ascending'), ('desc', 'Descending')], label='Order')
+    file_type = forms.ChoiceField(choices=[('pdf', 'PDF'), ('word', 'Word Document')], label='File Type')

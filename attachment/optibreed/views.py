@@ -195,86 +195,94 @@ def generate_chart(labels, data, title, ylabel):
     plt.close()
     return image_data
 
-
-def generate_report(request, room_id):
-
-    room = get_object_or_404(Room, id=room_id, User=request.user)
+def generate_report(request):
     form = ReportForm(request.GET or None)
-    conditions = Condition.objects.filter(Room=room).order_by('-Timestamp')[:30]
+    form.user = request.user  # Pass the user to the form
+
+    conditions = Condition.objects.none()
+    report_data = {}
+    image_temp = None
+    image_hum = None
+    image_light = None
 
     if form.is_valid():
+        room = form.cleaned_data['room_id']
         report_type = form.cleaned_data['report_type']
         number_of_records = form.cleaned_data['number_of_records']
         start_date = form.cleaned_data['start_date']
         end_date = form.cleaned_data['end_date']
+        order = form.cleaned_data['order']
+        file_type = form.cleaned_data['file_type']
+
+        conditions = Condition.objects.filter(Room=room)
 
         if report_type == 'recent':
-            conditions = conditions[:number_of_records]
+            if number_of_records != 'all':
+                conditions = conditions.order_by('-Timestamp')[:int(number_of_records)]
         elif report_type == 'date_range':
-            conditions = conditions.filter(Timestamp__range=(start_date, end_date))
+            conditions = conditions.filter(Timestamp__range=(start_date, end_date)).order_by(order)
 
-    avg_temperature = conditions.aggregate(Avg('Temperature'))['Temperature__avg']
-    avg_humidity = conditions.aggregate(Avg('Humidity'))['Humidity__avg']
-    avg_lightintensity = conditions.aggregate(Avg('Lightintensity'))['Lightintensity__avg']
+        avg_temperature = conditions.aggregate(Avg('Temperature'))['Temperature__avg']
+        avg_humidity = conditions.aggregate(Avg('Humidity'))['Humidity__avg']
+        avg_lightintensity = conditions.aggregate(Avg('Lightintensity'))['Lightintensity__avg']
 
-    # Generate plots
-    labels = [condition.Timestamp.strftime('%Y-%m-%d %H:%M:%S') for condition in conditions]
-    temperatures = [condition.Temperature for condition in conditions]
-    humidities = [condition.Humidity for condition in conditions]
-    lightintensities = [condition.Lightintensity for condition in conditions]
+        labels = [condition.Timestamp.strftime('%Y-%m-%d %H:%M:%S') for condition in conditions]
+        temperatures = [condition.Temperature for condition in conditions]
+        humidities = [condition.Humidity for condition in conditions]
+        lightintensities = [condition.Lightintensity for condition in conditions]
 
-    image_temp = generate_chart(labels, temperatures, 'Temperature', 'Temperature (°C)')
-    image_hum = generate_chart(labels, humidities, 'Humidity', 'Humidity (%)')
-    image_light = generate_chart(labels, lightintensities, 'Light Intensity', 'Light Intensity (lux)')
+        image_temp = generate_chart(labels, temperatures, 'Temperature', 'Temperature (°C)')
+        image_hum = generate_chart(labels, humidities, 'Humidity', 'Humidity (%)')
+        image_light = generate_chart(labels, lightintensities, 'Light Intensity', 'Light Intensity (lux)')
 
-    report_data = {
-        'avg_temperature': avg_temperature,
-        'avg_humidity': avg_humidity,
-        'avg_lightintensity': avg_lightintensity,
-    }
+        report_data = {
+            'avg_temperature': avg_temperature,
+            'avg_humidity': avg_humidity,
+            'avg_lightintensity': avg_lightintensity,
+        }
 
-    if 'download_pdf' in request.GET:
-        response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="report_{room.Material_name}.pdf"'
+        if 'download_pdf' in request.GET:
+            response = HttpResponse(content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="report_{room.Material_name}.pdf"'
 
-        buffer = BytesIO()
-        p = canvas.Canvas(buffer, pagesize=letter)
-        width, height = letter
+            buffer = BytesIO()
+            p = canvas.Canvas(buffer, pagesize=letter)
+            width, height = letter
 
-        p.drawString(100, height - 100, f"Condition Report for Room: {room.Material_name}")
-        p.drawString(100, height - 120, f"User: {request.user.username}")
+            p.drawString(100, height - 100, f"Condition Report for Room: {room.Material_name}")
+            p.drawString(100, height - 120, f"User: {request.user.username}")
 
-        p.drawString(100, height - 160, f"Average Temperature: {avg_temperature:.2f}°C")
-        p.drawString(100, height - 180, f"Average Humidity: {avg_humidity:.2f}%")
-        p.drawString(100, height - 200, f"Average Light Intensity: {avg_lightintensity:.2f} lux")
+            p.drawString(100, height - 160, f"Average Temperature: {avg_temperature:.2f}°C")
+            p.drawString(100, height - 180, f"Average Humidity: {avg_humidity:.2f}%")
+            p.drawString(100, height - 200, f"Average Light Intensity: {avg_lightintensity:.2f} lux")
 
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
-            temp_file.write(image_temp)
-            p.drawImage(temp_file.name, 100, height - 400, width=400, height=150)
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
-            temp_file.write(image_hum)
-            p.drawImage(temp_file.name, 100, height - 600, width=400, height=150)
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
-            temp_file.write(image_light)
-            p.drawImage(temp_file.name, 100, height - 800, width=400, height=150)
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
+                temp_file.write(image_temp)
+                p.drawImage(temp_file.name, 100, height - 400, width=400, height=150)
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
+                temp_file.write(image_hum)
+                p.drawImage(temp_file.name, 100, height - 600, width=400, height=150)
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
+                temp_file.write(image_light)
+                p.drawImage(temp_file.name, 100, height - 800, width=400, height=150)
 
-        p.showPage()
-        p.save()
+            p.showPage()
+            p.save()
 
-        pdf = buffer.getvalue()
-        buffer.close()
-        response.write(pdf)
-        return response
+            pdf = buffer.getvalue()
+            buffer.close()
+            response.write(pdf)
+            return response
+
+        # Add more conditions for other file types if needed
 
     context = {
-        'room': room,
-        'user': request.user,
-        'conditions': conditions,
         'form': form,
+        'conditions': conditions,
         'report_data': report_data,
-        'image_base64_temp': base64.b64encode(image_temp).decode('utf-8'),
-        'image_base64_hum': base64.b64encode(image_hum).decode('utf-8'),
-        'image_base64_light': base64.b64encode(image_light).decode('utf-8')
+        'image_temp': image_temp,
+        'image_hum': image_hum,
+        'image_light': image_light,
     }
 
-    return render(request, 'report.html', context)
+    return render(request, 'core/reports/reports.html', context)
