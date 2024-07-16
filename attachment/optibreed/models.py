@@ -26,6 +26,9 @@ class Room(models.Model):
     Min_Lightintensity = models.FloatField()
     Max_Lightintensity = models.FloatField()
 
+    def __str__(self):
+        return self.Material_name
+
 
 class Condition(models.Model):
     """
