@@ -83,38 +83,6 @@ def edit_room(request, room_id):
         form = RoomForm(instance=room)
     return render(request, 'core/room/edit_room.html', {'form': form})
 
-@login_required
-def room_conditions(request, room_id):
-    room = Room.objects.get(id=room_id, User=request.user)
-    conditions = Condition.objects.filter(Room=room).order_by('-Timestamp')[:50]
-
-    if conditions:
-        current_condition = conditions[0]
-        current_temperature = current_condition.Temperature
-        current_humidity = current_condition.Humidity
-        current_co2 = current_condition.Lightintensity  # Assuming Lightintensity represents CO2 levels in this context
-    else:
-        current_temperature = current_humidity = current_co2 = "No data available"
-
-    labels = [condition.Timestamp.strftime('%Y-%m-%d %H:%M:%S') for condition in conditions]
-    temperatures = [condition.Temperature for condition in conditions]
-    humidities = [condition.Humidity for condition in conditions]
-    light_intensities = [condition.Lightintensity for condition in conditions]
-
-    context = {
-        'room': room,
-        'conditions': conditions,
-        'labels': json.dumps(labels),
-        'temperatures': json.dumps(temperatures),
-        'humidities': json.dumps(humidities),
-        'light_intensities': json.dumps(light_intensities),
-        'current_temperature': current_temperature,
-        'current_humidity': current_humidity,
-        'current_co2': current_co2
-    }
-
-    return render(request, 'core/room/room_details.html', context)
-
 @csrf_exempt
 def receive_data(request):
     if request.method == 'POST':
@@ -142,25 +110,27 @@ def receive_data(request):
             return JsonResponse({"status": "failure", "reason": "Room not found"}, status=404)
     return JsonResponse({"status": "failure", "reason": "Invalid request method"}, status=405)
 
-# def room_conditions(request, room_id):
-#     room = Room.objects.get(id=room_id, User=request.user)
-#     conditions = Condition.objects.filter(Room=room).order_by('-Timestamp')[:50]
+@login_required
+def room_conditions(request, room_id):
+    room = Room.objects.get(id=room_id, User=request.user)
+    conditions = Condition.objects.filter(Room=room).order_by('-Timestamp')[:50]  # Limit to first 50 records
+    conditions_reverse = conditions[::-1]
 
-#     labels = [condition.Timestamp.strftime('%Y-%m-%d %H:%M:%S') for condition in conditions]
-#     temperatures = [condition.Temperature for condition in conditions]
-#     humidities = [condition.Humidity for condition in conditions]
-#     light_intensities = [condition.Lightintensity for condition in conditions]
+    labels = [condition.Timestamp.strftime('%Y-%m-%d %H:%M:%S') for condition in conditions_reverse]
+    temperatures = [condition.Temperature for condition in conditions_reverse]
+    humidities = [condition.Humidity for condition in conditions_reverse]
+    light_intensities = [condition.Lightintensity for condition in conditions_reverse]
 
-#     context = {
-#         'room': room,
-#         'conditions': conditions,
-#         'labels': json.dumps(labels),
-#         'temperatures': json.dumps(temperatures),
-#         'humidities': json.dumps(humidities),
-#         'light_intensities': json.dumps(light_intensities)
-#     }
+    context = {
+        'room': room,
+        'conditions': conditions,
+        'labels': json.dumps(labels),
+        'temperatures': json.dumps(temperatures),
+        'humidities': json.dumps(humidities),
+        'light_intensities': json.dumps(light_intensities)
+    }
 
-#     return render(request, 'room.html', context)
+    return render(request, 'core/room/room_details.html', context)
 
 
 # Notifications list view
