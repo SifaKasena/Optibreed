@@ -1,5 +1,5 @@
 {% extends "core/base.html" %} {% block content %}
-<div class="container mt-5">
+<div id="main" class="main mt-5">
   <div class="card mb-4">
     <div class="pagetitle m-lg-4">
       <h1>Rooms</h1>
@@ -15,7 +15,7 @@
     </div>
     <div class="card-body">
       <div class="room-info">
-        <h3>{{ room.name }}</h3>
+        <h3>{{ room.Material_name }}</h3>
         <p><strong>Status:</strong> {{ room.status }}</p>
         <p><strong>Description:</strong> {{ room.description }}</p>
       </div>

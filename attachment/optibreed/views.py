@@ -61,16 +61,15 @@ def rooms(request):
 
 @login_required
 def add_room(request):
+    form = RoomForm
     if request.method == 'POST':
-        form = RoomForm(request.POST)
         if form.is_valid():
             room = form.save(commit=False)
             room.User = request.user
             room.save()
             return redirect('optibreed:home')
-    else:
-        form = RoomForm()
-    return render(request, 'add_room.html', {'form': form})
+
+    return render(request, 'core/room/add_room.html', {'form': form})
 
 @login_required
 def edit_room(request, room_id):
@@ -82,7 +81,7 @@ def edit_room(request, room_id):
             return redirect('optibreed:rooms', room_id=room_id)
     else:
         form = RoomForm(instance=room)
-    return render(request, 'edit_room.html', {'form': form})
+    return render(request, 'core/room/edit_room.html', {'form': form})
 
 @login_required
 def room_conditions(request, room_id):
@@ -114,7 +113,7 @@ def room_conditions(request, room_id):
         'current_co2': current_co2
     }
 
-    return render(request, 'room_details.html', context)
+    return render(request, 'core/room/room_details.html', context)
 
 @csrf_exempt
 def receive_data(request):
@@ -143,25 +142,25 @@ def receive_data(request):
             return JsonResponse({"status": "failure", "reason": "Room not found"}, status=404)
     return JsonResponse({"status": "failure", "reason": "Invalid request method"}, status=405)
 
-def room_conditions(request, room_id):
-    room = Room.objects.get(id=room_id, User=request.user)
-    conditions = Condition.objects.filter(Room=room).order_by('-Timestamp')[:50]
+# def room_conditions(request, room_id):
+#     room = Room.objects.get(id=room_id, User=request.user)
+#     conditions = Condition.objects.filter(Room=room).order_by('-Timestamp')[:50]
 
-    labels = [condition.Timestamp.strftime('%Y-%m-%d %H:%M:%S') for condition in conditions]
-    temperatures = [condition.Temperature for condition in conditions]
-    humidities = [condition.Humidity for condition in conditions]
-    light_intensities = [condition.Lightintensity for condition in conditions]
+#     labels = [condition.Timestamp.strftime('%Y-%m-%d %H:%M:%S') for condition in conditions]
+#     temperatures = [condition.Temperature for condition in conditions]
+#     humidities = [condition.Humidity for condition in conditions]
+#     light_intensities = [condition.Lightintensity for condition in conditions]
 
-    context = {
-        'room': room,
-        'conditions': conditions,
-        'labels': json.dumps(labels),
-        'temperatures': json.dumps(temperatures),
-        'humidities': json.dumps(humidities),
-        'light_intensities': json.dumps(light_intensities)
-    }
+#     context = {
+#         'room': room,
+#         'conditions': conditions,
+#         'labels': json.dumps(labels),
+#         'temperatures': json.dumps(temperatures),
+#         'humidities': json.dumps(humidities),
+#         'light_intensities': json.dumps(light_intensities)
+#     }
 
-    return render(request, 'room.html', context)
+#     return render(request, 'room.html', context)
 
 
 # Notifications list view
