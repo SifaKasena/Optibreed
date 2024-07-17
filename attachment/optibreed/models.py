@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 # Create your models here.
@@ -63,3 +64,22 @@ class Notification(models.Model):
 
     class Meta:
         ordering = ['-timestamp']
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='profile_pics', default='profile.png')
+    job_title = models.CharField(max_length=100, blank=True)
+    twitter = models.URLField(blank=True)
+    facebook = models.URLField(blank=True)
+    instagram = models.URLField(blank=True)
+    linkedin = models.URLField(blank=True)
+    about = models.TextField(blank=True)
+    company = models.CharField(max_length=100, blank=True)
+    country = models.CharField(max_length=100, blank=True)
+    address = models.CharField(max_length=100)
+    phone_number = PhoneNumberField(blank=True, null=True)
+    email_notification = models.BooleanField(default=True)
+
+    def __str__(self) -> str:
+        return f'{self.user.username} Profile'

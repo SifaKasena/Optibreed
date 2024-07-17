@@ -31,6 +31,8 @@ def index(request):
 
     return render(request, 'public/index.html')
 
+def profile(request):
+    return render(request, 'core/profile/profile.html', {'user': request.user})
 
 
 class SignupView(generic.CreateView):
