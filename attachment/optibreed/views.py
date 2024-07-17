@@ -31,8 +31,10 @@ def index(request):
 
     return render(request, 'public/index.html')
 
+@login_required
 def profile(request):
     return render(request, 'core/profile/profile.html', {'user': request.user})
+
 
 
 class SignupView(generic.CreateView):
@@ -115,7 +117,7 @@ def add_room(request):
     else:
         form = RoomForm()
 
-    return render(request, 'core/rooms/add_room.html', {'form': form})
+    return render(request, 'core/room/add_room.html', {'form': form})
 
 
 @login_required
