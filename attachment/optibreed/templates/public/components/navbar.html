@@ -1,25 +1,43 @@
-<!-- templates/public/components/navbar.html -->
-
-{% load static%}
+{% load static %}
 <!-- ======= Header ======= -->
-<header id="header" class="fixed-top">
-  <div class="container d-flex align-items-center">
-
-    <h1 class="logo me-auto"><a href="{% url 'optibreed:index' %}">OptiBreed</a></h1>
+<header id="header" class="fixed-top bg-white shadow-sm mb-5">
+  <div class="container d-flex align-items-center justify-content-between">
+    <h1 class="logo me-auto"><a href="{% url 'optibreed:index' %}" class="text-primary">OptiBreed</a></h1>
     <!-- Uncomment below if you prefer to use an image logo -->
     <!-- <a href="{% url 'optibreed:index' %}" class="logo me-auto"><img src="{% static 'path_to_logo.png' %}" alt="" class="img-fluid"></a> -->
 
-    <nav id="navbar" class="navbar order-last order-lg-0">
-      <ul>
-        <li><a class="active" href="{% url 'optibreed:index' %}">Home</a></li>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Pricing</a></li>
-        <li><a href="#">Contact</a></li>
-      </ul>
-      <i class="bi bi-list mobile-nav-toggle"></i>
+    <nav id="navbar" class="navbar navbar-expand-lg order-last order-lg-0">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href="{% url 'optibreed:index' %}" data-aos="fade-down" data-aos-delay="100">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-aos="fade-down" data-aos-delay="200">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-aos="fade-down" data-aos-delay="300">Pricing</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-aos="fade-down" data-aos-delay="400">Contact</a>
+          </li>
+        </ul>
+      </div>
     </nav><!-- .navbar -->
 
-    <a href="{% url 'login' %}" class="get-started-btn mx-3">Login</a>
-    <a href="{% url 'optibreed:signup' %}" class="btn btn-outline-success rounded-pill">Register</a>
+    <div class="d-flex">
+      <a href="{% url 'login' %}" class="btn btn-primary mx-2" data-aos="fade-left" data-aos-delay="500">Login</a>
+      <a href="{% url 'optibreed:signup' %}" class="btn btn-outline-success rounded-pill" data-aos="fade-left" data-aos-delay="600">Register</a>
+    </div>
   </div>
 </header><!-- End Header -->
+
+<!-- AOS (Animate On Scroll) Library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script>
+  AOS.init();
+</script>
