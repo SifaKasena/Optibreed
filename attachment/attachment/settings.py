@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'channels',
+    'notifications',
 ]
 
 MIDDLEWARE = [
@@ -148,4 +150,14 @@ SITE_ID = 1
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 
 # Then set the SECURE_REFERRER_POLICY
+# For testing google login under localhost
 SECURE_REFERRER_POLICY = 'no-referrer-when-downgrade'
+
+# Channels settings
+ASGI_APPLICATION = 'attachment.routing.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+    }
+}

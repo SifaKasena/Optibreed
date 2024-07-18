@@ -13,12 +13,15 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .forms import ReportForm, RoomForm
-from .models import Condition, Room, Notification
+from .models import Condition, Room
 from .serializers import ConditionSerializer
 import matplotlib.pyplot as plt
 from django.db.models import Min, Max
 from allauth.account.views import SignupView, LoginView, LogoutView
 from datetime import timedelta, date
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from notifications.models import Notification
 
 
 # Create your views here.
@@ -130,6 +133,74 @@ def edit_room(request, room_id):
         form = RoomForm(instance=room)
     return render(request, 'core/room/edit_room.html', {'form': form})
 
+def check_conditions_and_notify(condition: Condition):
+    if not (condition.Room.Min_Temperature <= condition.Temperature <= condition.Room.Max_Temperature):
+        message = f"Temperature alert for room {condition.Room.Material_name}: "
+        if condition.Temperature < condition.Room.Min_Temperature:
+            message += f"Temperature {condition.Temperature}°C is BELOW OPTIMUM."
+        if condition.Temperature > condition.Room.Max_Temperature:
+            message += f"Temperature {condition.Temperature}°C is ABOVE OPTIMUM."
+        notification = Notification.objects.create(Room=condition.Room, message=message)
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"user_{condition.Room.User.id}",
+            {
+                "type": "send_notification",
+                "message": {
+                    "id": notification.id,
+                    "message": notification.message,
+                    "created_at": str(notification.timestamp),
+                    "status": notification.status,
+                },
+            }
+        )
+
+    if not (condition.Room.Min_Humidity <= condition.Humidity <= condition.Room.Max_Humidity):
+        message = f"Humidity alert for room {condition.Room.Material_name}: "
+        if condition.Humidity < condition.Room.Min_Humidity:
+            message += f"Humidity {condition.Humidity}°C is BELOW OPTIMUM."
+        if condition.Humidity > condition.Room.Max_Humidity:
+            message += f"Humidity {condition.Humidity}°C is ABOVE OPTIMUM."
+        notification = Notification.objects.create(Room=condition.Room, message=message)
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"user_{condition.Room.User.id}",
+            {
+                "type": "send_notification",
+                "message": {
+                    "id": notification.id,
+                    "message": notification.message,
+                    "created_at": str(notification.timestamp),
+                    "status": notification.status,
+                },
+            }
+        )
+
+    if not (condition.Room.Min_Lightintensity <= condition.Lightintensity <= condition.Room.Max_Lightintensity):
+        message = f"Lightintensity alert for room {condition.Room.Material_name}: "
+        if condition.Lightintensity < condition.Room.Min_Lightintensity:
+            message += f"Lightintensity {condition.Lightintensity}°C is BELOW OPTIMUM."
+        if condition.Lightintensity > condition.Room.Max_Lightintensity:
+            message += f"Lightintensity {condition.Lightintensity}°C is ABOVE OPTIMUM."
+        notification = Notification.objects.create(Room=condition.Room, message=message)
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"user_{condition.Room.User.id}",
+            {
+                "type": "send_notification",
+                "message": {
+                    "id": notification.id,
+                    "message": notification.message,
+                    "created_at": str(notification.timestamp),
+                    "status": notification.status,
+                },
+            }
+        )
+
+
 @csrf_exempt
 def receive_data(request):
     if request.method == 'POST':
@@ -142,13 +213,15 @@ def receive_data(request):
             light_intensity = data.get('light_intensity')
 
             room = Room.objects.get(id=room_id)
-            Condition.objects.create(
+            condition = Condition.objects.create(
                 Room=room,
                 Timestamp=timestamp,
                 Temperature=temperature,
                 Humidity=humidity,
                 Lightintensity=light_intensity
             )
+
+            check_conditions_and_notify(condition)
 
             return JsonResponse({"status": "success"}, status=200)
         except json.JSONDecodeError:
