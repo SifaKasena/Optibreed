@@ -1,26 +1,24 @@
-import base64
 import json
 import tempfile
 from io import BytesIO
 import matplotlib
-from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.db.models import Avg
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .forms import RegistrationForm, ReportForm, RoomForm
+from .forms import ReportForm, RoomForm
 from .models import Condition, Room, Notification
 from .serializers import ConditionSerializer
 import matplotlib.pyplot as plt
 from django.db.models import Min, Max
-from datetime import datetime, timedelta, date
+from allauth.account.views import SignupView, LoginView, LogoutView
+from datetime import timedelta, date
 
 
 # Create your views here.
@@ -37,16 +35,16 @@ def profile(request):
 
 
 
-class SignupView(generic.CreateView):
-
+class CustomSignupView(SignupView):
     template_name = "registration/signup.html"
-    form_class = RegistrationForm
-    success_url = '/dashboard/'
 
-    def form_valid(self, form):
-        user = form.save()
-        login(self.request, user)
-        return HttpResponseRedirect(self.success_url)
+class CustomLoginView(LoginView):
+    template_name = "registration/login.html"
+
+class CustomLogoutView(LogoutView):
+    # TODO: Implement custom logout view
+    # template_name = "registration/logout.html"
+    pass
 
 
 @login_required
