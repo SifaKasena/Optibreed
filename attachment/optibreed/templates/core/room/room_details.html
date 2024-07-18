@@ -9,8 +9,11 @@
           <li class="breadcrumb-item">
             <a href="{% url 'optibreed:dashboard' %}">Home</a>
           </li>
-          <li class="breadcrumb-item active">Rooms</li>
-          <li class="breadcrumb-item active">Room Details</li>
+          <li class="breadcrumb-item active">
+            <a href="{% url 'optibreed:rooms' %}">Rooms</a>
+          </li>
+          <li class="breadcrumb-item active">
+            <a href="{% url 'optibreed:room_conditions' room.id %}">Room Details</a></li>
         </ol>
       </nav>
     </div>
