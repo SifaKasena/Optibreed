@@ -137,9 +137,9 @@ def check_conditions_and_notify(condition: Condition):
     if not (condition.Room.Min_Temperature <= condition.Temperature <= condition.Room.Max_Temperature):
         message = f"Temperature alert for room {condition.Room.Material_name}: "
         if condition.Temperature < condition.Room.Min_Temperature:
-            message += f"Temperature {condition.Temperature}°C is BELOW OPTIMUM."
+            message += f"Temperature {condition.Temperature:.2f}°C is BELOW OPTIMUM."
         if condition.Temperature > condition.Room.Max_Temperature:
-            message += f"Temperature {condition.Temperature}°C is ABOVE OPTIMUM."
+            message += f"Temperature {condition.Temperature:.2f}°C is ABOVE OPTIMUM."
         notification = Notification.objects.create(Room=condition.Room, message=message)
 
         channel_layer = get_channel_layer()
@@ -159,9 +159,9 @@ def check_conditions_and_notify(condition: Condition):
     if not (condition.Room.Min_Humidity <= condition.Humidity <= condition.Room.Max_Humidity):
         message = f"Humidity alert for room {condition.Room.Material_name}: "
         if condition.Humidity < condition.Room.Min_Humidity:
-            message += f"Humidity {condition.Humidity}°C is BELOW OPTIMUM."
+            message += f"Humidity {condition.Humidity:.2f}% is BELOW OPTIMUM."
         if condition.Humidity > condition.Room.Max_Humidity:
-            message += f"Humidity {condition.Humidity}°C is ABOVE OPTIMUM."
+            message += f"Humidity {condition.Humidity:.2f}% is ABOVE OPTIMUM."
         notification = Notification.objects.create(Room=condition.Room, message=message)
 
         channel_layer = get_channel_layer()
@@ -181,9 +181,9 @@ def check_conditions_and_notify(condition: Condition):
     if not (condition.Room.Min_Lightintensity <= condition.Lightintensity <= condition.Room.Max_Lightintensity):
         message = f"Lightintensity alert for room {condition.Room.Material_name}: "
         if condition.Lightintensity < condition.Room.Min_Lightintensity:
-            message += f"Lightintensity {condition.Lightintensity}°C is BELOW OPTIMUM."
+            message += f"Lightintensity {condition.Lightintensity:.2f}lux is BELOW OPTIMUM."
         if condition.Lightintensity > condition.Room.Max_Lightintensity:
-            message += f"Lightintensity {condition.Lightintensity}°C is ABOVE OPTIMUM."
+            message += f"Lightintensity {condition.Lightintensity:.2f}lux is ABOVE OPTIMUM."
         notification = Notification.objects.create(Room=condition.Room, message=message)
 
         channel_layer = get_channel_layer()
@@ -251,38 +251,6 @@ def room_conditions(request, room_id):
     }
 
     return render(request, 'core/room/room_details.html', context)
-
-
-# Notifications list view
-@login_required
-def notifications_list(request):
-    status = request.GET.get('status')
-    date = request.GET.get('date')
-
-    notifications = Notification.objects.filter(User=request.user)
-
-    if status:
-        notifications = notifications.filter(status=status)
-    if date:
-        notifications = notifications.filter(timestamp__date=date)
-
-    context = {
-        'notifications': notifications
-    }
-
-    return render(request, 'core/notifications/list.html', context)
-
-
-# Notification details view
-@login_required
-def notification_details(request, notification_id):
-    notification = get_object_or_404(Notification, id=notification_id, User=request.user)
-
-    context = {
-        'notification': notification
-    }
-
-    return render(request, 'notifications/details.html', context)
 
 # Displaying updated condition
 class LatestConditionView(APIView):
