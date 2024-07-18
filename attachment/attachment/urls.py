@@ -19,6 +19,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('', include('optibreed.urls')),
-    path('', include('django.contrib.auth.urls')),
+    path('', include('allauth.urls')),
+    path('notifications/', include('notifications.urls')),
     path('admin/', admin.site.urls),
 ]

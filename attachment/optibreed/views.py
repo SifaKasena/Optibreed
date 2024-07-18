@@ -1,26 +1,27 @@
-import base64
 import json
 import tempfile
 from io import BytesIO
 import matplotlib
-from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.db.models import Avg
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .forms import RegistrationForm, ReportForm, RoomForm
-from .models import Condition, Room, Notification
+from .forms import ReportForm, RoomForm
+from .models import Condition, Room
 from .serializers import ConditionSerializer
 import matplotlib.pyplot as plt
 from django.db.models import Min, Max
-from datetime import datetime, timedelta, date
+from allauth.account.views import SignupView, LoginView, LogoutView
+from datetime import timedelta, date
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from notifications.models import Notification
 
 
 # Create your views here.
@@ -37,16 +38,16 @@ def profile(request):
 
 
 
-class SignupView(generic.CreateView):
-
+class CustomSignupView(SignupView):
     template_name = "registration/signup.html"
-    form_class = RegistrationForm
-    success_url = '/dashboard/'
 
-    def form_valid(self, form):
-        user = form.save()
-        login(self.request, user)
-        return HttpResponseRedirect(self.success_url)
+class CustomLoginView(LoginView):
+    template_name = "registration/login.html"
+
+class CustomLogoutView(LogoutView):
+    # TODO: Implement custom logout view
+    # template_name = "registration/logout.html"
+    pass
 
 
 @login_required
@@ -132,6 +133,74 @@ def edit_room(request, room_id):
         form = RoomForm(instance=room)
     return render(request, 'core/room/edit_room.html', {'form': form})
 
+def check_conditions_and_notify(condition: Condition):
+    if not (condition.Room.Min_Temperature <= condition.Temperature <= condition.Room.Max_Temperature):
+        message = f"Temperature alert for room {condition.Room.Material_name}: "
+        if condition.Temperature < condition.Room.Min_Temperature:
+            message += f"Temperature {condition.Temperature:.2f}°C is BELOW OPTIMUM."
+        if condition.Temperature > condition.Room.Max_Temperature:
+            message += f"Temperature {condition.Temperature:.2f}°C is ABOVE OPTIMUM."
+        notification = Notification.objects.create(Room=condition.Room, message=message)
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"user_{condition.Room.User.id}",
+            {
+                "type": "send_notification",
+                "message": {
+                    "id": notification.id,
+                    "message": notification.message,
+                    "created_at": str(notification.timestamp),
+                    "status": notification.status,
+                },
+            }
+        )
+
+    if not (condition.Room.Min_Humidity <= condition.Humidity <= condition.Room.Max_Humidity):
+        message = f"Humidity alert for room {condition.Room.Material_name}: "
+        if condition.Humidity < condition.Room.Min_Humidity:
+            message += f"Humidity {condition.Humidity:.2f}% is BELOW OPTIMUM."
+        if condition.Humidity > condition.Room.Max_Humidity:
+            message += f"Humidity {condition.Humidity:.2f}% is ABOVE OPTIMUM."
+        notification = Notification.objects.create(Room=condition.Room, message=message)
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"user_{condition.Room.User.id}",
+            {
+                "type": "send_notification",
+                "message": {
+                    "id": notification.id,
+                    "message": notification.message,
+                    "created_at": str(notification.timestamp),
+                    "status": notification.status,
+                },
+            }
+        )
+
+    if not (condition.Room.Min_Lightintensity <= condition.Lightintensity <= condition.Room.Max_Lightintensity):
+        message = f"Lightintensity alert for room {condition.Room.Material_name}: "
+        if condition.Lightintensity < condition.Room.Min_Lightintensity:
+            message += f"Lightintensity {condition.Lightintensity:.2f}lux is BELOW OPTIMUM."
+        if condition.Lightintensity > condition.Room.Max_Lightintensity:
+            message += f"Lightintensity {condition.Lightintensity:.2f}lux is ABOVE OPTIMUM."
+        notification = Notification.objects.create(Room=condition.Room, message=message)
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"user_{condition.Room.User.id}",
+            {
+                "type": "send_notification",
+                "message": {
+                    "id": notification.id,
+                    "message": notification.message,
+                    "created_at": str(notification.timestamp),
+                    "status": notification.status,
+                },
+            }
+        )
+
+
 @csrf_exempt
 def receive_data(request):
     if request.method == 'POST':
@@ -144,13 +213,15 @@ def receive_data(request):
             light_intensity = data.get('light_intensity')
 
             room = Room.objects.get(id=room_id)
-            Condition.objects.create(
+            condition = Condition.objects.create(
                 Room=room,
                 Timestamp=timestamp,
                 Temperature=temperature,
                 Humidity=humidity,
                 Lightintensity=light_intensity
             )
+
+            check_conditions_and_notify(condition)
 
             return JsonResponse({"status": "success"}, status=200)
         except json.JSONDecodeError:
@@ -180,38 +251,6 @@ def room_conditions(request, room_id):
     }
 
     return render(request, 'core/room/room_details.html', context)
-
-
-# Notifications list view
-@login_required
-def notifications_list(request):
-    status = request.GET.get('status')
-    date = request.GET.get('date')
-
-    notifications = Notification.objects.filter(User=request.user)
-
-    if status:
-        notifications = notifications.filter(status=status)
-    if date:
-        notifications = notifications.filter(timestamp__date=date)
-
-    context = {
-        'notifications': notifications
-    }
-
-    return render(request, 'core/notifications/list.html', context)
-
-
-# Notification details view
-@login_required
-def notification_details(request, notification_id):
-    notification = get_object_or_404(Notification, id=notification_id, User=request.user)
-
-    context = {
-        'notification': notification
-    }
-
-    return render(request, 'notifications/details.html', context)
 
 # Displaying updated condition
 class LatestConditionView(APIView):

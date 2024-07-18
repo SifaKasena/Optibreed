@@ -13,8 +13,14 @@
             <p class="card-text"><strong>Timestamp:</strong> {{ notification.timestamp }}</p>
             <p class="card-text"><strong>Status:</strong> {{ notification.status }}</p>
             <div class="actions mt-3">
-                <a href="{% url 'notifications:mark_as_read' notification.id %}" class="btn btn-success">Mark as Read</a>
-                <a href="{% url 'notifications:delete' notification.id %}" class="btn btn-danger">Delete</a>
+                <form action="{% url 'notifications:update-status' notification.id %}" method="POST" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">Mark as Read</button>
+                </form>
+                <form action="{% url 'notifications:delete' notification.id %}" method="POST" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
             </div>
             {% else %}
             <p>Notification details not available.</p>
