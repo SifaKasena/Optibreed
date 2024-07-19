@@ -83,213 +83,107 @@ optibreed/
 ```
 
 
-Features and Components:
 
-1. Public Pages:
-Home
-Get Started
+Monitor Sensor Data:
 
-2. Authenticated Pages:
-Dashboard
-Rooms Management
-Room Conditions and Details
-Room Graphs
-Report Data
-Notifications
+Track real-time data from sensors.
+Ensure all sensors are reporting within expected intervals.
+Device Control:
 
-3. Functionality:
-User Authentication (Login, Signup, Logout)
-CRUD Operations for Rooms
-Real-time Sensor Data Visualization
-Integration with Google Sign-in
+Automatically adjust devices based on sensor readings.
+Provide manual control when needed.
+Alerting and Status Monitoring:
 
+Notify the user of any issues, such as disconnected sensors or devices.
+Display the overall status of the room, indicating whether all components are functioning correctly.
+Here's how you can achieve this:
 
-Models and Views to Add:
-1. Models:
-Room Model: Represents the rooms managed in the application, including fields like name, description, sensors associated, etc.
-Sensor Model: If sensors are entities with specific data points, this model could capture those details.
+Monitoring Sensor Data
+Regular Updates:
 
-2. Views (and ViewSets if using DRF for API):
-Home View: Render the home page.
-Get Started View: Provide information and steps to get started.
-Dashboard View: Display overview and summary of rooms and sensor data.
-Rooms Management View: List, create, update, delete rooms.
-Room Details View: Detailed view of a specific room, its sensors, and data.
-Room Graphs View: Render graphs and charts for room-specific data.
-Report Data View: Generate and display reports based on sensor data.
-Notifications View: Manage and display notifications for users.
-Login/Signup/Logout Views: Handle user authentication.
+Ensure that each sensor sends data at regular intervals (e.g., every minute).
+Record the timestamp of the last received data for each sensor.
+Health Check:
 
-3. Considerations:
-Authentication and Authorization: Ensure views are protected based on user roles and permissions.
-API Views (Optional): If exposing APIs, create corresponding API views and serializers for CRUD operations on rooms and sensors.
-Real-time Data Handling: Implement WebSocket or similar technology for real-time updates if needed.
-External Integrations: Ensure integration with Google Sign-in follows OAuth standards and handles user authentication securely.
+Compare the current time with the last update time for each sensor.
+If a sensor hasn't updated within a set threshold (e.g., 5 minutes), mark it as "Disconnected."
+Device Control
+Automated Control:
 
+Define rules for each device (e.g., turn on the fan if the temperature exceeds 25°C).
+Implement a control mechanism in the backend to send commands to devices.
+Manual Override:
 
+Provide the user with the ability to manually control devices via the application interface.
+Alerting and Status Monitoring
+Room Status:
 
-<!-- Temperature Card -->
-<div class="col-xxl-4 col-md-6">
-    <div class="card info-card temperature-card">
+Aggregate the status of all sensors and devices to determine the overall room status.
+Use statuses like "All Systems Go," "Warning," and "Critical" to indicate the overall health.
+Detailed Status:
 
-    <div class="filter">
-        <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-        <li class="dropdown-header text-start">
-            <h6>Filter</h6>
-        </li>
-        <li><a class="dropdown-item" href="#">Today</a></li>
-        <li><a class="dropdown-item" href="#">This Month</a></li>
-        <li><a class="dropdown-item" href="#">This Year</a></li>
-        </ul>
-    </div>
+Provide a detailed view showing the status of each sensor and device.
+Highlight any disconnected or malfunctioning components.
+Implementation Steps
+Backend
+Sensor and Device Models:
+python
+Copy code
+from django.db import models
+from django.utils import timezone
+from datetime import timedelta
 
-    <div class="card-body">
-        <h5 class="card-title">Temperature <span>| Today</span></h5>
-        <div class="d-flex flex-column align-items-center">
-        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-            <i class="bi bi-thermometer-half"></i>
-            <h6>22°C</h6>
-        </div>
-        <div class="ps-1">
-            <span class="text-muted small pt-2 ps-1">Min: 18°C, Max: 25°C</span>
-        </div>
-        </div>
-    </div>
+class Room(models.Model):
+    name = models.CharField(max_length=255)
+    min_temperature = models.FloatField()
+    max_temperature = models.FloatField()
+    min_humidity = models.FloatField()
+    max_humidity = models.FloatField()
+    min_light_intensity = models.FloatField()
+    max_light_intensity = models.FloatField()
 
-    </div>
-</div><!-- End Temperature Card -->
+class Sensor(models.Model):
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    type = models.CharField(max_length=50)  # e.g., temperature, humidity, light
+    last_update = models.DateTimeField(auto_now=True)
+    value = models.FloatField()
 
-<!-- Humidity Card -->
-<div class="col-xxl-4 col-md-6">
-    <div class="card info-card humidity-card">
+    def is_connected(self):
+        return timezone.now() - self.last_update <= timedelta(minutes=5)
 
-    <div class="filter">
-        <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-        <li class="dropdown-header text-start">
-            <h6>Filter</h6>
-        </li>
-        <li><a class="dropdown-item" href="#">Today</a></li>
-        <li><a class="dropdown-item" href="#">This Month</a></li>
-        <li><a class="dropdown-item" href="#">This Year</a></li>
-        </ul>
-    </div>
+class Device(models.Model):
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    type = models.CharField(max_length=50)  # e.g., fan, heater
+    status = models.CharField(max_length=50)  # e.g., on, off
+Control Logic:
+python
+Copy code
+def control_room_conditions(room):
+    sensors = Sensor.objects.filter(room=room)
+    for sensor in sensors:
+        if not sensor.is_connected():
+            # Handle disconnected sensor
+            continue
+        
+        if sensor.type == 'temperature' and sensor.value > room.max_temperature:
+            # Turn on fan
+            Device.objects.filter(room=room, type='fan').update(status='on')
+        elif sensor.type == 'temperature' and sensor.value < room.min_temperature:
+            # Turn off fan
+            Device.objects.filter(room=room, type='fan').update(status='off')
 
-    <div class="card-body">
-        <h5 class="card-title">Humidity <span>| Today</span></h5>
+        # Similar logic for other sensors and devices
 
-        <div class="d-flex align-items-center">
-        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-            <i class="bi bi-droplet-half"></i>
-        </div>
-        <div class="ps-3">
-            <h6>60%</h6>
-            <span class="text-muted small pt-2 ps-1">Min: 50%, Max: 70%</span>
-        </div>
-        </div>
-    </div>
-
-    </div>
-</div><!-- End Humidity Card -->
-
-<!-- Light Intensity Card -->
-<div class="col-xxl-4 col-md-6">
-    <div class="card info-card light-intensity-card">
-
-    <div class="filter">
-        <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-        <li class="dropdown-header text-start">
-            <h6>Filter</h6>
-        </li>
-        <li><a class="dropdown-item" href="#">Today</a></li>
-        <li><a class="dropdown-item" href="#">This Month</a></li>
-        <li><a class="dropdown-item" href="#">This Year</a></li>
-        </ul>
-    </div>
-
-    <div class="card-body">
-        <h5 class="card-title">Light Intensity <span>| Today</span></h5>
-
-        <div class="d-flex align-items-center">
-        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-            <i class="bi bi-brightness-high"></i>
-        </div>
-        <div class="ps-3">
-            <h6>800 lux</h6>
-            <span class="text-muted small pt-2 ps-1">Min: 600 lux, Max: 1000 lux</span>
-        </div>
-        </div>
-    </div>
-
-    </div>
-</div><!-- End Light Intensity Card -->
-
-<!-- Combined Graph -->
-<div class="col-12">
-    <div class="card">
-
-    <div class="filter">
-        <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-        <li class="dropdown-header text-start">
-            <h6>Filter</h6>
-        </li>
-        <li><a class="dropdown-item" href="#">Today</a></li>
-        <li><a class="dropdown-item" href="#">This Month</a></li>
-        <li><a class="dropdown-item" href="#">This Year</a></li>
-        </ul>
-    </div>
-
-    <div class="card-body">
-        <h5 class="card-title">Environmental Conditions <span>/ Today</span></h5>
-
-        <!-- Line Chart -->
-        <div id="conditionsChart"></div>
-
-        <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            new ApexCharts(document.querySelector("#conditionsChart"), {
-            series: [{
-                name: 'Temperature',
-                data: [22, 23, 21, 20, 22, 23, 24],
-            }, {
-                name: 'Humidity',
-                data: [60, 62, 61, 59, 60, 63, 64]
-            }, {
-                name: 'Light Intensity',
-                data: [800, 820, 780, 790, 810, 830, 850]
-            }],
-            chart: {
-                height: 350,
-                type: 'line',
-                toolbar: {
-                show: false
-                },
-            },
-            markers: {
-                size: 4
-            },
-            colors: ['#4154f1', '#2eca6a', '#ff771d'],
-            stroke: {
-                curve: 'smooth',
-                width: 2
-            },
-            xaxis: {
-                categories: ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00"]
-            },
-            tooltip: {
-                x: {
-                format: 'HH:mm'
-                },
-            }
-            }).render();
-        });
-        </script>
-        <!-- End Line Chart -->
-
-    </div>
-
-    </div>
-</div><!-- End Combined Graph -->
+def check_room_status(room):
+    sensors = Sensor.objects.filter(room=room)
+    devices = Device.objects.filter(room=room)
+    status = "All Systems Go"
+    for sensor in sensors:
+        if not sensor.is_connected():
+            status = "Critical"
+            break
+    for device in devices:
+        if device.status not in ['on', 'off']:
+            status = "Warning"
+            break
+    return status
