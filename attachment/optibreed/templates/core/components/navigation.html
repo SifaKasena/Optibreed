@@ -61,12 +61,13 @@
         </a>
       </li><!-- End Contact Page Nav -->
 
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="{% url 'optibreed:logout' %}">
+      <form method="post" action="{% url 'optibreed:logout' %}" class="nav-item">
+        {% csrf_token %}
+        <button type="submit" class="nav-link collapsed" style="width: 100%;">
           <i class="bi bi-box-arrow-in-right"></i>
           <span>Logout</span>
-        </a>
-      </li><!-- End Logout Nav -->
+        </button>
+      </form><!-- End Logout Nav -->
 
     </ul>
 

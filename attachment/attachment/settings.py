@@ -132,7 +132,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR / 'optibreed', 'static')]
-STATIC_ROOT = os.path.join(BASE_DIR / 'optibreed', 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -158,7 +158,7 @@ ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 SECURE_REFERRER_POLICY = 'no-referrer-when-downgrade'
 
 # Channels settings
-ASGI_APPLICATION = 'attachment.routing.application'
+ASGI_APPLICATION = 'attachment.asgi.application'
 
 CHANNEL_LAYERS = {
     'default': {
