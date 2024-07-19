@@ -50,24 +50,51 @@ class CustomLogoutView(LogoutView):
     pass
 
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from django.db.models import Min, Max
+from datetime import date, timedelta
+from .models import Room, Condition
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from django.db.models import Min, Max
+from datetime import date, timedelta
+from .models import Room, Condition
+
 @login_required
 def dashboard(request):
-    rooms = Room.objects.all()
-    Room_id = rooms.values_list('id', flat=True)  # Fetch all Room IDs
-    
+    user_rooms = Room.objects.all()
+    selected_room_id = request.GET.get('room_id')
+    selected_room = None
+
+    if selected_room_id:
+        try:
+            selected_room = Room.objects.get(id=selected_room_id)
+        except Room.DoesNotExist:
+            selected_room = None
+
+    if not selected_room:
+        selected_room = user_rooms.first()  # Default to the first room if none selected
+
     time_frame = request.GET.get('time_frame', 'today')
     today = date.today()
     
+    if selected_room:
+        conditions_query = Condition.objects.filter(Room_id=selected_room.id)
+    else:
+        conditions_query = Condition.objects.none()
+
     if time_frame == 'today':
-        conditions = Condition.objects.filter(Room_id__in=Room_id, Timestamp__date=today).order_by('-Timestamp')
+        conditions = conditions_query.filter(Timestamp__date=today).order_by('-Timestamp')
     elif time_frame == 'this_week':
         start_of_week = today - timedelta(days=today.weekday())
-        conditions = Condition.objects.filter(Room_id__in=Room_id, Timestamp__date__gte=start_of_week).order_by('-Timestamp')
+        conditions = conditions_query.filter(Timestamp__date__gte=start_of_week).order_by('-Timestamp')
     elif time_frame == 'this_month':
         start_of_month = today.replace(day=1)
-        conditions = Condition.objects.filter(Room_id__in=Room_id, Timestamp__date__gte=start_of_month).order_by('-Timestamp')
+        conditions = conditions_query.filter(Timestamp__date__gte=start_of_month).order_by('-Timestamp')
     else:
-        conditions = Condition.objects.filter(Room_id__in=Room_id).order_by('-Timestamp')
+        conditions = conditions_query.order_by('-Timestamp')
 
     min_temperature = conditions.aggregate(Min('Temperature'))['Temperature__min']
     max_temperature = conditions.aggregate(Max('Temperature'))['Temperature__max']
@@ -82,7 +109,8 @@ def dashboard(request):
     timestamps = [condition.Timestamp.strftime('%Y-%m-%dT%H:%M:%S.%fZ') for condition in conditions]
 
     context = {
-        'rooms': rooms,
+        'user_rooms': user_rooms,
+        'selected_room': selected_room,
         'conditions': conditions[:1],  # Only pass the latest condition
         'min_temperature': min_temperature,
         'max_temperature': max_temperature,
@@ -97,6 +125,8 @@ def dashboard(request):
         'time_frame': time_frame,
     }
     return render(request, 'core/dashboard/dashboard.html', context)
+
+
 
 
 
