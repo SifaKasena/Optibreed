@@ -10,342 +10,371 @@
 <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Dashboard</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="{% url 'optibreed:dashboard' %}">Home</a></li>
-          <li class="breadcrumb-item active">Dashboard</li>
-        </ol>
-      </nav>
-    </div><!-- End Page Title -->
-
-    <section class="section dashboard">
-      <div class="row">
-
-        <!-- Left side columns -->
-        <div class="col-lg-8">
-          <div class="row">
-
-            <!-- Temperature Card -->
-            <div class="col-xxl-4 col-md-6">
-              <div class="card info-card temperature-card">
-                  <div class="filter">
-                      <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                      <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                          <li class="dropdown-header text-start">
-                              <h6>Filter</h6>
-                          </li>
-                          <li><a class="dropdown-item" href="#">Today</a></li>
-                          <li><a class="dropdown-item" href="#">This Month</a></li>
-                          <li><a class="dropdown-item" href="#">This Year</a></li>
-                      </ul>
-                  </div>
-                  <div class="card-body d-flex flex-column justify-content-between">
-                      <h5 class="card-title">Temperature <span>| Today</span></h5>
-                      {% for condition in conditions %}
-                      <div class="d-flex flex-column align-items-center mb-auto">
-                          <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                              <i class="bi bi-thermometer-half"></i>
-                              <h6>{{ condition.Temperature|floatformat:2 }}°C</h6>
-                          </div>
-                      </div>
-                      <div class="d-flex justify-content-between mt-auto">
-                          <span class="text-muted small fs-6">Min: {{ min_temperature|floatformat:2 }}°C</span>
-                          <span class="text-muted small fs-6">Max: {{ max_temperature|floatformat:2 }}°C</span>
-                      </div>
-                      {% endfor %}
-                  </div>
-              </div>
-            </div><!-- End Temperature Card -->
-
-            <!-- Humidity Card -->
-            <div class="col-xxl-4 col-md-6">
-              <div class="card info-card humidity-card">
-                  <div class="filter">
-                      <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                      <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                          <li class="dropdown-header text-start">
-                              <h6>Filter</h6>
-                          </li>
-                          <li><a class="dropdown-item" href="#">Today</a></li>
-                          <li><a class="dropdown-item" href="#">This Month</a></li>
-                          <li><a class="dropdown-item" href="#">This Year</a></li>
-                      </ul>
-                  </div>
-                  <div class="card-body d-flex flex-column justify-content-between">
-                      <h5 class="card-title">Humidity <span>| Today</span></h5>
-                      {% for condition in conditions %}
-                      <div class="d-flex flex-column align-items-center mb-auto">
-                          <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                              <i class="bi bi-droplet-half"></i>
-                              <h6>{{ condition.Humidity|floatformat:2 }}%</h6>
-                          </div>
-                      </div>
-                      <div class="d-flex justify-content-between mt-auto">
-                          <span class="text-muted small fs-6">Min: {{ min_humidity|floatformat:2 }}%</span>
-                          <span class="text-muted small fs-6">Max: {{ max_humidity|floatformat:2 }}%</span>
-                      </div>
-                      {% endfor %}
-                  </div>
-              </div>
-            </div><!-- End Humidity Card -->
-
-            <!-- Light Intensity Card -->
-            <div class="col-xxl-4 col-md-6">
-              <div class="card info-card light-intensity-card">
-                  <div class="filter">
-                      <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                      <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                          <li class="dropdown-header text-start">
-                              <h6>Filter</h6>
-                          </li>
-                          <li><a class="dropdown-item" href="#">Today</a></li>
-                          <li><a class="dropdown-item" href="#">This Month</a></li>
-                          <li><a class="dropdown-item" href="#">This Year</a></li>
-                      </ul>
-                  </div>
-                  <div class="card-body d-flex flex-column justify-content-between">
-                      <h5 class="card-title">Light Intensity <span>| Today</span></h5>
-                      {% for condition in conditions %}
-                      <div class="d-flex flex-column align-items-center mb-auto">
-                          <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                              <i class="bi bi-brightness-high"></i>
-                              <h6>{{ condition.Lightintensity|floatformat:2 }} lux</h6>
-                          </div>
-                      </div>
-                      <div class="d-flex justify-content-between mt-auto">
-                          <span class="text-muted small fs-6">Min: {{ min_light_intensity|floatformat:2 }} lux</span>
-                          <span class="text-muted small fs-6">Max: {{ max_light_intensity|floatformat:2 }} lux</span>
-                      </div>
-                      {% endfor %}
-                  </div>
-              </div>
-            </div><!-- End Light Intensity Card -->
-
-
-            <div class="col-12">
-                <div class="card">
-                    <div class="filter">
+        <h1>Dashboard</h1>
+        <nav>
+            <ol class="breadcrumb d-flex align-items-center">
+                <li class="breadcrumb-item"><a href="{% url 'optibreed:dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item d-flex align-items-center">
+                    {{ selected_room.Material_name }}
+                    <div class="filter ms-2">
                         <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                             <li class="dropdown-header text-start">
                                 <h6>Filter</h6>
                             </li>
-                            <li><a class="dropdown-item" href="?time_frame=today">Today</a></li>
-                            <li><a class="dropdown-item" href="?time_frame=this_week">This Week</a></li>
-                            <li><a class="dropdown-item" href="?time_frame=this_month">This Month</a></li>
+                            {% for room in user_rooms %}
+                            <li><a class="dropdown-item" href="#" data-room-id="{{ room.id }}">{{ room.Material_name }}</a></li>
+                            {% endfor %}
                         </ul>
                     </div>
-                    <div class="card-body">
-                        <h5 class="card-title">Environmental Conditions <span>/ {{ time_frame }}</span></h5>
-                        <!-- Line Chart -->
-                        <div id="conditionsChart"></div>
-                        <script>
-                            document.addEventListener("DOMContentLoaded", () => {
-                                new ApexCharts(document.querySelector("#conditionsChart"), {
-                                    series: [{
-                                        name: 'Temperature',
-                                        data: {{ temperatures|safe }},
-                                    }, {
-                                        name: 'Humidity',
-                                        data: {{ humidities|safe }},
-                                    }, {
-                                        name: 'Light Intensity',
-                                        data: {{ light_intensities|safe }},
-                                    }],
-                                    chart: {
-                                        height: 350,
-                                        type: 'line',
-                                        toolbar: {
-                                            show: false
-                                        },
-                                    },
-                                    markers: {
-                                        size: 4
-                                    },
-                                    colors: ['#4154f1', '#2eca6a', '#ff771d'],
-                                    stroke: {
-                                        curve: 'smooth',
-                                        width: 2
-                                    },
-                                    xaxis: {
-                                        categories: {{ timestamps|safe }},
-                                        type: 'datetime',
-                                    },
-                                    yaxis: {
-                                        labels: {
-                                            formatter: function (value) {
-                                                return value.toFixed(2); // Adjust the number of decimal places as needed
+                </li>
+            </ol>
+        </nav>
+    </div><!-- End Page Title -->
+    
+    <form id="room-selection-form" method="get" action="{% url 'optibreed:dashboard' %}" class="d-none">
+        <input type="hidden" name="room_id" id="selected-room-id" value="{{ selected_room.id }}">
+        <input type="hidden" name="time_frame" value="{{ time_frame }}">
+    </form>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const dropdownItems = document.querySelectorAll('.dropdown-item[data-room-id]');
+        const roomSelectionForm = document.getElementById('room-selection-form');
+        const selectedRoomIdInput = document.getElementById('selected-room-id');
+    
+        dropdownItems.forEach(item => {
+            item.addEventListener('click', function (event) {
+                event.preventDefault();
+                selectedRoomIdInput.value = this.getAttribute('data-room-id');
+                roomSelectionForm.submit();
+            });
+        });
+    });
+    </script>
+    
+    <section class="section dashboard">
+        <div class="row">
+            <!-- Left side columns -->
+            <div class="col-lg-8">
+                <div class="row">
+                    <!-- Temperature Card -->
+                    <div class="col-xxl-4 col-md-6">
+                        <div class="card info-card temperature-card">
+                            <div class="filter">
+                                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                                    <li class="dropdown-header text-start">
+                                        <h6>Filter</h6>
+                                    </li>
+                                    <li><a class="dropdown-item" href="?time_frame=today&room_id={{ selected_room.id }}">Today</a></li>
+                                    <li><a class="dropdown-item" href="?time_frame=this_week&room_id={{ selected_room.id }}">This Week</a></li>
+                                    <li><a class="dropdown-item" href="?time_frame=this_month&room_id={{ selected_room.id }}">This Month</a></li>
+                                </ul>
+                            </div>
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <h5 class="card-title">Temperature <span>| {{ time_frame }}</span></h5>
+                                {% for condition in conditions %}
+                                <div class="d-flex flex-column align-items-center mb-auto">
+                                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-thermometer-half"></i>
+                                        <h6>{{ condition.Temperature|floatformat:2 }}°C</h6>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between mt-auto">
+                                    <span class="text-muted small fs-6">Min: {{ min_temperature|floatformat:2 }}°C</span>
+                                    <span class="text-muted small fs-6">Max: {{ max_temperature|floatformat:2 }}°C</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div><!-- End Temperature Card -->
+    
+                    <!-- Humidity Card -->
+                    <div class="col-xxl-4 col-md-6">
+                        <div class="card info-card humidity-card">
+                            <div class="filter">
+                                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                                    <li class="dropdown-header text-start">
+                                        <h6>Filter</h6>
+                                    </li>
+                                    <li><a class="dropdown-item" href="?time_frame=today&room_id={{ selected_room.id }}">Today</a></li>
+                                    <li><a class="dropdown-item" href="?time_frame=this_week&room_id={{ selected_room.id }}">This Week</a></li>
+                                    <li><a class="dropdown-item" href="?time_frame=this_month&room_id={{ selected_room.id }}">This Month</a></li>
+                                </ul>
+                            </div>
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <h5 class="card-title">Humidity <span>| {{ time_frame }}</span></h5>
+                                {% for condition in conditions %}
+                                <div class="d-flex flex-column align-items-center mb-auto">
+                                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-droplet-half"></i>
+                                        <h6>{{ condition.Humidity|floatformat:2 }}%</h6>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between mt-auto">
+                                    <span class="text-muted small fs-6">Min: {{ min_humidity|floatformat:2 }}%</span>
+                                    <span class="text-muted small fs-6">Max: {{ max_humidity|floatformat:2 }}%</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div><!-- End Humidity Card -->
+    
+                    <!-- Light Intensity Card -->
+                    <div class="col-xxl-4 col-md-6">
+                        <div class="card info-card light-intensity-card">
+                            <div class="filter">
+                                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                                    <li class="dropdown-header text-start">
+                                        <h6>Filter</h6>
+                                    </li>
+                                    <li><a class="dropdown-item" href="?time_frame=today&room_id={{ selected_room.id }}">Today</a></li>
+                                    <li><a class="dropdown-item" href="?time_frame=this_week&room_id={{ selected_room.id }}">This Week</a></li>
+                                    <li><a class="dropdown-item" href="?time_frame=this_month&room_id={{ selected_room.id }}">This Month</a></li>
+                                </ul>
+                            </div>
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <h5 class="card-title">Light Intensity <span>| {{ time_frame }}</span></h5>
+                                {% for condition in conditions %}
+                                <div class="d-flex flex-column align-items-center mb-auto">
+                                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-brightness-high"></i>
+                                        <h6>{{ condition.Lightintensity|floatformat:2 }} lux</h6>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between mt-auto">
+                                    <span class="text-muted small fs-6">Min: {{ min_light_intensity|floatformat:2 }} lux</span>
+                                    <span class="text-muted small fs-6">Max: {{ max_light_intensity|floatformat:2 }} lux</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div><!-- End Light Intensity Card -->
+    
+                    <!-- Combined Graphs -->
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="filter">
+                                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                                    <li class="dropdown-header text-start">
+                                        <h6>Filter</h6>
+                                    </li>
+                                    <li><a class="dropdown-item" href="?time_frame=today&room_id={{ selected_room.id }}">Today</a></li>
+                                    <li><a class="dropdown-item" href="?time_frame=this_week&room_id={{ selected_room.id }}">This Week</a></li>
+                                    <li><a class="dropdown-item" href="?time_frame=this_month&room_id={{ selected_room.id }}">This Month</a></li>
+                                </ul>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">Environmental Conditions <span>| {{ time_frame }}</span></h5>
+                                <!-- Line Chart -->
+                                <div id="conditionsChart"></div>
+                                <script>
+                                    document.addEventListener("DOMContentLoaded", () => {
+                                        new ApexCharts(document.querySelector("#conditionsChart"), {
+                                            series: [{
+                                                name: 'Temperature',
+                                                data: {{ temperatures|safe }},
+                                            }, {
+                                                name: 'Humidity',
+                                                data: {{ humidities|safe }},
+                                            }, {
+                                                name: 'Light Intensity',
+                                                data: {{ light_intensities|safe }},
+                                            }],
+                                            chart: {
+                                                height: 350,
+                                                type: 'line',
+                                                toolbar: {
+                                                    show: false
+                                                },
+                                            },
+                                            markers: {
+                                                size: 4
+                                            },
+                                            colors: ['#4154f1', '#2eca6a', '#ff771d'],
+                                            stroke: {
+                                                curve: 'smooth',
+                                                width: 2
+                                            },
+                                            xaxis: {
+                                                categories: {{ timestamps|safe }},
+                                                type: 'datetime',
+                                            },
+                                            yaxis: {
+                                                labels: {
+                                                    formatter: function (value) {
+                                                        return value.toFixed(2); // Adjust the number of decimal places as needed
+                                                    }
+                                                }
+                                            },
+                                            tooltip: {
+                                                x: {
+                                                    format: 'dd/MM/yy HH:mm'
+                                                },
                                             }
-                                        }
-                                    },
-                                    tooltip: {
-                                        x: {
-                                            format: 'dd/MM/yy HH:mm'
-                                        },
-                                    }
-                                }).render();
-                            });
-                        </script>
-                        <!-- End Line Chart -->
+                                        }).render();
+                                    });
+                                </script>
+                                <!-- End Line Chart -->
+                            </div>
+                        </div>
+                    </div><!-- End Combined Graphs -->
+
+
+
+                <!-- Recent Alerts -->
+                <div class="col-12">
+                    <div class="card recent-alerts overflow-auto">
+                
+                    <div class="filter">
+                        <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                        <li class="dropdown-header text-start">
+                            <h6>Filter</h6>
+                        </li>
+                        <li><a class="dropdown-item" href="#">Today</a></li>
+                        <li><a class="dropdown-item" href="#">This Month</a></li>
+                        <li><a class="dropdown-item" href="#">This Year</a></li>
+                        </ul>
                     </div>
-                </div>
-            </div>
-          
-          
+                
+                    <div class="card-body">
+                        <h5 class="card-title">Recent Alerts <span>| Today</span></h5>
+                
+                        <table class="table table-borderless datatable">
+                        <thead>
+                            <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Sensor ID</th>
+                            <th scope="col">Issue</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            <th scope="row"><a href="#">#101</a></th>
+                            <td>Temp-01</td>
+                            <td><a href="#" class="text-primary">Temperature Drop</a></td>
+                            <td>Temperature dropped below 18°C at...</td>
+                            <td><span class="badge bg-warning">In Progress</span></td>
+                            </tr>
+                            <tr>
+                            <th scope="row"><a href="#">#102</a></th>
+                            <td>Humidity-05</td>
+                            <td><a href="#" class="text-primary">Humidity Rise</a></td>
+                            <td>Humidity rose above 70% at...</td>
+                            <td><span class="badge bg-danger">Unresolved</span></td>
+                            </tr>
+                            <tr>
+                            <th scope="row"><a href="#">#103</a></th>
+                            <td>Light-07</td>
+                            <td><a href="#" class="text-primary">High Light Intensity</a></td>
+                            <td>Light intensity exceeded 1000 lux...</td>
+                            <td><span class="badge bg-success">Resolved</span></td>
+                            </tr>
+                            <tr>
+                            <th scope="row"><a href="#">#104</a></th>
+                            <td>Temp-02</td>
+                            <td><a href="#" class="text-primary">Temperature Spike</a></td>
+                            <td>Temperature rose above 25°C at...</td>
+                            <td><span class="badge bg-warning">In Progress</span></td>
+                            </tr>
+                            <tr>
+                            <th scope="row"><a href="#">#105</a></th>
+                            <td>Humidity-03</td>
+                            <td><a href="#" class="text-primary">Low Humidity</a></td>
+                            <td>Humidity dropped below 50% at...</td>
+                            <td><span class="badge bg-success">Resolved</span></td>
+                            </tr>
+                        </tbody>
+                        </table>
+                
+                    </div>
+                
+                    </div>
+                </div><!-- End Recent Alerts -->
+    
 
+                <!-- Top Selling -->
+                <div class="col-12">
+                <div class="card top-selling overflow-auto">
 
-
-
-            <!-- Recent Alerts -->
-            <div class="col-12">
-                <div class="card recent-alerts overflow-auto">
-            
-                <div class="filter">
+                    <div class="filter">
                     <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                    <li class="dropdown-header text-start">
+                        <li class="dropdown-header text-start">
                         <h6>Filter</h6>
-                    </li>
-                    <li><a class="dropdown-item" href="#">Today</a></li>
-                    <li><a class="dropdown-item" href="#">This Month</a></li>
-                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                        </li>
+
+                        <li><a class="dropdown-item" href="#">Today</a></li>
+                        <li><a class="dropdown-item" href="#">This Month</a></li>
+                        <li><a class="dropdown-item" href="#">This Year</a></li>
                     </ul>
-                </div>
-            
-                <div class="card-body">
-                    <h5 class="card-title">Recent Alerts <span>| Today</span></h5>
-            
-                    <table class="table table-borderless datatable">
-                    <thead>
+                    </div>
+
+                    <div class="card-body pb-0">
+                    <h5 class="card-title">Top Selling <span>| Today</span></h5>
+
+                    <table class="table table-borderless">
+                        <thead>
                         <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Sensor ID</th>
-                        <th scope="col">Issue</th>
-                        <th scope="col">Description</th>
-                        <th scope="col">Status</th>
+                            <th scope="col">Preview</th>
+                            <th scope="col">Product</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Sold</th>
+                            <th scope="col">Revenue</th>
                         </tr>
-                    </thead>
-                    <tbody>
+                        </thead>
+                        <tbody>
                         <tr>
-                        <th scope="row"><a href="#">#101</a></th>
-                        <td>Temp-01</td>
-                        <td><a href="#" class="text-primary">Temperature Drop</a></td>
-                        <td>Temperature dropped below 18°C at...</td>
-                        <td><span class="badge bg-warning">In Progress</span></td>
-                        </tr>
-                        <tr>
-                        <th scope="row"><a href="#">#102</a></th>
-                        <td>Humidity-05</td>
-                        <td><a href="#" class="text-primary">Humidity Rise</a></td>
-                        <td>Humidity rose above 70% at...</td>
-                        <td><span class="badge bg-danger">Unresolved</span></td>
+                            <th scope="row"><a href="#"><img src="assets/img/product-1.jpg" alt=""></a></th>
+                            <td><a href="#" class="text-primary fw-bold">Ut inventore ipsa voluptas nulla</a></td>
+                            <td>$64</td>
+                            <td class="fw-bold">124</td>
+                            <td>$5,828</td>
                         </tr>
                         <tr>
-                        <th scope="row"><a href="#">#103</a></th>
-                        <td>Light-07</td>
-                        <td><a href="#" class="text-primary">High Light Intensity</a></td>
-                        <td>Light intensity exceeded 1000 lux...</td>
-                        <td><span class="badge bg-success">Resolved</span></td>
+                            <th scope="row"><a href="#"><img src="assets/img/product-2.jpg" alt=""></a></th>
+                            <td><a href="#" class="text-primary fw-bold">Exercitationem similique doloremque</a></td>
+                            <td>$46</td>
+                            <td class="fw-bold">98</td>
+                            <td>$4,508</td>
                         </tr>
                         <tr>
-                        <th scope="row"><a href="#">#104</a></th>
-                        <td>Temp-02</td>
-                        <td><a href="#" class="text-primary">Temperature Spike</a></td>
-                        <td>Temperature rose above 25°C at...</td>
-                        <td><span class="badge bg-warning">In Progress</span></td>
+                            <th scope="row"><a href="#"><img src="assets/img/product-3.jpg" alt=""></a></th>
+                            <td><a href="#" class="text-primary fw-bold">Doloribus nisi exercitationem</a></td>
+                            <td>$59</td>
+                            <td class="fw-bold">74</td>
+                            <td>$4,366</td>
                         </tr>
                         <tr>
-                        <th scope="row"><a href="#">#105</a></th>
-                        <td>Humidity-03</td>
-                        <td><a href="#" class="text-primary">Low Humidity</a></td>
-                        <td>Humidity dropped below 50% at...</td>
-                        <td><span class="badge bg-success">Resolved</span></td>
+                            <th scope="row"><a href="#"><img src="assets/img/product-4.jpg" alt=""></a></th>
+                            <td><a href="#" class="text-primary fw-bold">Officiis quaerat sint rerum error</a></td>
+                            <td>$32</td>
+                            <td class="fw-bold">63</td>
+                            <td>$2,016</td>
                         </tr>
-                    </tbody>
+                        <tr>
+                            <th scope="row"><a href="#"><img src="assets/img/product-5.jpg" alt=""></a></th>
+                            <td><a href="#" class="text-primary fw-bold">Sit unde debitis delectus repellendus</a></td>
+                            <td>$79</td>
+                            <td class="fw-bold">41</td>
+                            <td>$3,239</td>
+                        </tr>
+                        </tbody>
                     </table>
-            
-                </div>
-            
-                </div>
-            </div><!-- End Recent Alerts -->
-  
 
-            <!-- Top Selling -->
-            <div class="col-12">
-              <div class="card top-selling overflow-auto">
-
-                <div class="filter">
-                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                    <li class="dropdown-header text-start">
-                      <h6>Filter</h6>
-                    </li>
-
-                    <li><a class="dropdown-item" href="#">Today</a></li>
-                    <li><a class="dropdown-item" href="#">This Month</a></li>
-                    <li><a class="dropdown-item" href="#">This Year</a></li>
-                  </ul>
-                </div>
-
-                <div class="card-body pb-0">
-                  <h5 class="card-title">Top Selling <span>| Today</span></h5>
-
-                  <table class="table table-borderless">
-                    <thead>
-                      <tr>
-                        <th scope="col">Preview</th>
-                        <th scope="col">Product</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">Sold</th>
-                        <th scope="col">Revenue</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <th scope="row"><a href="#"><img src="assets/img/product-1.jpg" alt=""></a></th>
-                        <td><a href="#" class="text-primary fw-bold">Ut inventore ipsa voluptas nulla</a></td>
-                        <td>$64</td>
-                        <td class="fw-bold">124</td>
-                        <td>$5,828</td>
-                      </tr>
-                      <tr>
-                        <th scope="row"><a href="#"><img src="assets/img/product-2.jpg" alt=""></a></th>
-                        <td><a href="#" class="text-primary fw-bold">Exercitationem similique doloremque</a></td>
-                        <td>$46</td>
-                        <td class="fw-bold">98</td>
-                        <td>$4,508</td>
-                      </tr>
-                      <tr>
-                        <th scope="row"><a href="#"><img src="assets/img/product-3.jpg" alt=""></a></th>
-                        <td><a href="#" class="text-primary fw-bold">Doloribus nisi exercitationem</a></td>
-                        <td>$59</td>
-                        <td class="fw-bold">74</td>
-                        <td>$4,366</td>
-                      </tr>
-                      <tr>
-                        <th scope="row"><a href="#"><img src="assets/img/product-4.jpg" alt=""></a></th>
-                        <td><a href="#" class="text-primary fw-bold">Officiis quaerat sint rerum error</a></td>
-                        <td>$32</td>
-                        <td class="fw-bold">63</td>
-                        <td>$2,016</td>
-                      </tr>
-                      <tr>
-                        <th scope="row"><a href="#"><img src="assets/img/product-5.jpg" alt=""></a></th>
-                        <td><a href="#" class="text-primary fw-bold">Sit unde debitis delectus repellendus</a></td>
-                        <td>$79</td>
-                        <td class="fw-bold">41</td>
-                        <td>$3,239</td>
-                      </tr>
-                    </tbody>
-                  </table>
+                    </div>
 
                 </div>
+                </div><!-- End Top Selling -->
 
-              </div>
-            </div><!-- End Top Selling -->
-
-          </div>
+            </div>
         </div><!-- End Left side columns -->
 
         <!-- Right side columns -->
@@ -547,4 +576,14 @@
     </section>
 
   </main><!-- End #main -->
+  <script>
+    document.querySelectorAll('.dropdown-item[data-room-id]').forEach(item => {
+        item.addEventListener('click', function (e) {
+            e.preventDefault();
+            const roomId = this.getAttribute('data-room-id');
+            document.getElementById('selected-room-id').value = roomId;
+            document.getElementById('room-selection-form').submit();
+        });
+    });
+</script>
 {% endblock %}
