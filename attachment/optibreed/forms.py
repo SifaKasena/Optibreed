@@ -80,9 +80,9 @@ class RoomForm(forms.ModelForm):
 
 class ReportForm(forms.Form):
     def __init__(self, user, *args, **kwargs):
+        self.user = user
         super(ReportForm, self).__init__(*args, **kwargs)
         self.fields['room_id'] = forms.ModelChoiceField(queryset=Room.objects.filter(User=user), label='Select Room')
-    
     report_type = forms.ChoiceField(choices=[('recent', 'Recent'), ('date_range', 'Date Range')], label='Report Type')
     number_of_records = forms.ChoiceField(choices=[(10, '10'), (25, '25'), (50, '50'), (75, '75'), (100, '100'), ('all', 'All')], label='Number of Records')
     start_date = forms.DateTimeField(required=False, widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}), label='Start Date')

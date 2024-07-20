@@ -64,7 +64,7 @@ from .models import Room, Condition
 
 @login_required
 def dashboard(request):
-    user_rooms = Room.objects.all()
+    user_rooms = Room.objects.filter(User=request.user)
     selected_room_id = request.GET.get('room_id')
     selected_room = None
 
@@ -314,8 +314,7 @@ def generate_chart(labels, data, title, ylabel):
     return image_data
 
 def generate_report(request):
-    form = ReportForm(request.GET or None)
-    form.user = request.user  # Pass the user to the form
+    form = ReportForm(request.user, request.GET or None)
 
     conditions = Condition.objects.none()
     report_data = {}
