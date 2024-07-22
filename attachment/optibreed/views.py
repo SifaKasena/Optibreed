@@ -16,12 +16,14 @@ from .forms import ReportForm, RoomForm
 from .models import Condition, Room
 from .serializers import ConditionSerializer
 import matplotlib.pyplot as plt
-from django.db.models import Min, Max
+from django.db.models import Min, Max, Avg
 from allauth.account.views import SignupView, LoginView, LogoutView
 from datetime import timedelta, date
+from django.utils import timezone
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from notifications.models import Notification
+import json
 
 
 # Create your views here.
@@ -50,17 +52,6 @@ class CustomLogoutView(LogoutView):
     pass
 
 
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-from django.db.models import Min, Max
-from datetime import date, timedelta
-from .models import Room, Condition
-
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-from django.db.models import Min, Max
-from datetime import date, timedelta
-from .models import Room, Condition
 
 @login_required
 def dashboard(request):
@@ -262,8 +253,17 @@ def receive_data(request):
 
 @login_required
 def room_conditions(request, room_id):
-    room = Room.objects.get(id=room_id, User=request.user)
-    conditions = Condition.objects.filter(Room=room).order_by('-Timestamp')[:50]  # Limit to first 50 records
+    room = get_object_or_404(Room, id=room_id, User=request.user)
+    
+    # Get filter parameters
+    filter_minutes = int(request.GET.get('filter', 60))  # Default to last 1 hour
+    entries = int(request.GET.get('entries', 10))  # Default to 10 entries
+    
+    # Filter conditions based on the selected time range
+    time_threshold = timezone.now() - timedelta(minutes=filter_minutes)
+    conditions = Condition.objects.filter(Room=room, Timestamp__gte=time_threshold).order_by('-Timestamp')[:entries]
+    
+    latest_condition = conditions.first()  # Get the latest condition
     conditions_reverse = conditions[::-1]
 
     labels = [condition.Timestamp.strftime('%Y-%m-%d %H:%M:%S') for condition in conditions_reverse]
@@ -271,13 +271,24 @@ def room_conditions(request, room_id):
     humidities = [condition.Humidity for condition in conditions_reverse]
     light_intensities = [condition.Lightintensity for condition in conditions_reverse]
 
+    # Calculate averages for the selected time range
+    average_temperature = conditions.aggregate(Avg('Temperature'))['Temperature__avg'] or 0.0
+    average_humidity = conditions.aggregate(Avg('Humidity'))['Humidity__avg'] or 0.0
+    average_light_intensity = conditions.aggregate(Avg('Lightintensity'))['Lightintensity__avg'] or 0.0
+
     context = {
         'room': room,
+        'latest_condition': latest_condition,
         'conditions': conditions,
         'labels': json.dumps(labels),
         'temperatures': json.dumps(temperatures),
         'humidities': json.dumps(humidities),
-        'light_intensities': json.dumps(light_intensities)
+        'light_intensities': json.dumps(light_intensities),
+        'average_temperature': average_temperature,
+        'average_humidity': average_humidity,
+        'average_light_intensity': average_light_intensity,
+        'filter_minutes': filter_minutes,
+        'entries': entries,
     }
 
     return render(request, 'core/room/room_details.html', context)
