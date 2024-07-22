@@ -32,7 +32,7 @@
             <span class="badge bg-primary badge-number">{{ notifications|length }}</span>
         </a><!-- End Notification Icon -->
     
-        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications p-2">
             <li class="dropdown-header">
                 You have {{ notifications|length }} new notifications
                 <a href="{% url 'notifications:list' %}"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
@@ -41,25 +41,31 @@
                 <hr class="dropdown-divider">
             </li>
     
-            {% for notification in notifications %}
-            <li class="notification-item">
-                <i class="bi bi-{{ notification.icon }} text-{{ notification.type }}"></i>
-                <div>
-                    <h4>{{ notification.title }}</h4>
-                    <p>{{ notification.message }}</p>
-                    <p>{{ notification.time }}</p>
-                </div>
-            </li>
-            <li>
-                <hr class="dropdown-divider">
-            </li>
-            {% endfor %}
+            <div class="overflow-auto" style="max-height: 300px;">
+                {% for notification in notifications %}
+                <li class="d-flex align-items-start mb-2">
+                    <a href="{% url 'notifications:details' notification.id %}" class="d-flex align-items-start text-decoration-none text-dark w-100">
+                        <i class="bi bi-{{ notification.icon }} text-{{ notification.type }} me-2"></i>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">{{ notification.title }}</h6>
+                            <p class="mb-0">{{ notification.message }}</p>
+                            <small class="text-muted">{{ notification.time }}</small>
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                {% endfor %}
+            </div>
     
             <li class="dropdown-footer">
-                <a href="#">Show all notifications</a>
+                <a href="{% url 'notifications:list' %}" class="d-block text-center">Show all notifications</a>
             </li>
         </ul><!-- End Notification Dropdown Items -->
-      </li><!-- End Notification Nav -->
+    </li><!-- End Notification Nav -->
+    
+    
 
       <li class="nav-item dropdown">
 

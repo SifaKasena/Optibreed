@@ -254,15 +254,15 @@ def receive_data(request):
 @login_required
 def room_conditions(request, room_id):
     room = get_object_or_404(Room, id=room_id, User=request.user)
-    
+
     # Get filter parameters
     filter_minutes = int(request.GET.get('filter', 60))  # Default to last 1 hour
     entries = int(request.GET.get('entries', 10))  # Default to 10 entries
-    
+
     # Filter conditions based on the selected time range
     time_threshold = timezone.now() - timedelta(minutes=filter_minutes)
     conditions = Condition.objects.filter(Room=room, Timestamp__gte=time_threshold).order_by('-Timestamp')[:entries]
-    
+
     latest_condition = conditions.first()  # Get the latest condition
     conditions_reverse = conditions[::-1]
 
