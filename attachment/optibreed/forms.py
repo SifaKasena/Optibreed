@@ -5,30 +5,6 @@ from .models import Room
 from django import forms
 
 
-class RegistrationForm(UserCreationForm):
-    """
-    A form used for user registration.
-
-    Inherits from UserCreationForm, which is a built-in form provided by Django
-    for creating new user accounts.
-
-    Attributes:
-        model (User): The user model to be used for registration.
-        fields (list): The fields to be included in the registration form.
-
-    """
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'password1', 'password2']
-
-    def __init__(self, *args, **kwargs):
-        super(RegistrationForm, self).__init__(*args, **kwargs)
-        self.fields['username'].widget = forms.TextInput(attrs={'placeholder': 'Username'})
-        self.fields['email'].widget = forms.EmailInput(attrs={'placeholder': 'Email'})
-        self.fields['password1'].widget = forms.PasswordInput(attrs={'placeholder': 'Password'})
-        self.fields['password2'].widget = forms.PasswordInput(attrs={'placeholder': 'Confirm Password'})
-
-
 # form for adding room
 class RoomForm(forms.ModelForm):
     """
@@ -79,7 +55,10 @@ class RoomForm(forms.ModelForm):
 
 
 class ReportForm(forms.Form):
-    room_id = forms.ModelChoiceField(queryset=Room.objects.all(), label='Select Room')
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super(ReportForm, self).__init__(*args, **kwargs)
+        self.fields['room_id'] = forms.ModelChoiceField(queryset=Room.objects.filter(User=user), label='Select Room')
     report_type = forms.ChoiceField(choices=[('recent', 'Recent'), ('date_range', 'Date Range')], label='Report Type')
     number_of_records = forms.ChoiceField(choices=[(10, '10'), (25, '25'), (50, '50'), (75, '75'), (100, '100'), ('all', 'All')], label='Number of Records')
     start_date = forms.DateTimeField(required=False, widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}), label='Start Date')

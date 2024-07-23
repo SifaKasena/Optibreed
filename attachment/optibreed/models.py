@@ -48,24 +48,6 @@ class Condition(models.Model):
     Humidity = models.FloatField()
     Lightintensity = models.FloatField()
 
-# class Notification(models.Model):
-#     STATUS_CHOICES = [
-#         ('unread', 'Unread'),
-#         ('read', 'Read')
-#     ]
-
-#     User = models.ForeignKey(User, on_delete=models.CASCADE)
-#     message = models.TextField()
-#     timestamp = models.DateTimeField(auto_now_add=True)
-#     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='unread')
-
-#     def __str__(self):
-#         return f"Notification for {self.User.username} at {self.timestamp}"
-
-#     class Meta:
-#         ordering = ['-timestamp']
-
-
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='profile_pics', default='profile.png')
