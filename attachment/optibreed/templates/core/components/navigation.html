@@ -3,69 +3,69 @@
 
     <ul class="sidebar-nav" id="sidebar-nav">
 
-      <li class="nav-item">
+      <li class="nav-item mb-3">
         <a class="nav-link" href="{% url 'optibreed:dashboard' %}">
-          <i class="bi bi-grid"></i>
-          <span>Dashboard</span>
+          <i class="bi bi-grid fs-4"></i>
+          <span class="fs-6">Dashboard</span>
         </a>
       </li><!-- End Dashboard Nav -->
 
-      <li class="nav-item">
+      <li class="nav-item mb-3">
         <a class="nav-link" href="{% url 'optibreed:rooms' %}">
-          <i class="ri-home-5-fill"></i>
-          <span>Rooms</span>
+          <i class="ri-home-4-line fs-4"></i>
+          <span class="fs-6">Rooms</span>
         </a>
       </li><!-- End Rooms Nav -->
 
-      <li class="nav-item">
+      <li class="nav-item mb-3">
         <a class="nav-link" href="{% url 'notifications:list' %}">
-          <i class="ri-message-3-fill"></i>
-          <span>Notifications</span>
+          <i class="ri-notification-3-line fs-4"></i>
+          <span class="fs-6">Notifications</span>
         </a>
       </li><!-- End Notifications Nav -->
 
-      <li class="nav-item">
+      <!-- <li class="nav-item">
         <a class="nav-link" href="#">
           <i class="ri-24-hours-line"></i>
           <span>Activity log</span>
-        </a>
+        </a> -->
       </li><!-- End Activity Log Nav -->
 
-      <li class="nav-item">
+      <li class="nav-item mb-3">
         <a class="nav-link" href="{% url 'optibreed:generate_report' %}">
-          <i class="ri-chat-history-fill"></i>
-          <span>Report</span>
+          <i class="ri-file-list-3-line fs-4"></i>
+          <span class="fs-6">Report</span>
         </a>
       </li><!-- End Report Nav -->
 
-      <li class="nav-heading">Info Pages</li>
+      <li class="nav-heading mb-3">Info Pages</li>
 
       <li class="nav-item">
         <a class="nav-link collapsed" href="{% url 'optibreed:profile' %}">
-          <i class="bi bi-person"></i>
-          <span>Profile</span>
+          <i class="bi bi-person fs-4"></i>
+          <span class="fs-6">Profile</span>
         </a>
       </li><!-- End Profile Page Nav -->
 
-      <li class="nav-item">
+      <!-- <li class="nav-item">
         <a class="nav-link collapsed" href="#">
           <i class="bi bi-question-circle"></i>
           <span>F.A.Q</span>
-        </a>
+        </a> -->
       </li><!-- End F.A.Q Page Nav -->
 
-      <li class="nav-item">
+      <!-- <li class="nav-item">
         <a class="nav-link collapsed" href="#">
           <i class="bi bi-envelope"></i>
           <span>Contact</span>
-        </a>
+        </a> -->
       </li><!-- End Contact Page Nav -->
 
       <form method="post" action="{% url 'optibreed:logout' %}" class="nav-item">
         {% csrf_token %}
         <button type="submit" class="nav-link collapsed" style="width: 100%;">
-          <i class="bi bi-box-arrow-in-right"></i>
-          <span>Logout</span>
+          <i class="bi bi-box-arrow-in-right fs-4"></i>
+          <span class="fs-6">Logout</span>
         </button>
       </form><!-- End Logout Nav -->
 
