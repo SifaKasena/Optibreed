@@ -31,6 +31,23 @@ class Room(models.Model):
         return self.Material_name
 
 
+class Sensor(models.Model):
+    """
+    Represents a sensor in a room.
+
+    Attributes:
+        Room (Room): The room associated with the sensor.
+        Sensor_type (CharField): The type of sensor (e.g., temperature, humidity, light intensity).
+        Sensor_name (CharField): The name or identifier of the sensor.
+    """
+    Room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    Sensor_type = models.CharField(max_length=50)
+    Sensor_name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f"{self.Sensor_name} ({self.Sensor_type}) in {self.Room}"
+
+
 class Condition(models.Model):
     """
     Represents a condition measurement in a room.
@@ -49,6 +66,19 @@ class Condition(models.Model):
     Lightintensity = models.FloatField()
 
 class Profile(models.Model):
+    """
+    Represents the profile of the user
+
+    Attributes:
+        User: the user associated with the profile
+        image: profile image related to user
+        job_title:job title related to user
+        twitter: twitter handle account
+        facebook: facebook handle account
+        instagram: instagram handle account
+        linkedin: linkedin handle account
+        about: about section for user profile
+    """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='profile_pics', default='profile.png')
     job_title = models.CharField(max_length=100, blank=True)
