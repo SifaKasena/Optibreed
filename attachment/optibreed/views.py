@@ -12,7 +12,7 @@ from reportlab.pdfgen import canvas
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .forms import ReportForm, RoomForm
+from .forms import ReportForm, RoomForm, CustomLoginForm
 from .models import Condition, Room
 from .serializers import ConditionSerializer
 import matplotlib.pyplot as plt
@@ -23,6 +23,10 @@ from django.utils import timezone
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from notifications.models import Notification
+from django.contrib.auth import views as auth_views
+from django.urls import reverse_lazy
+from django.views.generic import CreateView
+from django.contrib.auth.forms import UserCreationForm
 import json
 
 
@@ -40,16 +44,17 @@ def profile(request):
 
 
 
-class CustomSignupView(SignupView):
+class CustomSignupView(CreateView):
     template_name = "registration/signup.html"
+    form_class = UserCreationForm
+    success_url = reverse_lazy('optibreed:login')  # Redirect to login page after successful signup
 
-class CustomLoginView(LoginView):
+class CustomLoginView(auth_views.LoginView):
     template_name = "registration/login.html"
+    form_class = CustomLoginForm 
 
-class CustomLogoutView(LogoutView):
-    # TODO: Implement custom logout view
-    # template_name = "registration/logout.html"
-    pass
+class CustomLogoutView(auth_views.LogoutView):
+    template_name = "registration/logout.html"
 
 
 

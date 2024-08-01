@@ -1,0 +1,198 @@
+/* Container for the timeline section */
+.timeline {
+  position: relative;
+  padding: 0;
+  list-style: none;
+  margin: 2rem 0; /* Increased margin for spacing between sections */
+}
+
+/* Vertical line in the center of the timeline */
+.timeline:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  margin-left: -1px;
+  background-color: #e9ecef;
+}
+
+/* Individual row container */
+.timeline .row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 5rem; /* Increased margin for more spacing between rows */
+}
+
+/* Container for the timeline images */
+.timeline-image {
+  position: relative;
+  width: 100%;
+  max-width: 350px; /* Increased image size */
+  margin: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* Ensure the image is fully visible */
+}
+
+/* Ensure text center alignment */
+.timeline .text-center {
+  text-align: center;
+}
+
+/* Left-aligned text */
+.timeline .text-md-start {
+  text-align: start;
+}
+
+/* Style for section titles */
+.timeline h4 {
+  margin-bottom: 1rem;
+}
+
+/* Style for section paragraphs */
+.timeline p {
+  margin-bottom: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+  .timeline:before {
+    left: 0;
+  }
+
+  .timeline .row {
+    flex-direction: column;
+  }
+
+  .timeline .row:nth-child(odd) .col-md-6:first-child {
+    order: 2;
+  }
+
+  .timeline .row:nth-child(even) .col-md-6:first-child {
+    order: 1;
+  }
+}
+
+/* Portfolio item container */
+.portfolio-item {
+  max-width: 350px; /* Increased image size */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Portfolio link container */
+.portfolio-link {
+  position: relative;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Hover effect for portfolio images */
+.portfolio-hover {
+  display: flex;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #5FC580;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity ease-in-out 0.25s;
+}
+
+/* Content displayed during hover */
+.portfolio-hover-content {
+  font-size: 1.25rem;
+  color: white;
+}
+
+/* Hover effect for the image zoom */
+.portfolio-link img {
+  transition: transform 0.25s ease-in-out;
+}
+
+.portfolio-link:hover .portfolio-hover {
+  opacity: 1;
+}
+
+.portfolio-link:hover img {
+  transform: scale(1.2); /* Increased zoom effect */
+}
+
+
+
+.blogs .blog-item {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+  min-height: 350px; /* Set a minimum height for consistency */
+  display: flex;
+  flex-direction: column;
+}
+
+.blogs .blog-item:hover {
+  transform: translateY(-10px);
+}
+
+.blogs .blog-item img {
+  width: 100%;
+  max-height: 300px; /* Max height for images, keeping them sizable */
+  object-fit: cover; /* Ensure images are properly displayed within the container */
+  transition: transform 0.3s ease;
+}
+
+.blogs .blog-item:hover img {
+  transform: scale(1.05); /* Zoom effect on hover */
+}
+
+.blogs .blog-content {
+  padding: 1rem;
+  text-align: center;
+  background-color: #fff;
+  flex-grow: 1; /* Ensure content takes up available space */
+}
+
+.blogs .blog-content h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.blogs .blog-content h3 a {
+  color: #333;
+  text-decoration: none;
+}
+
+.blogs .blog-content p {
+  font-size: 0.95rem;
+  margin-bottom: 1rem; /* Increased margin for better spacing */
+  color: #555;
+}
+
+.blogs .read-more-btn {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  background-color: #5FC580;
+  color: white;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.blogs .read-more-btn:hover {
+  background-color: #215732;
+}
+
+@media (max-width: 767.98px) {
+  .blogs .blog-item {
+    margin-bottom: 1.5rem;
+  }
+
+  .blogs .blog-content {
+    padding: 1rem;
+  }
+}

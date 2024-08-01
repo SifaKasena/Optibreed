@@ -1,12 +1,13 @@
 from django.urls import path
 from . import views
+from .views import CustomSignupView, CustomLoginView, CustomLogoutView
 
 app_name = "optibreed"
 urlpatterns = [
     path("", views.index, name="index"),
-    path("signup/", views.CustomSignupView.as_view(), name="signup"),
-    path("login/", views.CustomLoginView.as_view(), name="login"),
-    path("logout/", views.CustomLogoutView.as_view(), name="logout"),
+    path('signup/', CustomSignupView.as_view(), name='signup'),
+    path('login/', CustomLoginView.as_view(), name='login'),
+    path('logout/', CustomLogoutView.as_view(), name='logout'),
     path("profile/", views.profile, name="profile"),
     path("rooms/", views.rooms, name="rooms"),
     path("dashboard/", views.dashboard, name="dashboard"),

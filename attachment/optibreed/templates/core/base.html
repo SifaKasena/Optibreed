@@ -36,6 +36,10 @@
 
   {% include "./dependencies/js.html" %}
   <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        new PureCounter();
+    });
+    
     const userId = {{ user.id }};
     const socket = new WebSocket('ws://' + window.location.host + '/ws/notifications/');
 

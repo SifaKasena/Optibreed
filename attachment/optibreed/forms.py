@@ -1,9 +1,24 @@
 # forms.py (in your app)
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import AuthenticationForm
 from .models import Room
 from django import forms
 
+class CustomLoginForm(AuthenticationForm):
+    username = forms.CharField(
+        label='Email or Username',
+        max_length=254,
+        widget=forms.TextInput(attrs={'autofocus': True}),
+    )
+    password = forms.CharField(
+        label='Password',
+        widget=forms.PasswordInput,
+    )
+    remember_me = forms.BooleanField(required=False, initial=False, label='Remember me')
+
+    class Meta:
+        fields = ['username', 'password', 'remember_me']
 
 # form for adding room
 class RoomForm(forms.ModelForm):
