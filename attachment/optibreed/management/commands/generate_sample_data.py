@@ -1,4 +1,3 @@
-#optibreed/management/commands/generate_sample_data.py
 from django.core.management.base import BaseCommand
 from optibreed.models import Condition, Room
 import random
@@ -20,14 +19,16 @@ class Command(BaseCommand):
             timestamp = datetime.now() - timedelta(days=i)
             temperature = random.uniform(18.0, 30.0)
             humidity = random.uniform(30.0, 70.0)
-            light_intensity = random.uniform(100.0, 1000.0)
+            voltage = random.uniform(100.0, 240.0)
+            door_condition = random.choice(['Open', 'Closed'])
 
             Condition.objects.create(
                 Room=room,
                 Timestamp=timestamp,
                 Temperature=temperature,
                 Humidity=humidity,
-                Lightintensity=light_intensity
+                Voltage=voltage,
+                DoorCondition=door_condition
             )
 
         self.stdout.write(self.style.SUCCESS('Successfully generated sample data'))

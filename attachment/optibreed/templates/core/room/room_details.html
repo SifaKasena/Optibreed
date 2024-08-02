@@ -8,15 +8,9 @@
       <p class="text-muted">Material: {{ room.Material_name }}</p>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item">
-            <a href="{% url 'optibreed:dashboard' %}">Home</a>
-          </li>
-          <li class="breadcrumb-item active">
-            <a href="{% url 'optibreed:rooms' %}">Rooms</a>
-          </li>
-          <li class="breadcrumb-item active">
-            <a href="{% url 'optibreed:room_conditions' room.id %}">Room Details</a>
-          </li>
+          <li class="breadcrumb-item"><a href="{% url 'optibreed:dashboard' %}">Home</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'optibreed:rooms' %}">Rooms</a></li>
+          <li class="breadcrumb-item active"><a href="{% url 'optibreed:room_conditions' room.id %}">Room Details</a></li>
         </ol>
       </nav>
     </div>
@@ -24,23 +18,11 @@
 
   <div class="card mb-4">
     <div class="card-header d-flex justify-content-between">
-      <h2>Current Conditions - <span id="currentFilter">
-        {% if time_frame == 'this_week' %}
-          This Week
-        {% elif time_frame == 'this_month' %}
-          This Month
-        {% else %}
-          Today
-        {% endif %}
-      </span></h2>
+      <h2>Current Conditions - <span id="currentFilter">{% if time_frame == 'this_week' %} This Week {% elif time_frame == 'this_month' %} This Month {% else %} Today {% endif %}</span></h2>
       <div class="filter">
-        <a class="icon" href="#" data-bs-toggle="dropdown">
-          <i class="bi bi-three-dots"></i>
-        </a>
+        <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-          <li class="dropdown-header text-start">
-            <h6>Filter</h6>
-          </li>
+          <li class="dropdown-header text-start"><h6>Filter</h6></li>
           <li><a class="dropdown-item" href="?time_frame=today&room_id={{ room.id }}">Today</a></li>
           <li><a class="dropdown-item" href="?time_frame=this_week&room_id={{ room.id }}">This Week</a></li>
           <li><a class="dropdown-item" href="?time_frame=this_month&room_id={{ room.id }}">This Month</a></li>
@@ -53,58 +35,58 @@
           <div class="card text-center">
             <div class="card-body">
               <h5 class="card-title">Temperature</h5>
-              <h1 id="temperature" class="display-4 text-success">{{ latest_condition.Temperature|floatformat:2 }}°C</h1>
+              <h1 id="temperature" class="display-4 text-success" style="font-size: 2.5rem;">{{ latest_condition.Temperature|floatformat:2 }}°C</h1>
               <div class="d-flex justify-content-between">
-                <div>
-                  <p class="text-muted">MIN</p>
-                  <p>{{ room.Min_Temperature|floatformat:2 }}°C</p>
-                </div>
-                <div>
-                  <p class="text-muted">MAX</p>
-                  <p>{{ room.Max_Temperature|floatformat:2 }}°C</p>
-                </div>
+                <div><p class="text-muted">MIN</p><p>{{ room.Min_Temperature|floatformat:2 }}°C</p></div>
+                <div><p class="text-muted">MAX</p><p>{{ room.Max_Temperature|floatformat:2 }}°C</p></div>
               </div>
             </div>
           </div>
         </div>
+        
         <div class="col-md-4 mb-3">
           <div class="card text-center">
             <div class="card-body">
               <h5 class="card-title">Humidity</h5>
-              <h1 id="humidity" class="display-4 text-success">{{ latest_condition.Humidity|floatformat:2 }}%</h1>
+              <h1 id="humidity" class="display-4 text-success" style="font-size: 2.5rem;">{{ latest_condition.Humidity|floatformat:2 }}%</h1>
               <div class="d-flex justify-content-between">
-                <div>
-                  <p class="text-muted">MIN</p>
-                  <p>{{ room.Min_Humidity|floatformat:2 }}%</p>
-                </div>
-                <div>
-                  <p class="text-muted">MAX</p>
-                  <p>{{ room.Max_Humidity|floatformat:2 }}%</p>
-                </div>
+                <div><p class="text-muted">MIN</p><p>{{ room.Min_Humidity|floatformat:2 }}%</p></div>
+                <div><p class="text-muted">MAX</p><p>{{ room.Max_Humidity|floatformat:2 }}%</p></div>
               </div>
             </div>
           </div>
         </div>
+        
         <div class="col-md-4 mb-3">
-          <div class="card text-center">
+          <div class="card text-center door-status-card {% if latest_condition.DoorCondition == 'Open' %}blinking{% endif %}">
             <div class="card-body">
-              <h5 class="card-title">Light Intensity</h5>
-              <h1 id="light" class="display-4 text-success">{{ latest_condition.Lightintensity|floatformat:2 }} lux</h1>
-              <div class="d-flex justify-content-between">
-                <div>
-                  <p class="text-muted">MIN</p>
-                  <p>{{ room.Min_Lightintensity|floatformat:2 }} lux</p>
-                </div>
-                <div>
-                  <p class="text-muted">MAX</p>
-                  <p>{{ room.Max_Lightintensity|floatformat:2 }} lux</p>
+              <h5 class="card-title">Door Condition</h5>
+              <h1 class="display-4 text-success {% if latest_condition.DoorCondition == 'Open' %}text-danger{% endif %}" style="font-size: 2rem;">
+                {% if latest_condition.DoorCondition == 'Open' %}Open{% else %}Closed{% endif %}
+              </h1>
+              <div class="d-flex flex-column align-items-center mb-2">
+                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center {% if latest_condition.DoorCondition == 'Open' %}bg-danger{% else %}bg-success{% endif %}">
+                  {% if latest_condition.DoorCondition == 'Open' %}
+                  <i class="bi bi-door-open"></i>
+                  {% else %}
+                  <i class="bi bi-door-closed"></i>
+                  {% endif %}
                 </div>
               </div>
+              {% if latest_condition.DoorCondition == 'Open' %}
+              <div class="alert alert-warning mt-2 p-1" role="alert" style="font-size: 0.75rem;">
+                Door has been open for {{ door_open_duration|floatformat:2 }} minutes
+              </div>
+              {% endif %}
+              <h6 class="text-muted mb-0" style="font-size: 0.75rem;">
+                {{ room.Material_name }}
+              </h6>
             </div>
           </div>
         </div>
+        
       </div>
-      
+
 
       <div id="charts" class="mt-5">
         <div class="chart-container mb-5">
@@ -115,16 +97,10 @@
           <h3>Humidity Over Time</h3>
           <div id="humidityChart" class="w-100"></div>
         </div>
-        <div class="chart-container mb-5">
-          <h3>Light Intensity Over Time</h3>
-          <div id="lightIntensityChart" class="w-100"></div>
-        </div>
       </div>
 
       <div class="card mb-4">
-        <div class="card-header">
-          <h2>Average Readings</h2>
-        </div>
+        <div class="card-header"><h2>Average Readings</h2></div>
         <div class="card-body">
           <div class="row">
             <div class="col-md-4 mb-3">
@@ -140,14 +116,6 @@
                 <div class="card-body">
                   <h5 class="card-title">Average Humidity</h5>
                   <h1 class="display-4 text-primary">{{ average_humidity|floatformat:2 }}%</h1>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4 mb-3">
-              <div class="card text-center">
-                <div class="card-body">
-                  <h5 class="card-title">Average Light Intensity</h5>
-                  <h1 class="display-4 text-primary">{{ average_light_intensity|floatformat:2 }} lux</h1>
                 </div>
               </div>
             </div>
@@ -174,14 +142,14 @@
           </select>
         </div>
       </div>
-      
+
       <table class="table table-striped table-responsive">
         <thead>
           <tr>
             <th>Timestamp</th>
             <th>Temperature (°C)</th>
             <th>Humidity (%)</th>
-            <th>Light Intensity (lx)</th>
+            <th>Door Condition</th>
           </tr>
         </thead>
         <tbody>
@@ -190,7 +158,7 @@
             <td>{{ condition.Timestamp }}</td>
             <td>{{ condition.Temperature|floatformat:2 }}</td>
             <td>{{ condition.Humidity|floatformat:2 }}</td>
-            <td>{{ condition.Lightintensity|floatformat:2 }}</td>
+            <td>{{ condition.DoorCondition }}</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -201,7 +169,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
-
   function applyFilters() {
     const filter = document.getElementById('filter').value;
     const entries = document.getElementById('entries').value;
@@ -214,7 +181,6 @@
   const labels = {{ labels|safe }};
   const temperatures = {{ temperatures|safe }};
   const humidities = {{ humidities|safe }};
-  const lightIntensities = {{ light_intensities|safe }};
 
   // Temperature Chart
   document.addEventListener("DOMContentLoaded", () => {

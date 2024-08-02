@@ -40,7 +40,7 @@ class RoomForm(forms.ModelForm):
         exclude = ['User']
         fields = [
             'Material_name', 'Min_Temperature', 'Max_Temperature',
-            'Min_Humidity', 'Max_Humidity', 'Min_Lightintensity', 'Max_Lightintensity'
+            'Min_Humidity', 'Max_Humidity', 'Min_Voltage', 'Max_Voltage'
         ]
 
 

@@ -1243,3 +1243,41 @@ body {
 .footer {
   margin-top: auto;
 }
+
+
+.blinking {
+  animation: blinkingText 1.5s infinite;
+}
+
+@keyframes blinkingText {
+  0% { background-color: #dc3545; }
+  50% { background-color: #fff; }
+  100% { background-color: #dc3545; }
+}
+
+.door-status-card .card-icon {
+  font-size: 2rem;
+  color: #fff;
+  width: 4rem;
+  height: 4rem;
+}
+
+.bg-success {
+  background-color: #28a745;
+}
+
+.bg-danger {
+  background-color: #dc3545;
+}
+
+.card-body h6 {
+  font-size: 1rem;
+}
+
+.card-body .text-muted {
+  font-size: 0.875rem;
+}
+
+.alert-warning {
+  font-size: 0.75rem;
+}

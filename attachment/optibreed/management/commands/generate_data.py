@@ -1,7 +1,7 @@
 import requests
 import time
 from datetime import datetime
-from random import uniform
+from random import uniform, choice
 from django.core.management.base import BaseCommand
 from optibreed.models import Room
 
@@ -16,9 +16,10 @@ class Command(BaseCommand):
                 data = {
                     'room_id': room.id,
                     'timestamp': datetime.now().isoformat(),
-                    'temperature': uniform(room.Min_Temperature-5, room.Max_Temperature+5),
-                    'humidity': uniform(room.Min_Humidity-5, room.Max_Humidity+5),
-                    'light_intensity': uniform(room.Min_Lightintensity-5, room.Max_Lightintensity+5)
+                    'temperature': uniform(room.Min_Temperature - 5, room.Max_Temperature + 5),
+                    'humidity': uniform(room.Min_Humidity - 5, room.Max_Humidity + 5),
+                    'voltage': uniform(room.Min_Voltage - 5, room.Max_Voltage + 5),
+                    'door_condition': choice(['Open', 'Closed'])
                 }
 
                 try:

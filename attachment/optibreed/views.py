@@ -18,7 +18,7 @@ from .serializers import ConditionSerializer
 import matplotlib.pyplot as plt
 from django.db.models import Min, Max, Avg
 from allauth.account.views import SignupView, LoginView, LogoutView
-from datetime import timedelta, date
+from datetime import timedelta, date, datetime
 from django.utils import timezone
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -96,12 +96,12 @@ def dashboard(request):
     max_temperature = conditions.aggregate(Max('Temperature'))['Temperature__max']
     min_humidity = conditions.aggregate(Min('Humidity'))['Humidity__min']
     max_humidity = conditions.aggregate(Max('Humidity'))['Humidity__max']
-    min_light_intensity = conditions.aggregate(Min('Lightintensity'))['Lightintensity__min']
-    max_light_intensity = conditions.aggregate(Max('Lightintensity'))['Lightintensity__max']
+    min_voltage = conditions.aggregate(Min('Voltage'))['Voltage__min']
+    max_voltage = conditions.aggregate(Max('Voltage'))['Voltage__max']
 
     temperatures = [condition.Temperature for condition in conditions]
     humidities = [condition.Humidity for condition in conditions]
-    light_intensities = [condition.Lightintensity for condition in conditions]
+    voltages = [condition.Voltage for condition in conditions]
     timestamps = [condition.Timestamp.strftime('%Y-%m-%dT%H:%M:%S.%fZ') for condition in conditions]
 
     context = {
@@ -112,17 +112,16 @@ def dashboard(request):
         'max_temperature': max_temperature,
         'min_humidity': min_humidity,
         'max_humidity': max_humidity,
-        'min_light_intensity': min_light_intensity,
-        'max_light_intensity': max_light_intensity,
+        'min_voltage': min_voltage,
+        'max_voltage': max_voltage,
         'temperatures': temperatures,
         'humidities': humidities,
-        'light_intensities': light_intensities,
+        'voltages': voltages,
         'timestamps': timestamps,
         'time_frame': time_frame,
     }
+
     return render(request, 'core/dashboard/dashboard.html', context)
-
-
 
 
 
@@ -204,12 +203,30 @@ def check_conditions_and_notify(condition: Condition):
             }
         )
 
-    if not (condition.Room.Min_Lightintensity <= condition.Lightintensity <= condition.Room.Max_Lightintensity):
-        message = f"Lightintensity alert for room {condition.Room.Material_name}: "
-        if condition.Lightintensity < condition.Room.Min_Lightintensity:
-            message += f"Lightintensity {condition.Lightintensity:.2f}lux is BELOW OPTIMUM."
-        if condition.Lightintensity > condition.Room.Max_Lightintensity:
-            message += f"Lightintensity {condition.Lightintensity:.2f}lux is ABOVE OPTIMUM."
+    if not (condition.Room.Min_Voltage <= condition.Voltage <= condition.Room.Max_Voltage):
+        message = f"Voltage alert for room {condition.Room.Material_name}: "
+        if condition.Voltage < condition.Room.Min_Voltage:
+            message += f"Voltage {condition.Voltage:.2f}V is BELOW OPTIMUM."
+        if condition.Voltage > condition.Room.Max_Voltage:
+            message += f"Voltage {condition.Voltage:.2f}V is ABOVE OPTIMUM."
+        notification = Notification.objects.create(Room=condition.Room, message=message)
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"user_{condition.Room.User.id}",
+            {
+                "type": "send_notification",
+                "message": {
+                    "id": notification.id,
+                    "message": notification.message,
+                    "created_at": str(notification.timestamp),
+                    "status": notification.status,
+                },
+            }
+        )
+
+    if condition.Room.Door_Open:
+        message = f"Door status alert for room {condition.Room.Material_name}: Door is OPEN."
         notification = Notification.objects.create(Room=condition.Room, message=message)
 
         channel_layer = get_channel_layer()
@@ -236,17 +253,33 @@ def receive_data(request):
             timestamp = data.get('timestamp')
             temperature = data.get('temperature')
             humidity = data.get('humidity')
-            light_intensity = data.get('light_intensity')
+            voltage = data.get('voltage')
+            door_status = data.get('door_status')  # Assuming door_status is a boolean
 
+            # Validate and adjust timestamp
+            if isinstance(timestamp, str):
+                timestamp = timezone.datetime.fromisoformat(timestamp)
+
+            # Fetch the room object
             room = Room.objects.get(id=room_id)
+
+            # Create a new Condition object
             condition = Condition.objects.create(
                 Room=room,
                 Timestamp=timestamp,
                 Temperature=temperature,
                 Humidity=humidity,
-                Lightintensity=light_intensity
+                Voltage=voltage
             )
 
+            # Update door status if needed
+            if door_status is not None:
+                room.Door_Open = door_status
+                if door_status:
+                    room.Door_Open_Timestamp = timestamp
+                room.save()
+
+            # Call any other functions for checking conditions and notifying
             check_conditions_and_notify(condition)
 
             return JsonResponse({"status": "success"}, status=200)
@@ -254,19 +287,38 @@ def receive_data(request):
             return JsonResponse({"status": "failure", "reason": "Invalid JSON"}, status=400)
         except Room.DoesNotExist:
             return JsonResponse({"status": "failure", "reason": "Room not found"}, status=404)
+        except Exception as e:
+            return JsonResponse({"status": "failure", "reason": str(e)}, status=500)
     return JsonResponse({"status": "failure", "reason": "Invalid request method"}, status=405)
+
+
 
 @login_required
 def room_conditions(request, room_id):
     room = get_object_or_404(Room, id=room_id, User=request.user)
 
     # Get filter parameters
-    filter_minutes = int(request.GET.get('filter', 60))  # Default to last 1 hour
-    entries = int(request.GET.get('entries', 10))  # Default to 10 entries
-
+    time_frame = request.GET.get('time_frame', 'today')
+    today = date.today()
+    
+    if time_frame == 'today':
+        time_threshold = timezone.make_aware(datetime.combine(today, datetime.min.time()))
+    elif time_frame == 'this_week':
+        start_of_week = today - timedelta(days=today.weekday())
+        time_threshold = timezone.make_aware(datetime.combine(start_of_week, datetime.min.time()))
+    elif time_frame == 'this_month':
+        start_of_month = today.replace(day=1)
+        time_threshold = timezone.make_aware(datetime.combine(start_of_month, datetime.min.time()))
+    else:
+        # Default to the last 1 hour if no valid time_frame is provided
+        time_threshold = timezone.now() - timedelta(hours=1)
+    
     # Filter conditions based on the selected time range
-    time_threshold = timezone.now() - timedelta(minutes=filter_minutes)
-    conditions = Condition.objects.filter(Room=room, Timestamp__gte=time_threshold).order_by('-Timestamp')[:entries]
+    conditions = Condition.objects.filter(Room=room, Timestamp__gte=time_threshold).order_by('-Timestamp')
+    
+    # Get filter parameters for entries
+    entries = int(request.GET.get('entries', 10))  # Default to 10 entries
+    conditions = conditions[:entries]
 
     latest_condition = conditions.first()  # Get the latest condition
     conditions_reverse = conditions[::-1]
@@ -274,12 +326,12 @@ def room_conditions(request, room_id):
     labels = [condition.Timestamp.strftime('%Y-%m-%d %H:%M:%S') for condition in conditions_reverse]
     temperatures = [condition.Temperature for condition in conditions_reverse]
     humidities = [condition.Humidity for condition in conditions_reverse]
-    light_intensities = [condition.Lightintensity for condition in conditions_reverse]
+    voltages = [condition.Voltage for condition in conditions_reverse]
 
     # Calculate averages for the selected time range
     average_temperature = conditions.aggregate(Avg('Temperature'))['Temperature__avg'] or 0.0
     average_humidity = conditions.aggregate(Avg('Humidity'))['Humidity__avg'] or 0.0
-    average_light_intensity = conditions.aggregate(Avg('Lightintensity'))['Lightintensity__avg'] or 0.0
+    average_voltage = conditions.aggregate(Avg('Voltage'))['Voltage__avg'] or 0.0
 
     context = {
         'room': room,
@@ -288,15 +340,17 @@ def room_conditions(request, room_id):
         'labels': json.dumps(labels),
         'temperatures': json.dumps(temperatures),
         'humidities': json.dumps(humidities),
-        'light_intensities': json.dumps(light_intensities),
+        'voltages': json.dumps(voltages),
         'average_temperature': average_temperature,
         'average_humidity': average_humidity,
-        'average_light_intensity': average_light_intensity,
-        'filter_minutes': filter_minutes,
+        'average_voltage': average_voltage,
+        'time_frame': time_frame,
         'entries': entries,
     }
 
     return render(request, 'core/room/room_details.html', context)
+
+
 
 # Displaying updated condition
 class LatestConditionView(APIView):
