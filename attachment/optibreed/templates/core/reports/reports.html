@@ -25,15 +25,15 @@
                     <label for="report_type" class="mr-2">Report Type:</label>
                     {{ form.report_type|add_class:"form-control" }}
                 </div>
-                <div class="form-group mb-2 mx-2">
+                <div class="form-group mb-2 mx-2" id="number_of_records_group">
                     <label for="number_of_records" class="mr-2">Number of Records:</label>
                     {{ form.number_of_records|add_class:"form-control" }}
                 </div>
-                <div class="form-group mb-2 mx-2">
+                <div class="form-group mb-2 mx-2" id="start_date_group">
                     <label for="start_date" class="mr-2">Start Date:</label>
                     {{ form.start_date|add_class:"form-control" }}
                 </div>
-                <div class="form-group mb-2 mx-2">
+                <div class="form-group mb-2 mx-2" id="end_date_group">
                     <label for="end_date" class="mr-2">End Date:</label>
                     {{ form.end_date|add_class:"form-control" }}
                 </div>
@@ -57,10 +57,18 @@
     <div id="avg2" class="card shadow-sm p-4 mb-4 text-center">
         <h3>Average Data:</h3>
         <div id="avg" class="d-flex justify-content-center">
-            <p class="mx-3">Temperature: <br> {{ report_data.avg_temperature }}°C</p>
-            <p class="mx-3">Humidity:<br> {{ report_data.avg_humidity }}%</p>
-            <p class="mx-3">Voltage:<br> {{ report_data.avg_voltage }} V</p>
-            <p class="mx-3">Door Open Durations:<br> {{ report_data.door_open_durations }} minutes</p>
+            <div class="mx-3">
+                <p>Temperature:</p>
+                <p class="font-weight-bold">{{ report_data.avg_temperature }}°C</p>
+            </div>
+            <div class="mx-3">
+                <p>Humidity:</p>
+                <p class="font-weight-bold">{{ report_data.avg_humidity }}%</p>
+            </div>
+            <div class="mx-3">
+                <p>Voltage:</p>
+                <p class="font-weight-bold">{{ report_data.avg_voltage }} V</p>
+            </div>
         </div>
     </div>
 
@@ -88,7 +96,35 @@
             </tbody>
         </table>
     </div>
-
     {% endif %}
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const reportTypeSelect = document.getElementById("id_report_type");
+    const numberOfRecordsGroup = document.getElementById("number_of_records_group");
+    const startDateGroup = document.getElementById("start_date_group");
+    const endDateGroup = document.getElementById("end_date_group");
+
+    function toggleFields() {
+        const reportType = reportTypeSelect.value;
+        if (reportType === "recent") {
+            numberOfRecordsGroup.style.display = "";
+            startDateGroup.style.display = "none";
+            endDateGroup.style.display = "none";
+        } else if (reportType === "date_range") {
+            numberOfRecordsGroup.style.display = "none";
+            startDateGroup.style.display = "";
+            endDateGroup.style.display = "";
+        } else {
+            numberOfRecordsGroup.style.display = "";
+            startDateGroup.style.display = "";
+            endDateGroup.style.display = "";
+        }
+    }
+
+    reportTypeSelect.addEventListener("change", toggleFields);
+    toggleFields();
+});
+</script>
 {% endblock %}
