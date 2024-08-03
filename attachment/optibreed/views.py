@@ -293,10 +293,10 @@ def receive_data(request):
 def room_conditions(request, room_id):
     room = get_object_or_404(Room, id=room_id, User=request.user)
 
-    # Get filter parameters
+    # Get filter parameters for time frame
     time_frame = request.GET.get('time_frame', 'today')
     today = date.today()
-    
+
     if time_frame == 'today':
         time_threshold = timezone.make_aware(datetime.combine(today, datetime.min.time()))
     elif time_frame == 'this_week':
@@ -308,16 +308,18 @@ def room_conditions(request, room_id):
     else:
         # Default to the last 1 hour if no valid time_frame is provided
         time_threshold = timezone.now() - timedelta(hours=1)
+
+    # Filter conditions based on the selected time range for averages and charts
+    conditions_for_charts = Condition.objects.filter(Room=room, Timestamp__gte=time_threshold).order_by('-Timestamp')
     
-    # Filter conditions based on the selected time range
-    conditions = Condition.objects.filter(Room=room, Timestamp__gte=time_threshold).order_by('-Timestamp')
-    
+    # Get the latest condition for real-time display
+    latest_condition = Condition.objects.filter(Room=room).order_by('-Timestamp').first()
+
     # Get filter parameters for entries
     entries = int(request.GET.get('entries', 10))  # Default to 10 entries
-    conditions = conditions[:entries]
+    conditions_for_charts = conditions_for_charts[:entries]
 
-    latest_condition = conditions.first()  # Get the latest condition
-    conditions_reverse = conditions[::-1]
+    conditions_reverse = conditions_for_charts[::-1]
 
     labels = [condition.Timestamp.strftime('%Y-%m-%d %H:%M:%S') for condition in conditions_reverse]
     temperatures = [condition.Temperature for condition in conditions_reverse]
@@ -325,14 +327,14 @@ def room_conditions(request, room_id):
     voltages = [condition.Voltage for condition in conditions_reverse]
 
     # Calculate averages for the selected time range
-    average_temperature = conditions.aggregate(Avg('Temperature'))['Temperature__avg'] or 0.0
-    average_humidity = conditions.aggregate(Avg('Humidity'))['Humidity__avg'] or 0.0
-    average_voltage = conditions.aggregate(Avg('Voltage'))['Voltage__avg'] or 0.0
+    average_temperature = conditions_for_charts.aggregate(Avg('Temperature'))['Temperature__avg'] or 0.0
+    average_humidity = conditions_for_charts.aggregate(Avg('Humidity'))['Humidity__avg'] or 0.0
+    average_voltage = conditions_for_charts.aggregate(Avg('Voltage'))['Voltage__avg'] or 0.0
 
     context = {
         'room': room,
         'latest_condition': latest_condition,
-        'conditions': conditions,
+        'conditions': conditions_for_charts,
         'labels': json.dumps(labels),
         'temperatures': json.dumps(temperatures),
         'humidities': json.dumps(humidities),
@@ -345,6 +347,8 @@ def room_conditions(request, room_id):
     }
 
     return render(request, 'core/room/room_details.html', context)
+
+
 
 
 
