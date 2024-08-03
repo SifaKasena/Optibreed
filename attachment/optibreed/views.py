@@ -441,23 +441,58 @@ def generate_report(request):
             p = canvas.Canvas(buffer, pagesize=letter)
             width, height = letter
 
-            p.drawString(100, height - 100, f"Condition Report for Room: {room.Material_name}")
-            p.drawString(100, height - 120, f"User: {request.user.username}")
+            p.drawString(50, height - 50, "Condition Report")
+            p.drawString(50, height - 70, f"Room: {room.Material_name}")
+            p.drawString(50, height - 90, f"User: {request.user.username}")
+            p.drawString(50, height - 110, "Expected Ranges:")
+            p.drawString(70, height - 130, f"Temperature: {room.Min_Temperature}°C to {room.Max_Temperature}°C")
+            p.drawString(70, height - 150, f"Humidity: {room.Min_Humidity}% to {room.Max_Humidity}%")
+            p.drawString(70, height - 170, f"Voltage: {room.Min_Voltage}V to {room.Max_Voltage}V")
 
-            p.drawString(100, height - 160, f"Average Temperature: {avg_temperature:.2f}°C")
-            p.drawString(100, height - 180, f"Average Humidity: {avg_humidity:.2f}%")
-            p.drawString(100, height - 200, f"Average Voltage: {avg_voltage:.2f} V")
-            p.drawString(100, height - 220, f"Door Open Durations: {door_open_durations} minutes")
+            # Table headers
+            p.drawString(50, height - 200, "Timestamp")
+            p.drawString(200, height - 200, "Temperature (°C)")
+            p.drawString(300, height - 200, "Humidity (%)")
+            p.drawString(400, height - 200, "Voltage (V)")
+            p.drawString(500, height - 200, "Door Condition")
 
+            y_position = height - 220
+            for condition in conditions:
+                temp_deviation = condition.Temperature - ((room.Min_Temperature + room.Max_Temperature) / 2)
+                hum_deviation = condition.Humidity - ((room.Min_Humidity + room.Max_Humidity) / 2)
+                volt_deviation = condition.Voltage - ((room.Min_Voltage + room.Max_Voltage) / 2)
+
+                p.drawString(50, y_position, condition.Timestamp.strftime('%b %d, %Y, %I:%M %p'))
+                p.drawString(200, y_position, f"{condition.Temperature:.2f}")
+                p.drawString(300, y_position, f"{condition.Humidity:.2f}")
+                p.drawString(400, y_position, f"{condition.Voltage:.2f}")
+                p.drawString(500, y_position, condition.DoorCondition)
+                y_position -= 20
+
+                if y_position < 100:
+                    p.showPage()
+                    y_position = height - 50
+
+            # Averages
+            y_position -= 20
+            p.drawString(50, y_position, "Averages")
+            p.drawString(200, y_position, f"{avg_temperature:.2f}°C")
+            p.drawString(300, y_position, f"{avg_humidity:.2f}%")
+            p.drawString(400, y_position, f"{avg_voltage:.2f} V")
+
+            # Draw graphs
+            y_position -= 100
             with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
                 temp_file.write(image_temp)
-                p.drawImage(temp_file.name, 100, height - 400, width=400, height=150)
+                p.drawImage(temp_file.name, 50, y_position, width=500, height=150)
+            y_position -= 200
             with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
                 temp_file.write(image_hum)
-                p.drawImage(temp_file.name, 100, height - 600, width=400, height=150)
+                p.drawImage(temp_file.name, 50, y_position, width=500, height=150)
+            y_position -= 200
             with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
                 temp_file.write(image_volt)
-                p.drawImage(temp_file.name, 100, height - 800, width=400, height=150)
+                p.drawImage(temp_file.name, 50, y_position, width=500, height=150)
 
             p.showPage()
             p.save()
