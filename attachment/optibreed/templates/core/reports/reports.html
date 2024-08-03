@@ -59,7 +59,8 @@
         <div id="avg" class="d-flex justify-content-center">
             <p class="mx-3">Temperature: <br> {{ report_data.avg_temperature }}°C</p>
             <p class="mx-3">Humidity:<br> {{ report_data.avg_humidity }}%</p>
-            <p class="mx-3">Light Intensity:<br> {{ report_data.avg_lightintensity }} lux</p>
+            <p class="mx-3">Voltage:<br> {{ report_data.avg_voltage }} V</p>
+            <p class="mx-3">Door Open Durations:<br> {{ report_data.door_open_durations }} minutes</p>
         </div>
     </div>
 
@@ -70,7 +71,8 @@
                     <th>Timestamp</th>
                     <th>Temperature (°C)</th>
                     <th>Humidity (%)</th>
-                    <th>Light Intensity (lux)</th>
+                    <th>Voltage (V)</th>
+                    <th>Door Condition</th>
                 </tr>
             </thead>
             <tbody>
@@ -79,7 +81,8 @@
                         <td>{{ condition.Timestamp }}</td>
                         <td>{{ condition.Temperature }}</td>
                         <td>{{ condition.Humidity }}</td>
-                        <td>{{ condition.Lightintensity }}</td>
+                        <td>{{ condition.Voltage }}</td>
+                        <td>{{ condition.DoorCondition }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

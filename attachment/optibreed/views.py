@@ -365,7 +365,6 @@ matplotlib.use('Agg')  # Use the Anti-Grain Geometry backend for non-interactive
 
 
 def generate_chart(labels, data, title, ylabel):
-
     plt.figure(figsize=(10, 6))
     plt.plot(labels, data, label=title)
     plt.xlabel('Timestamp')
@@ -379,6 +378,7 @@ def generate_chart(labels, data, title, ylabel):
     plt.close()
     return image_data
 
+@login_required
 def generate_report(request):
     form = ReportForm(request.user, request.GET or None)
 
@@ -386,7 +386,7 @@ def generate_report(request):
     report_data = {}
     image_temp = None
     image_hum = None
-    image_light = None
+    image_volt = None
 
     if form.is_valid():
         room = form.cleaned_data['room_id']
@@ -407,21 +407,30 @@ def generate_report(request):
 
         avg_temperature = conditions.aggregate(Avg('Temperature'))['Temperature__avg']
         avg_humidity = conditions.aggregate(Avg('Humidity'))['Humidity__avg']
-        avg_lightintensity = conditions.aggregate(Avg('Lightintensity'))['Lightintensity__avg']
+        avg_voltage = conditions.aggregate(Avg('Voltage'))['Voltage__avg']
 
         labels = [condition.Timestamp.strftime('%Y-%m-%d %H:%M:%S') for condition in conditions]
         temperatures = [condition.Temperature for condition in conditions]
         humidities = [condition.Humidity for condition in conditions]
-        lightintensities = [condition.Lightintensity for condition in conditions]
+        voltages = [condition.Voltage for condition in conditions]
 
         image_temp = generate_chart(labels, temperatures, 'Temperature', 'Temperature (°C)')
         image_hum = generate_chart(labels, humidities, 'Humidity', 'Humidity (%)')
-        image_light = generate_chart(labels, lightintensities, 'Light Intensity', 'Light Intensity (lux)')
+        image_volt = generate_chart(labels, voltages, 'Voltage', 'Voltage (V)')
+
+        door_open_durations = []
+        door_open_intervals = []
+        for condition in conditions:
+            if condition.DoorCondition == 'Open':
+                door_open_durations.append((condition.Timestamp - room.Door_Open_Timestamp).total_seconds() / 60)
+                door_open_intervals.append(condition.Timestamp)
 
         report_data = {
             'avg_temperature': avg_temperature,
             'avg_humidity': avg_humidity,
-            'avg_lightintensity': avg_lightintensity,
+            'avg_voltage': avg_voltage,
+            'door_open_durations': door_open_durations,
+            'door_open_intervals': door_open_intervals,
         }
 
         if 'download_pdf' in request.GET:
@@ -437,7 +446,8 @@ def generate_report(request):
 
             p.drawString(100, height - 160, f"Average Temperature: {avg_temperature:.2f}°C")
             p.drawString(100, height - 180, f"Average Humidity: {avg_humidity:.2f}%")
-            p.drawString(100, height - 200, f"Average Light Intensity: {avg_lightintensity:.2f} lux")
+            p.drawString(100, height - 200, f"Average Voltage: {avg_voltage:.2f} V")
+            p.drawString(100, height - 220, f"Door Open Durations: {door_open_durations} minutes")
 
             with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
                 temp_file.write(image_temp)
@@ -446,7 +456,7 @@ def generate_report(request):
                 temp_file.write(image_hum)
                 p.drawImage(temp_file.name, 100, height - 600, width=400, height=150)
             with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
-                temp_file.write(image_light)
+                temp_file.write(image_volt)
                 p.drawImage(temp_file.name, 100, height - 800, width=400, height=150)
 
             p.showPage()
@@ -457,15 +467,13 @@ def generate_report(request):
             response.write(pdf)
             return response
 
-        # Add more conditions for other file types if needed
-
     context = {
         'form': form,
         'conditions': conditions,
         'report_data': report_data,
         'image_temp': image_temp,
         'image_hum': image_hum,
-        'image_light': image_light,
+        'image_volt': image_volt,
     }
 
     return render(request, 'core/reports/reports.html', context)
