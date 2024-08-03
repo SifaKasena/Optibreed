@@ -32,11 +32,16 @@ class Sensor(models.Model):
         return f"{self.Sensor_name} ({self.Sensor_type}) in {self.Room}"
 
 class Condition(models.Model):
+    DOOR_CONDITION_CHOICES = [
+        ('Open', 'Open'),
+        ('Closed', 'Closed'),
+    ]
     Room = models.ForeignKey(Room, on_delete=models.CASCADE)
     Timestamp = models.DateTimeField(default=timezone.now)
     Temperature = models.FloatField()
     Humidity = models.FloatField()
     Voltage = models.FloatField(default=0.0)
+    DoorCondition = models.CharField(max_length=10, choices=DOOR_CONDITION_CHOICES, default="Closed")
 
     def __str__(self):
         return f'{self.Room.Material_name} at {self.Timestamp}'

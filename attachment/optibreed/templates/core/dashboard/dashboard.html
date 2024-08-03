@@ -76,9 +76,11 @@
                                 <h5 class="card-title">Temperature <span>| {{ time_frame }}</span></h5>
                                 {% for condition in conditions %}
                                 <div class="d-flex flex-column align-items-center mb-auto">
-                                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                        <i class="bi bi-thermometer-half"></i>
-                                        <h6>{{ condition.Temperature|floatformat:2 }}°C</h6>
+                                    <div class="d-flex align-items-center"> <!-- Align icon and value horizontally -->
+                                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center me-0"> <!-- Add margin end -->
+                                            <i class="bi bi-thermometer-half"></i>
+                                        </div>
+                                        <h6 class="mb-0">{{ condition.Temperature|floatformat:2 }}°C</h6> <!-- Remove margin bottom -->
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-between mt-auto">
@@ -89,7 +91,7 @@
                             </div>
                         </div>
                     </div><!-- End Temperature Card -->
-    
+
                     <!-- Humidity Card -->
                     <div class="col-xxl-4 col-md-6">
                         <div class="card info-card humidity-card">
@@ -108,9 +110,11 @@
                                 <h5 class="card-title">Humidity <span>| {{ time_frame }}</span></h5>
                                 {% for condition in conditions %}
                                 <div class="d-flex flex-column align-items-center mb-auto">
-                                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                        <i class="bi bi-droplet-half"></i>
-                                        <h6>{{ condition.Humidity|floatformat:2 }}%</h6>
+                                    <div class="d-flex align-items-center"> <!-- Align icon and value horizontally -->
+                                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center me-0"> <!-- Add margin end -->
+                                            <i class="bi bi-droplet-half"></i>
+                                        </div>
+                                        <h6 class="mb-0">{{ condition.Humidity|floatformat:2 }}%</h6> <!-- Remove margin bottom -->
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-between mt-auto">
@@ -121,7 +125,8 @@
                             </div>
                         </div>
                     </div><!-- End Humidity Card -->
-    
+
+
                     <!-- Light Intensity Card -->
                     <!-- <div class="col-xxl-4 col-md-6">
                         <div class="card info-card light-intensity-card">
@@ -173,9 +178,11 @@
                                 <h5 class="card-title">Voltage Levels <span>| {{ time_frame }}</span></h5>
                                 {% for condition in conditions %}
                                 <div class="d-flex flex-column align-items-center mb-auto">
-                                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                        <i class="bi bi-lightning-charge"></i>
-                                        <h6>{{ condition.voltage|floatformat:2 }} V</h6>
+                                    <div class="d-flex align-items-center">
+                                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center me-0"> <!-- Add margin end -->
+                                            <i class="bi bi-lightning-charge"></i>
+                                        </div>
+                                        <h6 class="mb-0 ms-0">{{ condition.Voltage|floatformat:2 }} V</h6> <!-- Remove margin bottom -->
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-between mt-auto">
@@ -186,6 +193,7 @@
                             </div>
                         </div>
                     </div><!-- End Voltage Levels Card -->
+
 
 
                     <!-- Combined Graphs -->
@@ -264,7 +272,7 @@
                 <!-- Recent Alerts -->
                 <div class="col-12">
                     <div class="card recent-alerts overflow-auto">
-                
+
                     <div class="filter">
                         <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
@@ -276,7 +284,7 @@
                         <li><a class="dropdown-item" href="#">This Year</a></li>
                         </ul>
                     </div>
-                
+
                     <div class="card-body">
                         <h5 class="card-title">Recent Alerts <span>| Today</span></h5>
                 
@@ -486,7 +494,7 @@
             </div>
         </div><!-- End Recent Activity -->
 
-
+        <!-- Door Status -->
         <div class="card">
             <div class="card-body pb-0">
                 <h5 class="card-title">Door Status Report <span>| Real-Time</span></h5>
@@ -509,12 +517,6 @@
                                 </div>
                                 <h6 class="text-muted mb-0" style="font-size: 0.75rem;">
                                     {{ room.Material_name }}
-                                </h6>
-                                {% if room.Door_Open %}
-                                <div class="alert alert-warning mt-2 p-1" role="alert" style="font-size: 0.75rem;">
-                                    Door has been open for {{ room.door_open_duration|floatformat:2 }} minutes
-                                </div>
-                                {% endif %}
                             </div>
                         </div>
                     </div>

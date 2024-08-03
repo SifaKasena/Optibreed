@@ -19,7 +19,7 @@ class Command(BaseCommand):
                     'temperature': uniform(room.Min_Temperature - 5, room.Max_Temperature + 5),
                     'humidity': uniform(room.Min_Humidity - 5, room.Max_Humidity + 5),
                     'voltage': uniform(room.Min_Voltage - 5, room.Max_Voltage + 5),
-                    'door_condition': choice(['Open', 'Closed'])
+                    'door_condition': choice(['Open', 'Closed'])  # Ensure these match your model choices
                 }
 
                 try:

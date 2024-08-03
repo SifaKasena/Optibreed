@@ -3,7 +3,6 @@ import tempfile
 from io import BytesIO
 import matplotlib
 from django.contrib.auth.decorators import login_required
-from django.db.models import Avg
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
@@ -27,8 +26,6 @@ from django.contrib.auth import views as auth_views
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from django.contrib.auth.forms import UserCreationForm
-import json
-
 
 # Create your views here.
 def index(request):
@@ -243,7 +240,6 @@ def check_conditions_and_notify(condition: Condition):
             }
         )
 
-
 @csrf_exempt
 def receive_data(request):
     if request.method == 'POST':
@@ -254,7 +250,7 @@ def receive_data(request):
             temperature = data.get('temperature')
             humidity = data.get('humidity')
             voltage = data.get('voltage')
-            door_status = data.get('door_status')  # Assuming door_status is a boolean
+            door_condition = data.get('door_condition')  # Ensure this matches your model
 
             # Validate and adjust timestamp
             if isinstance(timestamp, str):
@@ -269,15 +265,15 @@ def receive_data(request):
                 Timestamp=timestamp,
                 Temperature=temperature,
                 Humidity=humidity,
-                Voltage=voltage
+                Voltage=voltage,
+                DoorCondition=door_condition  # Save door condition in the Condition model
             )
 
-            # Update door status if needed
-            if door_status is not None:
-                room.Door_Open = door_status
-                if door_status:
-                    room.Door_Open_Timestamp = timestamp
-                room.save()
+            # Update door status in the Room model
+            room.Door_Open = door_condition == 'Open'  # Convert string to boolean
+            if room.Door_Open:
+                room.Door_Open_Timestamp = timestamp
+            room.save()
 
             # Call any other functions for checking conditions and notifying
             check_conditions_and_notify(condition)

@@ -7,7 +7,6 @@ class Command(BaseCommand):
     help = 'Generate sample data for Condition model'
 
     def handle(self, *args, **kwargs):
-
         room = Room.objects.get(id=1)  # Replace with specific room if necessary
 
         if not room:
@@ -20,7 +19,7 @@ class Command(BaseCommand):
             temperature = random.uniform(18.0, 30.0)
             humidity = random.uniform(30.0, 70.0)
             voltage = random.uniform(100.0, 240.0)
-            door_condition = random.choice(['Open', 'Closed'])
+            door_condition = random.choice(['Open', 'Closed'])  # Ensure these match your model choices
 
             Condition.objects.create(
                 Room=room,
